@@ -11,6 +11,7 @@ class Resource extends Model
 {
     use HasFactory;
 
+    public int $id;
     public $resItem; // Item
     public int $amount = 1;
     public int $amountPerLevel = 1;

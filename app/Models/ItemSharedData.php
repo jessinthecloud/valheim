@@ -53,6 +53,7 @@ class ItemSharedData extends Model
     // max number you can stack
     public $maxStackSize;
     public bool $teleportable;
+    public bool $questItem;
     public $value;
     public $variants;
     // weight of single item
@@ -61,9 +62,14 @@ class ItemSharedData extends Model
     public ItemType $itemType;
     // recipe if craftable
     public Recipe $recipe;
-
+    public string $dlc;
+    /**
+     *
+     * @var float
+     */
+    public $armorPerLevel;
+    public $toolTier;
     // destroyBroken
-    // string dlc
     // attackStatusEffect
     // consumeStatusEffect
     // equipStatusEffect
@@ -75,11 +81,9 @@ class ItemSharedData extends Model
     // setStatusEffect
     // array damageModifiers
     // timedBlockBonus
-    // toolTier
     // bool useDurability
     // useDurabilityDrain
     // movementModifier
-    // bool questItem
     // setName
     // setSize
 }
