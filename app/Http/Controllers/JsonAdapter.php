@@ -1,15 +1,26 @@
 <?php
 
-namespace App\Models;
-
-use App\Models\Recipe;
+namespace App\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-abstract class Adapter extends Model
+class JsonAdapter extends Model
 {
     use HasFactory;
+    public static $count=0;
+
+    /**
+     * decode a JSON file
+     *
+     * @param  [string] $filepath filepath of JSON file
+     *
+     * @return Object    Decoded JSON
+     */
+    public static function decodeJsonFile($filepath, bool $toArray=false)
+    {
+        return json_decode(file_get_contents($filepath), $toArray);
+    }
 
     /**
      * convert member name from C# (remove "m_")
@@ -35,15 +46,78 @@ abstract class Adapter extends Model
             return rtrim($fqcname, 's');
         }
         // is recipe object
-        if (strpos($name, 'Recipe') !== false) {
+        if (str_contains($name, 'Recipe')) {
             return __NAMESPACE__.'\\'.'Recipe';
         }
         // is Item
-        if (strpos($name, 'Item') !== false) {
+        if (str_contains($name, 'Item')) {
             return __NAMESPACE__.'\\'.'Item';
         }
 
         return null;
+    }
+
+    public static function createFromArray($data)
+    {
+        self::$count++;
+        if (self::$count >= 10) {
+            die;
+        }
+        if (is_array($data)) {
+            dump("=====");
+            dump('DATA IS ARRAY');
+            dump($data);
+            dump("=====");
+            ///////////////////////////////////////////////////////
+            foreach ($data as $key => $item) {
+                if (!is_int($key)) {
+                    dump('Key is NOT int: '.$key);
+                    if (is_array($item)) {
+                        // item is array
+                        dump("item is ARRAY");
+                        if (is_int(array_key_first($item))) {
+                            dump("key is objectname, item is array of these objects");
+                            dump("Obj Name: $key");
+                            dump("Objects: ");
+                            dump($item);
+                            dump("UPPER (".self::$count.") CREATE FROM ARRAY");
+                            self::createFromArray($item);
+                        } else {
+                            dump("key is objectname, item is array of obj properties");
+                            dump("Obj Name: $key");
+                            dump("Properties: ");
+                            dump($item);
+                        }
+                    } else {
+                        // item not array
+                        dump("item is NOT array: $item");
+                        dump("key is property name, item is property value");
+                        dump("$key => $item");
+                    }
+                } else {
+                    // key is int
+                    dump('--- Key is INT: '.$key);
+                    if (is_array($item)) {
+                        dump("--- item is ARRAY");
+
+                        dump("--- key is int ($key) item is array of obj properties");
+                        dump("--- LOWER (".self::$count.") CREATE FROM ARRAY");
+
+                        self::createFromArray($item);
+                    } else {
+                        // item is not array
+                        dump("--- item is NOT array: $item");
+                        dump("--- key is objectname, item is obj property");
+                        dump("--- Obj Name: $key");
+                        dump("--- Property: $item");
+                    }
+                }
+                dump("=/=/=/=/=/=/=");
+            } // end foreach
+        } else {
+            dump("DATA is NOT Array: ".$data);
+            dump("//////////////////////////////////////////////////////");
+        }
     }
 
     public static function createFromJson($data, object $parent=null)

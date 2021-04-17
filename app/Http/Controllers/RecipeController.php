@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use PHPHtmlParser\Dom;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
 use App\Models\Recipe;
+use App\Http\Controllers\JsonAdapter;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
@@ -17,16 +17,28 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        /*dump($this->decodeJsonFromFile(
-            storage_path('app\recipes.json')
-        ));*/
-
-        $recipe = Recipe::createFromJson($this->decodeJsonFromFile(
+        // decode json file to array
+        $contents = ['recipes'=>JsonAdapter::decodeJsonFile(
             storage_path('app\recipes.json'),
             true
-        )[0]);
+        )];
+        ////////////////////
+        // dumping only
+        foreach ($contents as $key => $item) {
+            dump($key);
+            dump($item[0]);
+            break;
+        }
+        echo "<BR>";
+        dump("////////////////////// BEFORE FUNC ////////////////////////////////");
+        echo "<BR>";
+        /////////////////
 
-        echo "<BR>//////////////////////////////////////////////////////";
+        $recipe = JsonAdapter::createFromArray($contents);
+
+        echo "<BR>";
+        dump("/////////////////////// AFTER FUNC ///////////////////////////////");
+        echo "<BR>";
 
         dump($recipe);
     }
