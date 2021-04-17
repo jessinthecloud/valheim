@@ -28,6 +28,10 @@ class RecipeController extends Controller
         echo "<BR>";
         /////////////////
 
+        // !!!!
+        $contents['recipes'] = array_slice($contents['recipes'], 0, 2);
+        // !!!!
+        // dd($contents);
         // $recipe = JsonAdapter::recursiveCreateFromArray($contents);
         $recipe = JsonAdapter::createFromArray($contents);
 

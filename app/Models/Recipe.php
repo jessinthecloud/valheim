@@ -22,8 +22,10 @@ class Recipe extends Model
 
     public function __construct($data)
     {
+        dump("*~*~*~*~*~*~*~*~*~*~*");
         dump("RECIPE CLASS ");
         dump($data);
+        dump("*~*~*~*~*~*~*~*~*~*~*");
         // extract($data);
         $this->name = $data['name'];
         $this->itemName = $data['itemName'] ?? JsonAdapter::internalName($this->name);
