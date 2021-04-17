@@ -45,7 +45,6 @@ class JsonAdapter extends Model
      */
     protected static function internalName(string $name)
     {
-        dump((explode('_', $name)[1]) ?? $name);
         return (explode('_', $name)[1]) ?? $name;
     }
 
@@ -59,7 +58,6 @@ class JsonAdapter extends Model
      */
     protected static function camelToEnglish(string $name)
     {
-        dump(trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name);
         // split string into array on uppercase letter and turn it into string
         return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
     }
@@ -95,7 +93,7 @@ class JsonAdapter extends Model
         // dump($data);
         $className = self::convertMemberName($className);
         $className = self::mapClassName($className);
-        dump("real class name: $className");
+        // dump("real class name: $className");
         if (is_array($data)) {
             foreach ($data as $key => &$val) {
                 $newkey = self::convertMemberName($key) ?? $key;
@@ -120,77 +118,77 @@ class JsonAdapter extends Model
     public static function createFromArray($data, $name='', $objarray=[])
     {
         if (is_array($data)) {
-            dump("=====");
+            /*dump("=====");
             dump('DATA IS ARRAY');
             dump($data);
-            dump("=====");
+            dump("=====");*/
             ///////////////////////////////////////////////////////
             foreach ($data as $key => $item) {
-                self::$count++;
+                /*self::$count++;
                 if (self::$count >= 25) {
                     dump("DYING");
                     dump($objarray);
                     die;
-                }
+                }*/
                 if (!is_int($key)) {
-                    dump('Key is NOT int: '.$key);
+                    // dump('Key is NOT int: '.$key);
                     if (is_array($item)) {
                         // item is array
                         if (is_int(array_key_first($item))) {
-                            dump("item is NUMERIC ARRAY");
+                            /*dump("item is NUMERIC ARRAY");
                             dump("key is objectname, item is array of these objects");
                             dump("Obj Name: $key");
                             dump("Objects: ");
                             dump($item);
                             dump("UPPER (".self::$count.") CREATE FROM ARRAY");
-                            dump($objarray);
+                            dump($objarray);*/
                             return self::createFromArray($item, $key, $objarray);
                         } else {
-                            dump("item is ASSOC ARRAY");
+                            /*dump("item is ASSOC ARRAY");
 
                             dump("key is objectname, item is array of obj properties");
                             dump("Obj Name: $key");
                             dump("Properties: ");
                             dump("UPPER (".self::$count.") CREATE OBJECT $key");
 
-                            dump($item);
+                            dump($item);*/
                             // create object
                             return self::createObject($key, $item);
                         }
                     } else {
                         // item not array
-                        dump("item is NOT array: $item");
-                        dump("key is property name, item is property value");
-                        dump("$key => $item");
-                        dump("DON'T LOOP, CREATE OBJECT FROM DATA");
+                        /* dump("item is NOT array: $item");
+                         dump("key is property name, item is property value");
+                         dump("$key => $item");
+                         dump("DON'T LOOP, CREATE OBJECT FROM DATA");*/
                         return self::createObject($name, $data);
                     }
                 } else {
                     // key is int
-                    dump('--- Key is INT: '.$key);
+                    // dump('--- Key is INT: '.$key);
                     if (is_array($item)) {
-                        dump("--- item is ARRAY");
+                        /*dump("--- item is ARRAY");
 
                         dump("--- item is array of obj properties");
                         dump("--- LOWER (".self::$count.") CREATE OBJECT $name");
-
+*/
                         $objarray []= self::createFromArray($item, $name, $objarray);
                     } else {
                         // item is not array
-                        dump("--- item is NOT array: $item");
+                      /*  dump("--- item is NOT array: $item");
                         dump("--- key is objectname, item is obj property");
                         dump("--- Obj Name: $key");
-                        dump("--- Property: $item");
+                        dump("--- Property: $item");*/
                     }
                 }
-                dump("=/=/=/=/=/=/=");
+                // dump("=/=/=/=/=/=/=");
             } // end foreach
         } else {
-            dump("DATA is NOT Array: ".$data);
-            dump("//////////////////////////////////////////////////////");
+            /*dump("DATA is NOT Array: ".$data);
+            dump("//////////////////////////////////////////////////////");*/
         }
-        dump("oops we ESCAPED!");
-        dump($objarray);
+        /*dump("oops we ESCAPED!");
+        dump($objarray);*/
         return $objarray ?? null;
     } // end createFromArray
     /*

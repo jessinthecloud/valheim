@@ -19,20 +19,20 @@ class ConvertController extends Controller
             true
         )];
 
-        echo "<BR>";
+        /*echo "<BR>";
         dump("////////////////////// BEFORE FUNC ////////////////////////////////");
-        echo "<BR>";
+        echo "<BR>";*/
         /////////////////
 
         // !!!!
-        $contents['recipes'] = array_slice($contents['recipes'], 0, 2);
+        // $contents['recipes'] = array_slice($contents['recipes'], 0, 2);
         // !!!!
         // dd($contents);
         // $recipe = JsonAdapter::recursiveCreateFromArray($contents);
         $recipes = JsonAdapter::createFromArray($contents);
-        echo "<BR>";
+        /*echo "<BR>";
         dump("/////////////////////// AFTER FUNC ///////////////////////////////");
-        echo "<BR>";
+        echo "<BR>";*/
         dump($recipes);
 
         /*$iterator = new \RecursiveIteratorIterator(
