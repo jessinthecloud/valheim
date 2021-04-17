@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\JsonAdapter;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,11 +15,15 @@ class Resource extends Model
     public int $amount = 1;
     public int $amountPerLevel = 1;
 
-    public function __construct($amount=1, $amountPerLevel=1, $resItem=null)
+    public function __construct($data=null)
     {
-        $this->amount = $amount;
-        $this->amountPerLevel = $amountPerLevel;
-        $this->resItem = $resItem;
+        $this->amount = $data['amount'] ?? 1;
+        $this->amountPerLevel = $data['amountPerLevel'] ?? 1;
+        if (isset($data['resItem'])) {
+            $this->resItem = JsonAdapter::createObject('resItem', $data['resItem']) ?? null;
+        } else {
+            $this->resItem = null;
+        }
     }
 
     public function getAmount(int $qualityLevel) : int

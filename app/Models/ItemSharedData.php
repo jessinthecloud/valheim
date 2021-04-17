@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\JsonAdapter;
 use App\Enums\AnimationState;
 use App\Enums\SkillType;
 use App\Enums\ItemType;
 use App\Models\Recipe;
-
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

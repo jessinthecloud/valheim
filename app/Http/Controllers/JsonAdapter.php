@@ -96,75 +96,26 @@ class JsonAdapter extends Model
         $className = self::convertMemberName($className);
         $className = self::mapClassName($className);
         dump("real class name: $className");
-        foreach ($data as $key => &$val) {
-            $newkey = self::convertMemberName($key) ?? $key;
-            // dump("KEY: $key -- real key: $newkey -> ");
-            // dump($val);
-            $data [$newkey]= $val;
-            if ($key !== $newkey) {
-                unset($data[$key]);
+        if (is_array($data)) {
+            foreach ($data as $key => &$val) {
+                $newkey = self::convertMemberName($key) ?? $key;
+                // dump("KEY: $key -- real key: $newkey -> ");
+                // dump($val);
+                $data [$newkey]= $val;
+                if ($key !== $newkey) {
+                    unset($data[$key]);
+                }
+                // dump($data[$newkey]);
+                // dump("===");
             }
-            // dump($data[$newkey]);
-            // dump("===");
+            // dump($data);
+            // dump("*~*~*~*~*~*~*~*~*~*~*");
         }
-        // dump($data);
-        // dump("*~*~*~*~*~*~*~*~*~*~*");
 
         return $className ? new $className($data) : null;
     }
 
-    public static function recursiveCreateFromArray($data)
-    {
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator($data),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-        $i=0;
-        foreach ($iterator as $key => $item) {
-            if ($i > 44) {
-                break;
-            }
-            if (is_array($item)) {
-                // item is array
-                if (is_int(array_key_first($item))) {
-                    // item is numeric array
-                    if ($i > 0) {
-                        // if not first item, key is also property of CURRENT object
-                        dump("Current object property name: $key");
-                        dump("Child Object name: $key");
-                        dump("Child Objects: ");
-                        dump($item);
-                    } else {
-                        dump("Object name: $key");
-                        dump("Objects: ");
-                    }
-                    // current key is object name, item is array of these objects
-                    dump($item);
-                } else {
-                    // item is assoc array
-                    if (is_int($key)) {
-                        // PREVIOUS key was object name, item is ARRAY of that object's  properties => values
-                        dump("-- Object name: PREVIOUS KEY");
-                        dump("-- Properties->Values: ");
-                        dump($item);
-                    } else {
-                        // key is property AND object name, item is ARRAY of properties => values
-                        dump("Previous object Property name: $key");
-                        dump("-- Object name: $key");
-                        dump("-- Properties->Values: ");
-                        dump($item);
-                    }
-                }
-            } else {
-                // item is NOT array
-                // PREVIOUS key is object name
-                dump("-- Object name: PREVIOUS KEY");
-                // key is property name, item is property value
-                dump("$key => $item");
-            }
-            $i++;
-        } // end foreach
-    }
+
 
     public static function createFromArray($data, $name='', $objarray=[])
     {
@@ -242,7 +193,59 @@ class JsonAdapter extends Model
         dump($objarray);
         return $objarray ?? null;
     } // end createFromArray
-    /*///////////////////////
+    /*
+
+    public static function recursiveCreateFromArray($data)
+    {
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator($data),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+        $i=0;
+        foreach ($iterator as $key => $item) {
+            if (is_array($item)) {
+                // item is array
+                if (is_int(array_key_first($item))) {
+                    // item is numeric array
+                    if ($i > 0) {
+                        // if not first item, key is also property of CURRENT object
+                        dump("Current object property name: $key");
+                        dump("Child Object name: $key");
+                        dump("Child Objects: ");
+                        dump($item);
+                    } else {
+                        dump("Object name: $key");
+                        dump("Objects: ");
+                    }
+                    // current key is object name, item is array of these objects
+                    dump($item);
+                } else {
+                    // item is assoc array
+                    if (is_int($key)) {
+                        // PREVIOUS key was object name, item is ARRAY of that object's  properties => values
+                        dump("-- Object name: PREVIOUS KEY");
+                        dump("-- Properties->Values: ");
+                        dump($item);
+                    } else {
+                        // key is property AND object name, item is ARRAY of properties => values
+                        dump("Previous object Property name: $key");
+                        dump("-- Object name: $key");
+                        dump("-- Properties->Values: ");
+                        dump($item);
+                    }
+                }
+            } else {
+                // item is NOT array
+                // PREVIOUS key is object name
+                dump("-- Object name: PREVIOUS KEY");
+                // key is property name, item is property value
+                dump("$key => $item");
+            }
+            $i++;
+        } // end foreach
+    }
+
+    ///////////////////////
     public static function createFromJson($data, object $parent=null)
     {
         // associative arrays are objects

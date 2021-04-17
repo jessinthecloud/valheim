@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 // Valheim ------------------------------------------------------------------
 
-Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('valheim.index');
+Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
+Route::get('/convert/{item?}', [App\Http\Controllers\ConvertController::class, 'index'])->name('convert.index');
 
-Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])->name('valheim.recipes.index');
+Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipes.index');

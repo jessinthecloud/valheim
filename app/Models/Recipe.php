@@ -32,8 +32,11 @@ class Recipe extends Model
         $this->name_EN = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->itemName);
         $this->amount = $data['amount'];
         $this->minStationLevel = $data['minStationLevel'];
-        $this->craftingStation = $data['craftingStation'] ?? null;
-        $this->resources = $data['resources'];
+        $this->craftingStation = JsonAdapter::createObject('craftingStation', $data['craftingStation']) ?? null;
+        $this->resources = [];
+        foreach ($data['resources'] as $resource) {
+            $this->resources []= JsonAdapter::createObject('resource', $resource);
+        }
     }
 
     /**

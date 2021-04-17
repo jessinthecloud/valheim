@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\JsonAdapter;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,9 +14,9 @@ class CraftingStation extends Model
     public string $name;
     public string $name_EN;
 
-    public function __construct($name=null, $name_EN=null)
+    public function __construct($data=null/*$name=null, $name_EN=null*/)
     {
-        $this->name = $name;
-        $this->name_EN = $name_EN;
+        $this->name = $data['name'] ?? '';
+        $this->name_EN = $data['name_EN'] ?? $this->name;
     }
 }
