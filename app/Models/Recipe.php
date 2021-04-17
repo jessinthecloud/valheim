@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Adapter;
+use App\Http\Controllers\JsonAdapter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,20 +11,27 @@ class Recipe extends Model
     use HasFactory;
 
     public string $name;
+    public string $name_EN; // English name
+    public string $itemName; // $this->name converted to InternalId for item name
     public int $amount; // the number of items created from the recipe
     public int $minStationLevel; // minimum station level needed to create item
-    public array $resources; // array of Resource objects (which contain Item objects)
     public $craftingStation; // CraftingStation object/class used to create item
-    // repairStation // seems unused so far?
+    public $repairStation; // seems unused so far?
+    public array $resources; // array of Resource objects (which contain Item objects)
 
 
-    public function __construct(string $name='', int $amount=0, int $minStationLevel=1, CraftingStation $craftingStation=null, array $resources=[])
+    public function __construct($data)
     {
-        $this->name = $name;
-        $this->amount = $amount;
-        $this->minStationLevel = $minStationLevel;
-        $this->craftingStation = $craftingStation;
-        $this->resources = $resources;
+        dump("RECIPE CLASS ");
+        dump($data);
+        // extract($data);
+        $this->name = $data['name'];
+        $this->itemName = $data['itemName'] ?? JsonAdapter::internalName($this->name);
+        $this->name_EN = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->itemName);
+        $this->amount = $data['amount'];
+        $this->minStationLevel = $data['minStationLevel'];
+        $this->craftingStation = $data['craftingStation'] ?? null;
+        $this->resources = $data['resources'];
     }
 
     /**

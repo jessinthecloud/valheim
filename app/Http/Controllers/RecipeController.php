@@ -22,18 +22,13 @@ class RecipeController extends Controller
             storage_path('app\recipes.json'),
             true
         )];
-        ////////////////////
-        // dumping only
-        foreach ($contents as $key => $item) {
-            dump($key);
-            dump($item[0]);
-            break;
-        }
+
         echo "<BR>";
         dump("////////////////////// BEFORE FUNC ////////////////////////////////");
         echo "<BR>";
         /////////////////
 
+        // $recipe = JsonAdapter::recursiveCreateFromArray($contents);
         $recipe = JsonAdapter::createFromArray($contents);
 
         echo "<BR>";
@@ -41,6 +36,95 @@ class RecipeController extends Controller
         echo "<BR>";
 
         dump($recipe);
+        ////////////////////
+        // dumping only
+        /*$i=0;
+        foreach ($contents as $key => $item) {
+            dump("key: $key");
+            dump($item);
+            if (is_int(array_key_first($item))) {
+                foreach ($item as $k => $v) {
+                    if ($i > 22) {
+                        break;
+                    }
+                    if (is_int($k)) {
+                        foreach ($v as $prop => $val) {
+                            if ($i > 22) {
+                                break;
+                            }
+                            if (is_int($prop)) {
+                            } else {
+                                dump("inner key: $prop");
+                                dump($val);
+                            }
+                            dump("=$i===========================================$i=");
+                            $i++;
+                        }
+                    } else {
+                        dump("int key: $k");
+                        dump($v);
+                    }
+                    dump("=$i===========================================$i=");
+                    $i++;
+                }
+            }
+        }*/
+        /*$iterator = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator($contents),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+        $i=0;
+        foreach ($iterator as $key => $item) {
+            if ($i > 22) {
+                break;
+            }
+            dump("key: $key");
+            dump($item);
+            dump("=$i===========================================$i=");
+            $i++;
+        }*/
+
+        /*foreach ($iterator as $key => $item) {
+
+
+            if (is_array($item)) {
+                // item is array
+                    // if item is numeric array - if (is_int(array_key_first($item)))
+                        // current key is object name, item is array of these objects
+                    // else item is assoc array
+                        // key is object name, item is ARRAY of properties => values
+            } else {
+                // item is NOT array
+                // key is property name, item is property value
+                // key => item
+            }
+
+            ////////////////////////////////////////////////////////
+
+            if (!is_int($key)) {
+                // key is not int
+                    // if item is array
+                        // if item is numeric array
+                            // key is object name, item is array of these objects
+                        // else item is assoc array
+                            // key is object name, item is ARRAY of property => value
+                    // else item is not array
+                        // key is property name, item is property value
+                        // key => item
+            } else {
+                // key is int
+                    // if item is array
+                        // if item is numeric array
+                            // PREVIOUS key was object name, item is array of these objects
+                        // else item is assoc array
+                            // PREVIOUS key was object name, item is ARRAY of property => value
+                // ---------------
+                    // --- THIS CASE SHOULD NEVER HAPPEN --  else item is not array
+                        // key is property name, item is property value
+                        // key => item
+            }
+
+        }*/
     }
 
     /**

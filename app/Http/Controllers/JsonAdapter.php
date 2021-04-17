@@ -34,9 +34,40 @@ class JsonAdapter extends Model
         return (substr($name, 0, 2) === 'm_') ? substr($name, 2) : $name;
     }
 
+    /**
+     * convert class name from JSON (remove prefix)
+     * e.g., Recipe_ArmorBronzeChest -> ArmorBronzeChest
+     * Then this naem can be used to find the item
+     *
+     * @param  string $name
+     *
+     * @return string       the trimmed name
+     */
+    protected static function internalName(string $name)
+    {
+        dump((explode('_', $name)[1]) ?? $name);
+        return (explode('_', $name)[1]) ?? $name;
+    }
+
+    /**
+     * convert camel case name to english
+     * e.g., ArmorBronzeChest -> Armor Bronze Chest
+     *
+     * @param  string $name
+     *
+     * @return string       the trimmed name
+     */
+    protected static function camelToEnglish(string $name)
+    {
+        dump(trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name);
+        // split string into array on uppercase letter and turn it into string
+        return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
+    }
+
     protected static function mapClassName($name)
     {
-        $fqcname = __NAMESPACE__.'\\'.ucwords($name);
+        $fqcname = 'App\Models\\'.ucwords($name);
+
         // exact class name
         if (class_exists($fqcname)) {
             return $fqcname;
@@ -47,22 +78,101 @@ class JsonAdapter extends Model
         }
         // is recipe object
         if (str_contains($name, 'Recipe')) {
-            return __NAMESPACE__.'\\'.'Recipe';
+            return 'App\Models\\'.'Recipe';
         }
         // is Item
         if (str_contains($name, 'Item')) {
-            return __NAMESPACE__.'\\'.'Item';
+            return 'App\Models\\'.'Item';
         }
 
         return null;
     }
 
-    public static function createFromArray($data)
+    public static function createObject($className, $data)
+    {
+        dump("*~*~*~*~*~*~*~*~*~*~*");
+        dump("CREATING $className");
+        dump($data);
+        $className = self::convertMemberName($className);
+        $className = self::mapClassName($className);
+        dump("real class name: $className");
+        foreach ($data as $key => &$val) {
+            $newkey = self::convertMemberName($key) ?? $key;
+            // dump("KEY: $key -- real key: $newkey -> ");
+            // dump($val);
+            $data [$newkey]= $val;
+            if ($key !== $newkey) {
+                unset($data[$key]);
+            }
+            // dump($data[$newkey]);
+            // dump("===");
+        }
+        dump($data);
+        dump("*~*~*~*~*~*~*~*~*~*~*");
+
+        return $className ? new $className($data) : null;
+    }
+
+    public static function recursiveCreateFromArray($data)
+    {
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveArrayIterator($data),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+        $i=0;
+        foreach ($iterator as $key => $item) {
+            if ($i > 44) {
+                break;
+            }
+            if (is_array($item)) {
+                // item is array
+                if (is_int(array_key_first($item))) {
+                    // item is numeric array
+                    if ($i > 0) {
+                        // if not first item, key is also property of CURRENT object
+                        dump("Current object property name: $key");
+                        dump("Child Object name: $key");
+                        dump("Child Objects: ");
+                        dump($item);
+                    } else {
+                        dump("Object name: $key");
+                        dump("Objects: ");
+                    }
+                    // current key is object name, item is array of these objects
+                    dump($item);
+                } else {
+                    // item is assoc array
+                    if (is_int($key)) {
+                        // PREVIOUS key was object name, item is ARRAY of that object's  properties => values
+                        dump("-- Object name: PREVIOUS KEY");
+                        dump("-- Properties->Values: ");
+                        dump($item);
+                    } else {
+                        // key is property AND object name, item is ARRAY of properties => values
+                        dump("Previous object Property name: $key");
+                        dump("-- Object name: $key");
+                        dump("-- Properties->Values: ");
+                        dump($item);
+                    }
+                }
+            } else {
+                // item is NOT array
+                // PREVIOUS key is object name
+                dump("-- Object name: PREVIOUS KEY");
+                // key is property name, item is property value
+                dump("$key => $item");
+            }
+            $i++;
+        } // end foreach
+    }
+
+    public static function createFromArray($data, $name='')
     {
         self::$count++;
-        if (self::$count >= 10) {
+        if (self::$count >= 20) {
             die;
         }
+        $obj = null;
         if (is_array($data)) {
             dump("=====");
             dump('DATA IS ARRAY');
@@ -74,19 +184,25 @@ class JsonAdapter extends Model
                     dump('Key is NOT int: '.$key);
                     if (is_array($item)) {
                         // item is array
-                        dump("item is ARRAY");
                         if (is_int(array_key_first($item))) {
+                            dump("item is NUMERIC ARRAY");
                             dump("key is objectname, item is array of these objects");
                             dump("Obj Name: $key");
                             dump("Objects: ");
                             dump($item);
                             dump("UPPER (".self::$count.") CREATE FROM ARRAY");
-                            self::createFromArray($item);
+                            $obj []= self::createFromArray($item, $key);
                         } else {
+                            dump("item is ASSOC ARRAY");
+
                             dump("key is objectname, item is array of obj properties");
                             dump("Obj Name: $key");
                             dump("Properties: ");
+                            dump("UPPER (".self::$count.") CREATE OBJECT");
+
                             dump($item);
+                            // create object
+                            return self::createObject($key, $item);
                         }
                     } else {
                         // item not array
@@ -101,9 +217,9 @@ class JsonAdapter extends Model
                         dump("--- item is ARRAY");
 
                         dump("--- key is int ($key) item is array of obj properties");
-                        dump("--- LOWER (".self::$count.") CREATE FROM ARRAY");
+                        dump("--- LOWER (".self::$count.") CREATE OBJECT");
 
-                        self::createFromArray($item);
+                        return self::createObject($name, $item);
                     } else {
                         // item is not array
                         dump("--- item is NOT array: $item");
@@ -118,6 +234,7 @@ class JsonAdapter extends Model
             dump("DATA is NOT Array: ".$data);
             dump("//////////////////////////////////////////////////////");
         }
+        return $obj;
     }
 
     public static function createFromJson($data, object $parent=null)
