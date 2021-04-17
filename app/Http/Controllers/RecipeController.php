@@ -24,7 +24,7 @@ class RecipeController extends Controller
         $recipe = Recipe::createFromJson($this->decodeJsonFromFile(
             storage_path('app\recipes.json'),
             true
-        )[0], 'App\Models\Recipe');
+        )[0]);
 
         echo "<BR>//////////////////////////////////////////////////////";
 

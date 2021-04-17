@@ -46,41 +46,83 @@ abstract class Adapter extends Model
         return null;
     }
 
-    public static function createFromJson($data)
+    public static function createFromJson($data, object $parent=null)
     {
         // associative arrays are objects
         // numeric arrays are arrays
 
         dump($data);
 
-        echo "//////////////////////////////////////////////////////";
+        dump("//////////////////////////////////////////////////////");
 
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveArrayIterator($data),
             \RecursiveIteratorIterator::SELF_FIRST
         );
         $i=0;
+
+        $className = $parent ? get_class($parent) : get_called_class();
+        $parent = $parent ?? new $className();
+        dump("PARENT: $className");
+        dump("//////////////////////////////////////////////////////");
+
         foreach ($iterator as $key => $leaf) {
 
             // remove m_ prefix if exists
             if (!is_int($key)) {
                 $key = self::convertMemberName($key);
-                $className = self::mapClassName($key);
-                if (strpos(strtolower($key), 'name') !== false) {
-                    // the key is the class name
-                    $className = self::mapClassName($leaf);
-                }
-                if (isset($className) && class_exists($className)) {
-                    // we found a class, create object
-                    $object = new $className();
-                    dump("OBJECT: $className");
-                } else {
-                    // non-class key
-                    dump("$key => $leaf");
-                    // dump($leaf);
+                if ($i > 0) {
+                    $className = self::mapClassName($key) ?? $className;
                 }
             }
 
+            if (isset($className) && class_exists($className)/*
+                && $className !== get_class($parent)*/) {
+                if (is_int($key)) {
+                    dump('END OF CHILD LEAF '.$className);
+                    dump(get_class($parent)."->$key = $className");
+                    dump($leaf);
+                    return self::createFromJson($leaf, new $className());
+                } elseif ($leaf !== null) {
+                    if (is_array($leaf)) {
+                        // will be array of this child class
+                        // dd(array_shift($leaf));
+                        if (is_int(array_key_first($leaf))) {
+                            dump("Array of CHILD: $className");
+                            dump(get_class($parent)."->$key []= $className");
+                            $parent->$key []= self::createFromJson(array_shift($leaf), new $className());
+                        } else {
+                            dump("END OF LEAF");
+                            dump(get_class($parent)."->$key = $className");
+                            $parent->$key = self::createFromJson($leaf, new $className());
+                        }
+                    } elseif ($className !== get_class($parent)) {
+                        dump(get_class($parent)."->$key = $className");
+                        $parent->$key = new $className();
+                    }
+                } /*else {
+                    dump(get_class($parent)."->$key = $leaf");
+                    $parent->$key = $leaf;
+                }*/
+            } elseif (!is_int($key)) {
+                echo "NO CLASS FOUND for $key";
+                dump(get_class($parent)."->$key = $leaf");
+                $parent->$key = $leaf;
+            } else {
+                // key is int
+            }
+
+            if (!is_int($key) && !is_array($leaf)) {
+                // non-class key
+                dump(get_class($parent)."->$key = $leaf");
+                $parent->$key = $leaf;
+            }
+            /*dump('Key: '.$key."
+Leaf: ");
+            dump($leaf);*/
+
+
+            echo "=======================";
 
             /* if (is_array($leaf) && !is_int($key) && !is_int(array_key_first($leaf))) {
                  // this is an object (assoc array) key is obj name
@@ -104,6 +146,7 @@ abstract class Adapter extends Model
             $i++;
         }
 
+        return $parent;
 
         /*if (property_exists($className, $keyname)) {
             // TODO: correctly fill val if it is array

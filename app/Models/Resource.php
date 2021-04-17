@@ -13,6 +13,13 @@ class Resource extends Model
     public int $amount = 1;
     public int $amountPerLevel = 1;
 
+    public function __construct($amount=1, $amountPerLevel=1, $resItem=null)
+    {
+        $this->amount = $amount;
+        $this->amountPerLevel = $amountPerLevel;
+        $this->resItem = $resItem;
+    }
+
     public function getAmount(int $qualityLevel) : int
     {
         if ($qualityLevel <= 1) {

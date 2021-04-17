@@ -15,9 +15,9 @@ class Item extends Model
     // public ItemData $data; // ItemData -- not used, is not instanced from game
     public $shared_data; // ItemSharedData
 
-    public function __construct(/*string $name, ItemSharedData $shared_data*/)
+    public function __construct(string $name='', ItemSharedData $shared_data=null)
     {
-        /*$this->name = $name;
-        $this->shared_data = $shared_data;*/
+        $this->name = $name;
+        $this->shared_data = $shared_data;
     }
 }

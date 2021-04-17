@@ -12,9 +12,9 @@ class CraftingStation extends Model
     public string $name;
     public string $name_EN;
 
-    public function __construct(/*$name, $name_EN*/)
+    public function __construct($name=null, $name_EN=null)
     {
-        /*$this->name = $name;
-        $this->name_EN = $name_EN;*/
+        $this->name = $name;
+        $this->name_EN = $name_EN;
     }
 }

@@ -18,13 +18,13 @@ class Recipe extends Adapter
     // repairStation // seems unused so far?
 
 
-    public function __construct(/*string $name, int $amount, int $minStationLevel, CraftingStation $craftingStation, array $resources*/)
+    public function __construct(string $name='', int $amount=0, int $minStationLevel=1, CraftingStation $craftingStation=null, array $resources=[])
     {
-        /*$this->name = $name;
+        $this->name = $name;
         $this->amount = $amount;
         $this->minStationLevel = $minStationLevel;
         $this->craftingStation = $craftingStation;
-        $this->resources = $resources;*/
+        $this->resources = $resources;
     }
 
     /**
