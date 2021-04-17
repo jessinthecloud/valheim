@@ -1,0 +1,26 @@
+/node_modules
+/public/hot
+
+# not working
+/public/storage/*
+!/public/storage/notes
+!/public/storage/notes/*
+!/public/storage/notes/**/
+
+/storage/*.key
+/vendor
+.env
+.env.*
+.env.backup
+.phpunit.result.cache
+docker-compose.override.yml
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+sftp-config.json
+/public/css/fontawesome5/
+.phpintel
+*.phpintel
+
