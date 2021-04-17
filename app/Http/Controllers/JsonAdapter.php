@@ -166,9 +166,8 @@ class JsonAdapter extends Model
         } // end foreach
     }
 
-    public static function createFromArray($data, $name='')
+    public static function createFromArray($data, $name='', $objarray=[])
     {
-        $obj = null;
         if (is_array($data)) {
             dump("=====");
             dump('DATA IS ARRAY');
@@ -179,6 +178,7 @@ class JsonAdapter extends Model
                 self::$count++;
                 if (self::$count >= 25) {
                     dump("DYING");
+                    dump($objarray);
                     die;
                 }
                 if (!is_int($key)) {
@@ -192,26 +192,27 @@ class JsonAdapter extends Model
                             dump("Objects: ");
                             dump($item);
                             dump("UPPER (".self::$count.") CREATE FROM ARRAY");
-                            $obj []= self::createFromArray($item, $key);
-                            dump("#+#+#+#+#+#+#+# WE'VE RETURNED #+#+#+##+#+#+#+");
-                            dump($obj);
+                            dump($objarray);
+                            return self::createFromArray($item, $key, $objarray);
                         } else {
                             dump("item is ASSOC ARRAY");
 
                             dump("key is objectname, item is array of obj properties");
                             dump("Obj Name: $key");
                             dump("Properties: ");
-                            dump("UPPER (".self::$count.") CREATE OBJECT");
+                            dump("UPPER (".self::$count.") CREATE OBJECT $key");
 
                             dump($item);
                             // create object
-                            $obj = self::createObject($key, $item);
+                            return self::createObject($key, $item);
                         }
                     } else {
                         // item not array
                         dump("item is NOT array: $item");
                         dump("key is property name, item is property value");
                         dump("$key => $item");
+                        dump("DON'T LOOP, CREATE OBJECT FROM DATA");
+                        return self::createObject($name, $data);
                     }
                 } else {
                     // key is int
@@ -220,9 +221,9 @@ class JsonAdapter extends Model
                         dump("--- item is ARRAY");
 
                         dump("--- item is array of obj properties");
-                        dump("--- LOWER (".self::$count.") CREATE OBJECT");
+                        dump("--- LOWER (".self::$count.") CREATE OBJECT $name");
 
-                        $obj = self::createObject($name, $item);
+                        $objarray []= self::createFromArray($item, $name, $objarray);
                     } else {
                         // item is not array
                         dump("--- item is NOT array: $item");
@@ -237,9 +238,11 @@ class JsonAdapter extends Model
             dump("DATA is NOT Array: ".$data);
             dump("//////////////////////////////////////////////////////");
         }
-        return $obj;
-    }
-
+        dump("oops we ESCAPED!");
+        dump($objarray);
+        return $objarray ?? null;
+    } // end createFromArray
+    /*///////////////////////
     public static function createFromJson($data, object $parent=null)
     {
         // associative arrays are objects
@@ -271,7 +274,7 @@ class JsonAdapter extends Model
             }
 
             if (isset($className) && class_exists($className)/*
-                && $className !== get_class($parent)*/) {
+                && $className !== get_class($parent)*) {
                 if (is_int($key)) {
                     dump('END OF CHILD LEAF '.$className);
                     dump(get_class($parent)."->$key = $className");
@@ -297,7 +300,7 @@ class JsonAdapter extends Model
                 } /*else {
                     dump(get_class($parent)."->$key = $leaf");
                     $parent->$key = $leaf;
-                }*/
+                }*
             } elseif (!is_int($key)) {
                 echo "NO CLASS FOUND for $key";
                 dump(get_class($parent)."->$key = $leaf");
@@ -313,7 +316,7 @@ class JsonAdapter extends Model
             }
             /*dump('Key: '.$key."
 Leaf: ");
-            dump($leaf);*/
+            dump($leaf);*
 
 
             echo "=======================";
@@ -336,7 +339,7 @@ Leaf: ");
                  dump($leaf);
                  echo "====";
              }
-             */
+             *
             $i++;
         }
 
@@ -349,7 +352,7 @@ Leaf: ");
             } else {
                 $object->$keyname = $val;
             }
-        }*/
+        }*
         // return $object;
-    }
+    } // */
 }

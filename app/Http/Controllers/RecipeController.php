@@ -33,13 +33,13 @@ class RecipeController extends Controller
         // !!!!
         // dd($contents);
         // $recipe = JsonAdapter::recursiveCreateFromArray($contents);
-        $recipe = JsonAdapter::createFromArray($contents);
+        $recipes = JsonAdapter::createFromArray($contents);
 
         echo "<BR>";
         dump("/////////////////////// AFTER FUNC ///////////////////////////////");
         echo "<BR>";
 
-        dump($recipe);
+        dump($recipes);
         ////////////////////
         // dumping only
         /*$i=0;
