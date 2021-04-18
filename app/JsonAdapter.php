@@ -1,13 +1,8 @@
 <?php
+namespace App;
 
-namespace App\Http\Controllers;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class JsonAdapter extends Model
+class JsonAdapter
 {
-    use HasFactory;
     public static $count=0;
 
     /**
@@ -88,10 +83,9 @@ class JsonAdapter extends Model
 
     public static function createObject($className, $data)
     {
-        
         $className = self::convertMemberName($className);
         $className = self::mapClassName($className);
-        
+
         if (is_array($data)) {
             foreach ($data as $key => &$val) {
                 $newkey = self::convertMemberName($key) ?? $key;
@@ -110,22 +104,20 @@ class JsonAdapter extends Model
     public static function createFromArray($data, $name='', $objarray=[])
     {
         if (is_array($data)) {
-           
             foreach ($data as $key => $item) {
-                
                 if (!is_int($key)) {
                     // key is not int
                     if (is_array($item)) {
                         // item is array
                         if (is_int(array_key_first($item))) {
                             // key is objectname, item is array of these objects");
-                            
+
                             return self::createFromArray($item, $key, $objarray);
                         } else {
                             // item is ASSOC ARRAY");
 
                             // key is objectname, item is array of obj properties
-                            
+
                             // create object
                             return self::createObject($key, $item);
                         }
@@ -138,12 +130,12 @@ class JsonAdapter extends Model
                     }
                 } else {
                     // key is int
-                    
+
                     if (is_array($item)) {
                         // item is array
 
                         // item is array of obj properties
-                        
+
                         $objarray []= self::createFromArray($item, $name, $objarray);
                     } else {
                         // item is not array
@@ -154,7 +146,7 @@ class JsonAdapter extends Model
         } else {
             // data is not an array
         }
-        
+
         return $objarray ?? null;
     } // end createFromArray
     /*
