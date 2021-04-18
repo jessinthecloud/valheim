@@ -45,7 +45,7 @@ class Recipe extends Model
         $this->resources = $resources;
     }
 
-    public function setNameAttribute($value)
+    /*public function setNameAttribute($value)
     {
         $this->attributes['name'] = $value;
     }
@@ -73,7 +73,7 @@ class Recipe extends Model
     public function resources()
     {
         return $this->hasMany(Resource::class);
-    }
+    }*/
 
     /**
      * calculate the required station level for this item based on its quality

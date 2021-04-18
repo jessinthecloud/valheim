@@ -29,7 +29,7 @@ class Item extends Model
         $this->shared_data = $data['shared'] ?? null;
     }
 
-    public function setNameAttribute($value)
+    /*public function setNameAttribute($value)
     {
         $this->attributes['name'] = $value;
     }
@@ -40,7 +40,7 @@ class Item extends Model
     public function setShared_DataAttribute($value)
     {
         $this->attributes['shared_data'] = $value;
-    }
+    }*/
 
     public function sharedData()
     {

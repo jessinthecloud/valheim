@@ -31,7 +31,7 @@ class Resource extends Model
         }
     }
 
-    public function setAmountAttribute($value)
+    /*public function setAmountAttribute($value)
     {
         $this->attributes['amount'] = $value;
     }
@@ -42,7 +42,7 @@ class Resource extends Model
     public function setResItemAttribute($value)
     {
         $this->attributes['resItem'] = $value;
-    }
+    }*/
 
     public function item()
     {

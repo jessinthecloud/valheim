@@ -24,12 +24,12 @@ class CraftingStation extends Model
         $this->name_EN = $data['name_EN'] ?? $this->name;
     }
 
-    public function setNameAttribute($value)
+    /*public function setNameAttribute($value)
     {
         $this->attributes['name'] = $value;
     }
     public function setName_ENAttribute($value)
     {
         $this->attributes['name_EN'] = $value;
-    }
+    }*/
 }
