@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use PHPHtmlParser\Dom;
 use App\Models\Recipe;
-use App\Http\Controllers\JsonAdapter;
+use App\JsonAdapter;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\JsonAdapter;
+use App\JsonAdapter;
 use App\Enums\AnimationState;
 use App\Enums\SkillType;
 use App\Enums\ItemType;

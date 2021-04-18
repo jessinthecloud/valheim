@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\JsonAdapter;
+use App\JsonAdapter;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ItemController;
 use App\Models\Recipe;
@@ -21,7 +21,7 @@ class ConvertController extends Controller
     {
         dump("Convert: $name");
         $contents = JsonAdapter::decodeJsonFile(
-            storage_path('app\recipes.json'),
+            storage_path('app\\'.strtolower($type).'s.json'),
             true
         );
         foreach ($contents as $k => $content) {
@@ -38,13 +38,13 @@ class ConvertController extends Controller
             // dd("dying");
         }
         dump($contents);
-        $recipe = JsonAdapter::createObject($name, $contents);
+        $item = JsonAdapter::createObject($name, $contents);
         // dd($recipes);
-        if (Recipe::where('name', $contents['name'])->first()) {
-            dump("Recipe {$contents['name']} already exists.");
-            dump($recipe);
+        if (ucfirst($type)::where('name', $contents['name'])->first()) {
+            dump(ucfirst($type)." {$contents['name']} already exists.");
+            dump($item);
         } else {
-            $saved = $recipe->save();
+            $saved = $item->save();
             dump("save: ".$saved);
         }
     } // end func convert()
@@ -126,7 +126,7 @@ class ConvertController extends Controller
     {
     }
 
-    
+
     /**
      * Display a listing of the resource.
      *
