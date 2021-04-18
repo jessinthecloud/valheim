@@ -15,7 +15,11 @@ class ItemSharedData extends Model
 {
     use HasFactory;
 
-    public $id;
+    // more useful: only lockdown specific fields from being mass-assigned
+    // empty array means nothing is locked down
+    protected $guarded = [];
+
+    /*public $id;
     public $name;
     // default human readable name
     public $name_EN;
@@ -64,12 +68,9 @@ class ItemSharedData extends Model
     // recipe if craftable
     public Recipe $recipe;
     public string $dlc;
-    /**
-     *
-     * @var float
-     */
-    public $armorPerLevel;
-    public $toolTier;
+      public $armorPerLevel;
+    public $toolTier;*/
+
     // destroyBroken
     // attackStatusEffect
     // consumeStatusEffect

@@ -11,12 +11,16 @@ class Resource extends Model
 {
     use HasFactory;
 
-    public int $id;
+    // more useful: only lockdown specific fields from being mass-assigned
+    // empty array means nothing is locked down
+    protected $guarded = [];
+
+    /*public int $id;
     public $resItem; // Item
     public int $amount = 1;
-    public int $amountPerLevel = 1;
+    public int $amountPerLevel = 1;*/
 
-    public function __construct($data=null)
+    public function __construct($data)
     {
         $this->amount = $data['amount'] ?? 1;
         $this->amountPerLevel = $data['amountPerLevel'] ?? 1;
@@ -25,6 +29,19 @@ class Resource extends Model
         } else {
             $this->resItem = null;
         }
+    }
+
+    public function setAmountAttribute($value)
+    {
+        $this->attributes['amount'] = $value;
+    }
+    public function setAmountPerLevelAttribute($value)
+    {
+        $this->attributes['amountPerLevel'] = $value;
+    }
+    public function setResItemAttribute($value)
+    {
+        $this->attributes['resItem'] = $value;
     }
 
     public function item()

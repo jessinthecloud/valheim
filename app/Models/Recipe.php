@@ -10,25 +10,20 @@ class Recipe extends Model
 {
     use HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        '*'
-    ];
+    // more useful: only lockdown specific fields from being mass-assigned
+    // empty array means nothing is locked down
+    protected $guarded = [];
 
-    public int $id; // DB id
-    public string $name;
-    public string $name_EN; // English name
-    public string $internalName; // $this->name converted to InternalId for item name
-    public int $amount; // the number of items created from the recipe
-    public int $minStationLevel; // minimum station level needed to create item
-    public $craftingStation; // CraftingStation object/class used to create item
-    public $repairStation; // seems unused so far?
-    public array $resources; // array of Resource objects (which contain Item objects)
-
+    /* public int $id; // DB id
+     public string $name;
+     public string $name_EN; // English name
+     public string $internalName; // $this->name converted to InternalId for item name
+     public int $amount; // the number of items created from the recipe
+     public int $minStationLevel; // minimum station level needed to create item
+     public $craftingStation; // CraftingStation object/class used to create item
+     public $repairStation; // seems unused so far?
+     public array $resources; // array of Resource objects (which contain Item objects)
+*/
 
     public function __construct($data)
     {
@@ -43,10 +38,36 @@ class Recipe extends Model
         $this->amount = $data['amount'];
         $this->minStationLevel = $data['minStationLevel'] ?? 1;
         $this->craftingStation = JsonAdapter::createObject('craftingStation', $data['craftingStation']) ?? null;
-        $this->resources = [];
+        $resources = [];
         foreach ($data['resources'] as $resource) {
-            $this->resources []= JsonAdapter::createObject('resource', $resource);
+            $resources []= JsonAdapter::createObject('resource', $resource);
         }
+        $this->resources = $resources;
+    }
+
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $value;
+    }
+    public function setName_ENAttribute($value)
+    {
+        $this->attributes['name_EN'] = $value;
+    }
+    public function setAmountAttribute($value)
+    {
+        $this->attributes['amount'] = $value;
+    }
+    public function setMinStationLevelAttribute($value)
+    {
+        $this->attributes['minStationLevel'] = $value;
+    }
+    public function setCraftingStationAttribute($value)
+    {
+        $this->attributes['craftingStation'] = $value;
+    }
+    public function setResourcesAttribute($value)
+    {
+        $this->attributes['resources'] = $value;
     }
 
     public function resources()
