@@ -130,40 +130,13 @@ class ConvertController extends Controller
     {
     }
 
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function tester()
-    {
-        $response = json_decode(file_get_contents(storage_path('app\itemdrops.json')));
-        return $response;
-        /*dump($response[1]);
-
-        $array = json_decode(file_get_contents(storage_path('app\itemdrops.json')), true);
-
-        $unique_properties = [];
-        foreach (new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator($array),
-            \RecursiveIteratorIterator::SELF_FIRST
-        )
-          as $key => $value) {
-            if (is_string($key)) {
-                $unique_properties[]=$key;
-            }
-        }
-        $unique_properties = array_unique($unique_properties);
-        foreach ($unique_properties as $prop) {
-            echo "$prop <BR>";
-        }*/
-    }
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function oldIndex()
     {
         $base_uri = 'https://valheim.fandom.com';
         // $uri_path = '/wiki/Category:Food/';
