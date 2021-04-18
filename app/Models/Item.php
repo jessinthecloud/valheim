@@ -19,14 +19,18 @@ class Item extends Model
     /*public string $name; // internalID - as seen on wiki
     public string $name_EN; // internalID - as seen on wiki
     // public $data; // ItemData -- not used, is not instanced from game
-    public $shared_data; // ItemSharedData*/
+    */
+    public $shared_data; // ItemSharedData
 
     public function __construct($data=null)
     {
-        $this->name = $data['name'] ?? null;
+        $this->name = $data['name'] ?? '';
         $this->name = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->name);
         // $this->data = $data['itemData'] ?? null;
-        $this->shared_data = $data['shared'] ?? null;
+        $shared = isset($data['shared']) ? new ItemSharedData($data['shared']) : null;
+        // dump($shared);
+        $this->shared_data = $shared->id ?? null;
+        // $this->shared_data = $data['shared'] ?? null;
     }
 
     /*public function setNameAttribute($value)

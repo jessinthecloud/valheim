@@ -14,7 +14,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        dump($this->decodeJsonFromFile(storage_path('app\itemdrops.json')), true);
+        return Item::all();
     }
 
     /**

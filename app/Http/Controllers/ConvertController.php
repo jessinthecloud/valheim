@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\JsonAdapter;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ItemController;
 use App\Models\Recipe;
+use App\Models\Item;
 
 class ConvertController extends Controller
 {
@@ -15,7 +17,7 @@ class ConvertController extends Controller
      * @param  [type] $name [description]
      * @return [type]       [description]
      */
-    public function convert($name)
+    public function convert($name, $type='')
     {
         dump("Convert: $name");
         $contents = JsonAdapter::decodeJsonFile(
@@ -56,8 +58,13 @@ class ConvertController extends Controller
     *
     * @return \Illuminate\Http\Response
     */
-    public function index()
+    public function recipe($name='')
     {
+        echo "CONVERT RECIPE";
+        if (!empty($name)) {
+            return $this->convert($name, 'recipe');
+        }
+
         // decode json file to array
         $contents = ['recipes'=>JsonAdapter::decodeJsonFile(
             storage_path('app\recipes.json'),
@@ -78,6 +85,49 @@ class ConvertController extends Controller
                 dump("save: ".$saved);
             }
         }
+    }
+
+    /**
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function item($name='')
+    {
+        echo "CONVERT ITEM $name";
+        if (!empty($name)) {
+            return $this->convert($name, 'item');
+        }
+
+        // decode json file to array
+        $contents = ['items'=>JsonAdapter::decodeJsonFile(
+            storage_path('app\itemdrops.json'),
+            true
+        )];
+
+        $items = JsonAdapter::createFromArray($contents);
+
+        // dump($items);
+        foreach ($items as $item) {
+            // dump($item);
+            // dump($item->name);
+            // dump($item->getAttributes());
+            if (Item::where('name', $item->name)->first()) {
+                dump("item {$item->name} already exists.");
+            } else {
+                $saved = $item->save();
+                dump("save: ".$saved);
+            }
+        }
+    }
+
+    /**
+    * Display a listing of the resource.
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function index()
+    {
     }
 
     /**

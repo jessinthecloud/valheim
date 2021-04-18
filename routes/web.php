@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
 Route::get('/convert/', [App\Http\Controllers\ConvertController::class, 'index'])->name('convert.index');
+Route::get('/convert/recipe/{name?}', [App\Http\Controllers\ConvertController::class, 'recipe'])->name('convert.recipe');
+Route::get('/convert/item/{name?}', [App\Http\Controllers\ConvertController::class, 'item'])->name('convert.item');
 Route::get('/convert/{name}', [App\Http\Controllers\ConvertController::class, 'convert'])->name('convert.name');
 
-Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipes.index');
+Route::get('/recipe', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipe.index');
+Route::get('/item', [App\Http\Controllers\ItemController::class, 'index'])->name('item.index');
