@@ -24,7 +24,7 @@ class JsonAdapter
      *
      * @return string       the trimmed name
      */
-    protected static function convertMemberName(string $name)
+    public static function convertMemberName(string $name)
     {
         return (substr($name, 0, 2) === 'm_') ? substr($name, 2) : $name;
     }
@@ -38,7 +38,7 @@ class JsonAdapter
      *
      * @return string       the trimmed name
      */
-    protected static function internalName(string $name)
+    public static function internalName(string $name)
     {
         return (explode('_', $name)[1]) ?? $name;
     }
@@ -51,13 +51,13 @@ class JsonAdapter
      *
      * @return string       the trimmed name
      */
-    protected static function camelToEnglish(string $name)
+    public static function camelToEnglish(string $name)
     {
         // split string into array on uppercase letter and turn it into string
         return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
     }
 
-    protected static function mapClassName($name)
+    public static function mapClassName($name)
     {
         $fqcname = 'App\Models\\'.ucwords($name);
 

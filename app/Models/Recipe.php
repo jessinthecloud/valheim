@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Http\Controllers\JsonAdapter;
+use App\JsonAdapter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
