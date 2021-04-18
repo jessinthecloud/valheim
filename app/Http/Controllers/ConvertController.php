@@ -28,11 +28,7 @@ class ConvertController extends Controller
             // dump($content);
             $content = array_filter($content, function ($val, $key) use ($name) {
                 // dump("$key === name");
-                if (is_string($val) && $key === 'name' && $val === $name) {
-                    return true;
-                }
-
-                return false;
+                return (is_string($val) && $key === 'name' && $val === $name);
             }, ARRAY_FILTER_USE_BOTH);
             // dump($content);
             if (!empty($content)) {
