@@ -27,6 +27,11 @@ class Resource extends Model
         }
     }
 
+    public function item()
+    {
+        return $this->hasOne(Item::class);
+    }
+
     public function getAmount(int $qualityLevel) : int
     {
         if ($qualityLevel <= 1) {

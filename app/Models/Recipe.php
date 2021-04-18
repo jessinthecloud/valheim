@@ -10,6 +10,15 @@ class Recipe extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        '*'
+    ];
+
     public int $id; // DB id
     public string $name;
     public string $name_EN; // English name
@@ -38,6 +47,11 @@ class Recipe extends Model
         foreach ($data['resources'] as $resource) {
             $this->resources []= JsonAdapter::createObject('resource', $resource);
         }
+    }
+
+    public function resources()
+    {
+        return $this->hasMany(Resource::class);
     }
 
     /**

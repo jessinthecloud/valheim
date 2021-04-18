@@ -15,6 +15,7 @@ class ItemSharedData extends Model
 {
     use HasFactory;
 
+    public $id;
     public $name;
     // default human readable name
     public $name_EN;
@@ -86,4 +87,9 @@ class ItemSharedData extends Model
     // movementModifier
     // setName
     // setSize
+
+    public function recipe()
+    {
+        return $this->hasOne(Recipe::class);
+    }
 }

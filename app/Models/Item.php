@@ -24,4 +24,9 @@ class Item extends Model
         // $this->data = $data['itemData'] ?? null;
         $this->shared_data = $data['shared'] ?? null;
     }
+
+    public function sharedData()
+    {
+        return $this->hasOne(ItemSharedData::class);
+    }
 }
