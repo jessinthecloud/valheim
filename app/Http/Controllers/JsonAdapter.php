@@ -88,26 +88,18 @@ class JsonAdapter extends Model
 
     public static function createObject($className, $data)
     {
-        // dump("*~*~*~*~*~*~*~*~*~*~*");
-        // dump("CREATING $className");
-        // dump($data);
+        
         $className = self::convertMemberName($className);
         $className = self::mapClassName($className);
-        // dump("real class name: $className");
+        
         if (is_array($data)) {
             foreach ($data as $key => &$val) {
                 $newkey = self::convertMemberName($key) ?? $key;
-                // dump("KEY: $key -- real key: $newkey -> ");
-                // dump($val);
                 $data [$newkey]= $val;
                 if ($key !== $newkey) {
                     unset($data[$key]);
                 }
-                // dump($data[$newkey]);
-                // dump("===");
             }
-            // dump($data);
-            // dump("*~*~*~*~*~*~*~*~*~*~*");
         }
 
         return $className ? new $className($data) : null;
@@ -118,131 +110,54 @@ class JsonAdapter extends Model
     public static function createFromArray($data, $name='', $objarray=[])
     {
         if (is_array($data)) {
-            /*dump("=====");
-            dump('DATA IS ARRAY');
-            dump($data);
-            dump("=====");*/
-            ///////////////////////////////////////////////////////
+           
             foreach ($data as $key => $item) {
-                /*self::$count++;
-                if (self::$count >= 25) {
-                    dump("DYING");
-                    dump($objarray);
-                    die;
-                }*/
+                
                 if (!is_int($key)) {
-                    // dump('Key is NOT int: '.$key);
+                    // key is not int
                     if (is_array($item)) {
                         // item is array
                         if (is_int(array_key_first($item))) {
-                            /*dump("item is NUMERIC ARRAY");
-                            dump("key is objectname, item is array of these objects");
-                            dump("Obj Name: $key");
-                            dump("Objects: ");
-                            dump($item);
-                            dump("UPPER (".self::$count.") CREATE FROM ARRAY");
-                            dump($objarray);*/
+                            // key is objectname, item is array of these objects");
+                            
                             return self::createFromArray($item, $key, $objarray);
                         } else {
-                            /*dump("item is ASSOC ARRAY");
+                            // item is ASSOC ARRAY");
 
-                            dump("key is objectname, item is array of obj properties");
-                            dump("Obj Name: $key");
-                            dump("Properties: ");
-                            dump("UPPER (".self::$count.") CREATE OBJECT $key");
-
-                            dump($item);*/
+                            // key is objectname, item is array of obj properties
+                            
                             // create object
                             return self::createObject($key, $item);
                         }
                     } else {
-                        // item not array
-                        /* dump("item is NOT array: $item");
-                         dump("key is property name, item is property value");
-                         dump("$key => $item");
-                         dump("DON'T LOOP, CREATE OBJECT FROM DATA");*/
+                        // item is not array
+                        // key is property name, item is property value
+                        // create obj from all data this loop
+                        // should probably check each property for class names instead
                         return self::createObject($name, $data);
                     }
                 } else {
                     // key is int
-                    // dump('--- Key is INT: '.$key);
+                    
                     if (is_array($item)) {
-                        /*dump("--- item is ARRAY");
+                        // item is array
 
-                        dump("--- item is array of obj properties");
-                        dump("--- LOWER (".self::$count.") CREATE OBJECT $name");
-*/
+                        // item is array of obj properties
+                        
                         $objarray []= self::createFromArray($item, $name, $objarray);
                     } else {
                         // item is not array
-                      /*  dump("--- item is NOT array: $item");
-                        dump("--- key is objectname, item is obj property");
-                        dump("--- Obj Name: $key");
-                        dump("--- Property: $item");*/
+                        // key is objectname, item is obj property
                     }
                 }
-                // dump("=/=/=/=/=/=/=");
             } // end foreach
         } else {
-            /*dump("DATA is NOT Array: ".$data);
-            dump("//////////////////////////////////////////////////////");*/
+            // data is not an array
         }
-        /*dump("oops we ESCAPED!");
-        dump($objarray);*/
+        
         return $objarray ?? null;
     } // end createFromArray
     /*
-
-    public static function recursiveCreateFromArray($data)
-    {
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator($data),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-        $i=0;
-        foreach ($iterator as $key => $item) {
-            if (is_array($item)) {
-                // item is array
-                if (is_int(array_key_first($item))) {
-                    // item is numeric array
-                    if ($i > 0) {
-                        // if not first item, key is also property of CURRENT object
-                        dump("Current object property name: $key");
-                        dump("Child Object name: $key");
-                        dump("Child Objects: ");
-                        dump($item);
-                    } else {
-                        dump("Object name: $key");
-                        dump("Objects: ");
-                    }
-                    // current key is object name, item is array of these objects
-                    dump($item);
-                } else {
-                    // item is assoc array
-                    if (is_int($key)) {
-                        // PREVIOUS key was object name, item is ARRAY of that object's  properties => values
-                        dump("-- Object name: PREVIOUS KEY");
-                        dump("-- Properties->Values: ");
-                        dump($item);
-                    } else {
-                        // key is property AND object name, item is ARRAY of properties => values
-                        dump("Previous object Property name: $key");
-                        dump("-- Object name: $key");
-                        dump("-- Properties->Values: ");
-                        dump($item);
-                    }
-                }
-            } else {
-                // item is NOT array
-                // PREVIOUS key is object name
-                dump("-- Object name: PREVIOUS KEY");
-                // key is property name, item is property value
-                dump("$key => $item");
-            }
-            $i++;
-        } // end foreach
-    }
-
     ///////////////////////
     public static function createFromJson($data, object $parent=null)
     {
@@ -346,14 +261,5 @@ Leaf: ");
 
         return $parent;
 
-        /*if (property_exists($className, $keyname)) {
-            // TODO: correctly fill val if it is array
-            if (is_array($val)) {
-                $object->$keyname []= self::createFromJson($val, 'App\Models\Valheim\\'.rtrim(ucwords($keyname), 's'));
-            } else {
-                $object->$keyname = $val;
-            }
-        }*
-        // return $object;
     } // */
 }
