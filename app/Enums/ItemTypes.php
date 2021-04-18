@@ -1,5 +1,5 @@
 <?php
-namespace App\Enums\Valheim;
+namespace App\Enums;
 
 abstract class ItemType
 {
