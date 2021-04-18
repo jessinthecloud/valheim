@@ -1,8 +1,8 @@
 # To Do
 - refactor Models to correctly grab their related has- Models
 - Items & Recipes web API
-- Functionality to fetch recipe and item info via form
-- write C# script to read purer data from game file to database/JSON/HTTP request
+- Functionality to fetch recipe and item info via UI
+- write C# script to read purer data from game files and write to database/JSON file/HTTP request
 - heavily refactor conversion process & JsonMapper
 
 # Tools & Thanks
