@@ -1,9 +1,9 @@
 # To Do
 - refactor Models to correctly grab their related has- Models
-- heavily refactor conversion process & JsonMapper
-- write C# script to read purer data from game file to database/JSON/HTTP request
-- Functionality to fetch recipe and item info via form
 - Items & Recipes web API
+- Functionality to fetch recipe and item info via form
+- write C# script to read purer data from game file to database/JSON/HTTP request
+- heavily refactor conversion process & JsonMapper
 
 # Tools & Thanks
 - [Valheim Game](https://www.valheimgame.com/)
