@@ -13,15 +13,22 @@ class CreateRecipesTable extends Migration
      */
     public function up()
     {
+        Schema::create('crafting_stations', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('name_EN');
+            $table->timestamps();
+        });
+
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('name_EN');
-            $table->string('internalName')->unique()->nullable();
+            $table->string('internalName')->nullable()->unique();
             $table->tinyInteger('amount');
             $table->tinyInteger('minStationLevel');
 
-            // $table->foreignId('craftingStation')->references('id')->on('crafting_stations')->nullable();
+            $table->foreignId('craftingStation')->nullable()->references('id')->on('crafting_stations');
             // $table->foreignId('repairStation')->references('id')->on('repair_stations')->nullable();
 
             $table->timestamps();
@@ -31,7 +38,7 @@ class CreateRecipesTable extends Migration
             $table->id();
             // $table->foreignId('item_id')->constrained();
             // recipe if craftable
-            $table->foreignId('recipe_id')->constrained()->nullable();
+            $table->foreignId('recipe_id')->nullable()->constrained();
 
             $table->string('name')->unique();
             $table->string('name_EN')->nullable();
@@ -87,7 +94,7 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->string('name')->unique();
             // $table->string('name_EN')->nullable();
-            $table->foreignId('shared_data_id')->constrained('shared_data')->nullable();
+            $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             $table->timestamps();
         });
 

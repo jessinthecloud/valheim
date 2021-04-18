@@ -35,10 +35,11 @@ class ConvertController extends Controller
         echo "<BR>";*/
         // dump($recipes);
         foreach ($recipes as $recipe) {
-            dump($recipe);
+            // dump($recipe);
             dump($recipe->name);
-            dd($recipe->getAttributes());
-            $recipe->save();
+            dump($recipe->getAttributes());
+            $saved = $recipe->save();
+            dump("save: ".$saved);
         }
         /*$iterator = new \RecursiveIteratorIterator(
             new \RecursiveArrayIterator($contents),

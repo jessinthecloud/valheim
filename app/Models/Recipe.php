@@ -14,6 +14,38 @@ class Recipe extends Model
     // empty array means nothing is locked down
     protected $guarded = [];
 
+    /**
+    * The attributes that should be cast.
+    *
+    * @var array
+    */
+    protected $casts = [
+        'resources' => 'array',
+    ];
+
+    /**
+     * Store bar in protected variable instead of attributes
+     * Because bar is not set in attributes, Laravel will not try to save it to database
+     */
+    protected $resources;
+
+    /**
+     * Mutator method to set bar's value
+     */
+    public function setResourcesAttribute($value)
+    {
+        $this->resources = $value;
+    }
+
+    /**
+     * Accessor method to retrieve bar's value
+     */
+    public function getBarAttribute()
+    {
+        return $this->resources;
+    }
+
+
     /* public int $id; // DB id
      public string $name;
      public string $name_EN; // English name
@@ -37,7 +69,9 @@ class Recipe extends Model
         $this->name_EN = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->internalName);
         $this->amount = $data['amount'];
         $this->minStationLevel = $data['minStationLevel'] ?? 1;
-        $this->craftingStation = JsonAdapter::createObject('craftingStation', $data['craftingStation']) ?? null;
+        $craftstation = new CraftingStation($data['craftingStation']);
+        $this->craftingStation = $craftStation/*JsonAdapter::createObject('craftingStation', $data['craftingStation'])*/ ?? null;
+
         $resources = [];
         foreach ($data['resources'] as $resource) {
             $resources []= JsonAdapter::createObject('resource', $resource);
@@ -68,12 +102,12 @@ class Recipe extends Model
     public function setResourcesAttribute($value)
     {
         $this->attributes['resources'] = $value;
-    }
+    }*/
 
     public function resources()
     {
         return $this->hasMany(Resource::class);
-    }*/
+    }
 
     /**
      * calculate the required station level for this item based on its quality

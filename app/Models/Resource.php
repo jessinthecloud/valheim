@@ -44,6 +44,11 @@ class Resource extends Model
         $this->attributes['resItem'] = $value;
     }*/
 
+    public function recipes()
+    {
+        return $this->belongsToMany(Recipe::class);
+    }
+
     public function item()
     {
         return $this->hasOne(Item::class);
