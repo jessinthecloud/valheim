@@ -3,9 +3,54 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\JsonAdapter;
+use App\Http\Controllers\RecipeController;
+use App\Models\Recipe;
 
 class ConvertController extends Controller
 {
+    /**
+     * convert an item by unqiue name
+     *
+     * @param  [type] $name [description]
+     * @return [type]       [description]
+     */
+    public function convert($name)
+    {
+        dump("Convert: $name");
+        $contents = JsonAdapter::decodeJsonFile(
+            storage_path('app\recipes.json'),
+            true
+        );
+        foreach ($contents as $k => $content) {
+            // dump($content);
+            $content = array_filter($content, function ($val, $key) use ($name) {
+                // dump("$key === name");
+                if (is_string($val) && $key === 'name' && $val === $name) {
+                    return true;
+                }
+
+                return false;
+            }, ARRAY_FILTER_USE_BOTH);
+            // dump($content);
+            if (!empty($content)) {
+                $contents = $contents[$k];
+                break;
+            }
+            // dd("dying");
+        }
+        dump($contents);
+        $recipe = JsonAdapter::createObject($name, $contents);
+        // dd($recipes);
+        if (Recipe::where('name', $contents['name'])->first()) {
+            dump("Recipe {$contents['name']} already exists.");
+            dump($recipe);
+        } else {
+            $saved = $recipe->save();
+            dump("save: ".$saved);
+        }
+    } // end func convert()
+
     /**
     * Display a listing of the resource.
     *
@@ -19,42 +64,20 @@ class ConvertController extends Controller
             true
         )];
 
-        /*echo "<BR>";
-        dump("////////////////////// BEFORE FUNC ////////////////////////////////");
-        echo "<BR>";*/
-        /////////////////
-
-        // !!!!
-        // $contents['recipes'] = array_slice($contents['recipes'], 0, 2);
-        // !!!!
-        // dd($contents);
-        // $recipe = JsonAdapter::recursiveCreateFromArray($contents);
         $recipes = JsonAdapter::createFromArray($contents);
-        /*echo "<BR>";
-        dump("/////////////////////// AFTER FUNC ///////////////////////////////");
-        echo "<BR>";*/
+
         // dump($recipes);
         foreach ($recipes as $recipe) {
             // dump($recipe);
-            dump($recipe->name);
-            dump($recipe->getAttributes());
-            $saved = $recipe->save();
-            dump("save: ".$saved);
-        }
-        /*$iterator = new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator($contents),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-        $i=0;
-        foreach ($iterator as $key => $item) {
-            if ($i > 22) {
-                break;
+            // dump($recipe->name);
+            // dump($recipe->getAttributes());
+            if (Recipe::where('name', $recipe->name)->first()) {
+                dump("Recipe {$recipe->name} already exists.");
+            } else {
+                $saved = $recipe->save();
+                dump("save: ".$saved);
             }
-            dump("key: $key");
-            dump($item);
-            dump("=$i===========================================$i=");
-            $i++;
-        }*/
+        }
     }
 
     /**

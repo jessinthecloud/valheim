@@ -57,24 +57,26 @@ class Recipe extends Model
      public array $resources; // array of Resource objects (which contain Item objects)
 */
 
-    public function __construct($data)
+    public function __construct($data=null)
     {
         /*dump("*~*~*~*~*~*~*~*~*~*~*");
         dump("RECIPE CLASS ");
         dump($data);
         dump("*~*~*~*~*~*~*~*~*~*~*");*/
         // extract($data);
-        $this->name = $data['name'];
+        $this->name = $data['name'] ?? '';
         $this->internalName = $data['itemName'] ?? JsonAdapter::internalName($this->name);
         $this->name_EN = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->internalName);
-        $this->amount = $data['amount'];
+        $this->amount = $data['amount'] ?? 1;
         $this->minStationLevel = $data['minStationLevel'] ?? 1;
-        $craftstation = new CraftingStation($data['craftingStation']);
+        $craftstation = isset($data['craftingStation']) ? new CraftingStation($data['craftingStation']) : null;
         $this->craftingStation = $craftStation/*JsonAdapter::createObject('craftingStation', $data['craftingStation'])*/ ?? null;
 
         $resources = [];
-        foreach ($data['resources'] as $resource) {
-            $resources []= JsonAdapter::createObject('resource', $resource);
+        if (isset($data['resources'])) {
+            foreach ($data['resources'] as $resource) {
+                $resources []= JsonAdapter::createObject('resource', $resource);
+            }
         }
         $this->resources = $resources;
     }
