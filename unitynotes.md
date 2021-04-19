@@ -1,4 +1,4 @@
-# Unity / C# Dev Notes
+# Unity / C# Notes
 
 ---
 
