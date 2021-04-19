@@ -75,6 +75,7 @@ public enum ItemType
 
 ## AnimationState
 ```cs
+// ItemDrop.ItemData.AnimationState
 public enum AnimationState
 {
     Unarmed,
@@ -92,6 +93,7 @@ public enum AnimationState
 
 ## AiTarget
 ```cs
+// ItemDrop.ItemData.AiTarget
 public enum AiTarget
 {
     Enemy,
@@ -141,6 +143,7 @@ public enum StatusAttribute
 
 ## AttackType
 ```cs 
+// Attack.AttackType
 public enum AttackType
 {
     Horizontal,
@@ -154,6 +157,7 @@ public enum AttackType
 
 ## HitPointType
 ```cs
+// Attack.HitPointType
 public enum HitPointType
 {
     Closest,
@@ -164,6 +168,7 @@ public enum HitPointType
 
 ## PieceCategory
 ```cs
+// Piece.PieceCategory
 public enum PieceCategory
 {
     Misc = 0,
@@ -177,6 +182,7 @@ public enum PieceCategory
 
 ## ComfortGroup
 ```cs
+// Piece.ComfortGroup
 public enum ComfortGroup
 {
     None,
