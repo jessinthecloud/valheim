@@ -75,6 +75,7 @@ public enum ItemType
 
 ## AnimationState
 ```cs
+// ItemDrop.ItemData.AnimationState
 public enum AnimationState
 {
     Unarmed,
@@ -92,11 +93,30 @@ public enum AnimationState
 
 ## AiTarget
 ```cs
+// ItemDrop.ItemData.AiTarget
 public enum AiTarget
 {
     Enemy,
     FriendHurt,
     Friend
+}
+```
+
+## Biomes
+```cs
+public enum Biome
+{
+    None = 0,
+    Meadows = 1,
+    Swamp = 2,
+    Mountain = 4,
+    BlackForest = 8,
+    Plains = 0x10,
+    AshLands = 0x20,
+    DeepNorth = 0x40,
+    Ocean = 0x100,
+    Mistlands = 0x200,
+    BiomesMax = 513
 }
 ```
 
@@ -141,6 +161,7 @@ public enum StatusAttribute
 
 ## AttackType
 ```cs 
+// Attack.AttackType
 public enum AttackType
 {
     Horizontal,
@@ -154,6 +175,7 @@ public enum AttackType
 
 ## HitPointType
 ```cs
+// Attack.HitPointType
 public enum HitPointType
 {
     Closest,
@@ -164,6 +186,7 @@ public enum HitPointType
 
 ## PieceCategory
 ```cs
+// Piece.PieceCategory
 public enum PieceCategory
 {
     Misc = 0,
@@ -177,6 +200,7 @@ public enum PieceCategory
 
 ## ComfortGroup
 ```cs
+// Piece.ComfortGroup
 public enum ComfortGroup
 {
     None,
