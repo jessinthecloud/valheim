@@ -4,6 +4,12 @@ namespace App;
 class JsonAdapter
 {
     public static $count=0;
+    private static $childPropNames = [
+        'resources',
+        'item',
+        'craftingStation',
+        'shared'
+    ];
 
     /**
      * decode a JSON file
@@ -26,6 +32,9 @@ class JsonAdapter
      */
     public static function convertMemberName(string $name)
     {
+        // dump("check member name: $name");
+        $name = (str_contains($name, 'resItem')) ? 'item' : $name;
+
         return (substr($name, 0, 2) === 'm_') ? substr($name, 2) : $name;
     }
 
@@ -59,7 +68,7 @@ class JsonAdapter
 
     public static function mapClassName($name)
     {
-        dump("check name: $name");
+        // dump("check class name: $name");
         if (class_exists($name)) {
             return $name;
         }
@@ -80,7 +89,7 @@ class JsonAdapter
             return 'App\Models\\'.'Recipe';
         }
         // is Item
-        if (str_contains($name, 'Item')) {
+        if (str_contains($name, 'resItem')) {
             return 'App\Models\\'.'Item';
         }
 
@@ -103,22 +112,22 @@ class JsonAdapter
                         // dump("### EXISTS! create $keyClass with val ###");
                         $v = $val;
                         // dump($v);
-                        if (is_int(array_key_first($v))) {
-                            $newobj = self::createFromArray($v, $keyClass);
-                            // dump("object array", $newobj);
-                            $v = $newobj;
+                        if (is_int(array_key_first($val))) {
+                            $val = self::createFromArray($val, $keyClass);
                         } else {
-                            $v = self::createObject($keyClass, $v);
+                            $val = self::createObject($keyClass, $val);
                         }
                         // dump("-- V:", $v);
-                        $data[$key] = $v;
+                        $data[$key] = $val;
                         // dump("data[key]: ", $data[$key]);
                     }
                 } /*else {
                     dump("key: $key");
                 }*/
                 // dump("val: ", $val);
+                // save key as the nice name
                 $newkey = self::convertMemberName($key) ?? $key;
+                // dump("newkey: $newkey");
                 $data [$newkey]= $val;
                 // dump("data[NEWkey]: ", $data[$newkey]);
                 if ($key !== $newkey) {
@@ -129,9 +138,44 @@ class JsonAdapter
         } // end if is array
         if (isset($className)) {
             dump(" @@@ $className being created! @@@");
-            // dump($data);
-        }
-        return $className ? new $className($data) : null;
+            if (isset($data['name'])) {
+                dump("name: {$data['name']}");
+            }
+            dump($data);
+            $object = !is_object($data) ? new $className($data) : $data;
+            dump($object);
+            if (isset($object->name) && $className::where('name', $object->name)->first()) {
+                dump("{$object->name} already exists. ({$object->id})");
+            } else {
+                dump("object doesn't exist or doesn't have name");
+                // check and attach relations
+                // need to find
+                $object = JsonAdapter::attachRelationsTo($object);
+                dump("after child chekc", $object);
+                $saved = $object->save();
+                dump("save: ".$saved);
+            }
+            return $object;
+        } // if classname set
+        return null;
+    }
+
+    public static function attachRelationsTo($object)
+    {
+        // dump("checking for relations");
+        $vars = array_merge($object->getAttributes(), get_object_vars($object));
+        dump($vars);
+
+        // dump('names to chekc', self::$childPropNames);
+        foreach ($vars as $propName => $value) {
+            dump("propname: $propName");
+            if (isset($value) && in_array($propName, self::$childPropNames)) {
+                dump("CHILD FOUND", $value);
+                // TODO: query for this child and $object->attach()
+            }
+        } // end foreach
+
+        return $object;
     }
 
     public static function createFromArray($data, $name='', $objarray=[])

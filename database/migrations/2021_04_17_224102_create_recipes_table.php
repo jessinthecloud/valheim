@@ -102,7 +102,7 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->tinyInteger('amount');
             $table->tinyInteger('amountPerLevel');
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
+            $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
 

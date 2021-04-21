@@ -72,6 +72,16 @@ class Recipe extends Model
         $craftstation = isset($data['craftingStation']) ? new CraftingStation($data['craftingStation']) : null;
         $this->craftingStation = $craftStation/*JsonAdapter::createObject('craftingStation', $data['craftingStation'])*/ ?? null;
 
+        /*if (isset($data['craftingStation'])) {
+            if (is_object($data['craftingStation'])) {
+                $this->craftingStation = $data['craftingStation'];
+            } else {
+                $this->craftingStation = JsonAdapter::createObject('craftingStation', $data['craftingStation']) ?? null;
+            }
+        } else {
+            $this->craftingStation = null;
+        }*/
+
         $resources = [];
         if (isset($data['resources'])) {
             foreach ($data['resources'] as $resource) {

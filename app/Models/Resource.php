@@ -15,19 +15,30 @@ class Resource extends Model
     // empty array means nothing is locked down
     protected $guarded = [];
 
+    public $item; // Item
     /*public int $id;
-    public $resItem; // Item
     public int $amount = 1;
     public int $amountPerLevel = 1;*/
 
-    public function __construct($data)
+    public function __construct($data=null)
     {
+        // dump("BUILDING A RESOURCE!");
+        // dump($data);
+        if (is_object($data)) {
+            dump("Resource exists as $data, aborting creation");
+            // we already made it...
+            return;
+        }
         $this->amount = $data['amount'] ?? 1;
         $this->amountPerLevel = $data['amountPerLevel'] ?? 1;
-        if (isset($data['resItem'])) {
-            $this->resItem = JsonAdapter::createObject('resItem', $data['resItem']) ?? null;
+        if (isset($data['item'])) {
+            if (is_object($data['item'])) {
+                $this->item = $data['item'];
+            } else {
+                $this->item = JsonAdapter::createObject('item', $data['item']) ?? null;
+            }
         } else {
-            $this->resItem = null;
+            $this->item = null;
         }
     }
 
