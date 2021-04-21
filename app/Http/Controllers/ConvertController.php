@@ -20,32 +20,37 @@ class ConvertController extends Controller
     public function convert($name, $type='')
     {
         dump("Convert: $name");
-        $contents = JsonAdapter::decodeJsonFile(
-            storage_path('app\\'.strtolower($type).'s.json'),
-            true
-        );
-        foreach ($contents as $k => $content) {
-            // dump($content);
-            $content = array_filter($content, function ($val, $key) use ($name) {
-                // dump("$key === name");
-                return (is_string($val) && $key === 'name' && $val === $name);
-            }, ARRAY_FILTER_USE_BOTH);
-            // dump($content);
-            if (!empty($content)) {
-                $contents = $contents[$k];
-                break;
+        if (file_exists(storage_path('app\\'.strtolower($type).'s.json'))) {
+            $contents = JsonAdapter::decodeJsonFile(
+                storage_path('app\\'.strtolower($type).'s.json'),
+                true
+            );
+
+            foreach ($contents as $k => $content) {
+                // dump($content);
+                $content = array_filter($content, function ($val, $key) use ($name) {
+                    // dump("$key === name");
+                    return (is_string($val) && $key === 'name' && $val === $name);
+                }, ARRAY_FILTER_USE_BOTH);
+
+                if (!empty($content)) {
+                    $contents = $contents[$k];
+                    break;
+                }
             }
-            // dd("dying");
-        }
-        dump($contents);
-        $item = JsonAdapter::createObject($name, $contents);
-        // dd($recipes);
-        if (ucfirst($type)::where('name', $contents['name'])->first()) {
-            dump(ucfirst($type)." {$contents['name']} already exists.");
-            dump($item);
+
+            $item = JsonAdapter::createObject($name, $contents);
+
+            $className = '\App\Models\\'.ucfirst($type);
+            if ($className::where('name', $contents['name'])->first()) {
+                dump(ucfirst($type)." {$contents['name']} already exists.");
+                dump($item);
+            } else {
+                $saved = $item->save();
+                dump("save: ".$saved);
+            }
         } else {
-            $saved = $item->save();
-            dump("save: ".$saved);
+            dump(storage_path('app\\'.strtolower($type).'s.json')." doesn't exist.");
         }
     } // end func convert()
 
@@ -67,19 +72,22 @@ class ConvertController extends Controller
             true
         )];
 
+        //////
+        $contents['recipes'] = array_slice($contents['recipes'], 0, 2);
+        /////
         $recipes = JsonAdapter::createFromArray($contents);
 
-        // dump($recipes);
+        dump($recipes);
         foreach ($recipes as $recipe) {
             // dump($recipe);
             // dump($recipe->name);
             // dump($recipe->getAttributes());
-            if (Recipe::where('name', $recipe->name)->first()) {
-                dump("Recipe {$recipe->name} already exists.");
-            } else {
-                $saved = $recipe->save();
-                dump("save: ".$saved);
-            }
+            /* if (Recipe::where('name', $recipe->name)->first()) {
+                 dump("Recipe {$recipe->name} already exists.");
+             } else {*/
+            $saved = $recipe->save();
+            dump("save: ".$saved);
+            // }
         }
     }
 

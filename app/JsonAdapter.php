@@ -59,6 +59,12 @@ class JsonAdapter
 
     public static function mapClassName($name)
     {
+        dump("check name: $name");
+        if (class_exists($name)) {
+            return $name;
+        }
+
+        $name = self::convertMemberName($name);
         $fqcname = 'App\Models\\'.ucwords($name);
 
         // exact class name
@@ -83,28 +89,60 @@ class JsonAdapter
 
     public static function createObject($className, $data)
     {
-        $className = self::convertMemberName($className);
-        $className = self::mapClassName($className);
+        dump("*~* CREATING $className *~*");
 
+        $className = self::mapClassName($className);
+        // dump("fixed name: $className");
         if (is_array($data)) {
-            foreach ($data as $key => &$val) {
+            // convert property names to correct names
+            foreach ($data as $key => $val) {
+                if (is_array($val)) {
+                    $keyClass = self::mapClassName($key);
+                    // dump("key: $key, class: $keyClass");
+                    if (class_exists($keyClass)) {
+                        // dump("### EXISTS! create $keyClass with val ###");
+                        $v = $val;
+                        // dump($v);
+                        if (is_int(array_key_first($v))) {
+                            $newobj = self::createFromArray($v, $keyClass);
+                            // dump("object array", $newobj);
+                            $v = $newobj;
+                        } else {
+                            $v = self::createObject($keyClass, $v);
+                        }
+                        // dump("-- V:", $v);
+                        $data[$key] = $v;
+                        // dump("data[key]: ", $data[$key]);
+                    }
+                } /*else {
+                    dump("key: $key");
+                }*/
+                // dump("val: ", $val);
                 $newkey = self::convertMemberName($key) ?? $key;
                 $data [$newkey]= $val;
+                // dump("data[NEWkey]: ", $data[$newkey]);
                 if ($key !== $newkey) {
                     unset($data[$key]);
                 }
-            }
+                // dump("=-=-=-=-=-=-=");
+            } // endforeach
+        } // end if is array
+        if (isset($className)) {
+            dump(" @@@ $className being created! @@@");
+            // dump($data);
         }
-
         return $className ? new $className($data) : null;
     }
-
-
 
     public static function createFromArray($data, $name='', $objarray=[])
     {
         if (is_array($data)) {
             foreach ($data as $key => $item) {
+                self::$count++;
+                /*if (self::$count > 10) {
+                    dump("DYING");
+                    die;
+                }*/
                 if (!is_int($key)) {
                     // key is not int
                     if (is_array($item)) {
@@ -126,6 +164,7 @@ class JsonAdapter
                         // key is property name, item is property value
                         // create obj from all data this loop
                         // should probably check each property for class names instead
+
                         return self::createObject($name, $data);
                     }
                 } else {
@@ -135,7 +174,6 @@ class JsonAdapter
                         // item is array
 
                         // item is array of obj properties
-
                         $objarray []= self::createFromArray($item, $name, $objarray);
                     } else {
                         // item is not array
@@ -149,6 +187,40 @@ class JsonAdapter
 
         return $objarray ?? null;
     } // end createFromArray
+
+    public static function convertFromModel($model)
+    {
+        $type = $model->getTable();
+        dump($type);
+        dump("========");
+        $contents = self::decodeJsonFile(
+            storage_path('app\\'.strtolower($type).'.json'),
+            true
+        );
+        $name = $model->name;
+        $found = false;
+        foreach ($contents as $i => $content) {
+            if ($i >= 10) {
+                break;
+            }
+            foreach ($content as $key => $value) {
+                dump("$value === $name");
+                dump($value === $name);
+                if ($value === $name) {
+                    $found = true;
+                    break;
+                }
+            };
+
+            if ($found) {
+                $contents = $content;
+                break;
+            }
+        }
+        dump($contents);
+        die;
+    }
+
     /*
     ///////////////////////
     public static function createFromJson($data, object $parent=null)
