@@ -150,10 +150,10 @@ class JsonAdapter
                 dump("object doesn't exist or doesn't have name");
                 // check and attach relations
                 // need to find
-                $object = JsonAdapter::attachRelationsTo($object);
                 dump("after child chekc", $object);
                 $saved = $object->save();
                 dump("save: ".$saved);
+                $object = JsonAdapter::attachRelationsTo($object);
             }
             return $object;
         } // if classname set
@@ -166,16 +166,30 @@ class JsonAdapter
         $vars = array_merge($object->getAttributes(), get_object_vars($object));
         dump($vars);
 
-        // dump('names to chekc', self::$childPropNames);
+        dump('names to chekc', self::$childPropNames);
         foreach ($vars as $propName => $value) {
             dump("propname: $propName");
             if (isset($value) && in_array($propName, self::$childPropNames)) {
                 dump("CHILD FOUND", $value);
-                // TODO: query for this child and $object->attach()
+                // TODO: query for this child and save to $object
+                self::determineAttach($object, $value, $propName);
+                // dump("attacher: $attacher");
+                // $object->$attacher()->save($value);
             }
         } // end foreach
 
         return $object;
+    }
+
+    public static function determineAttach($object, $child, $propName)
+    {
+        // we can use "s" because only the plurals end in s here
+        if (substr($propName, -1) === 's') {
+            // many to many
+            return $object->{$propName.'s'}()->save($child);
+        }
+        // one to one
+        return $object->$propName()->associate($child);
     }
 
     public static function createFromArray($data, $name='', $objarray=[])

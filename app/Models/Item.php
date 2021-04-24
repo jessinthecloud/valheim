@@ -46,6 +46,16 @@ class Item extends Model
         $this->attributes['shared_data'] = $value;
     }*/
 
+    public function recipes()
+    {
+        return $this->belongsToManyThrough(Recipe::class, Resource::class);
+    }
+
+    public function resources()
+    {
+        return $this->hasMany(Resource::class);
+    }
+
     public function sharedData()
     {
         return $this->hasOne(ItemSharedData::class);

@@ -62,7 +62,7 @@ class Resource extends Model
 
     public function item()
     {
-        return $this->hasOne(Item::class);
+        return $this->belongsTo(Item::class);
     }
 
     public function getAmount(int $qualityLevel) : int

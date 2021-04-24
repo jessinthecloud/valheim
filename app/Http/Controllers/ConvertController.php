@@ -55,7 +55,6 @@ class ConvertController extends Controller
     } // end func convert()
 
     /**
-    * Display a listing of the resource.
     *
     * @return \Illuminate\Http\Response
     */
@@ -92,7 +91,6 @@ class ConvertController extends Controller
     }
 
     /**
-    * Display a listing of the resource.
     *
     * @return \Illuminate\Http\Response
     */
