@@ -28,7 +28,7 @@ class CreateRecipesTable extends Migration
             $table->tinyInteger('amount');
             $table->tinyInteger('minStationLevel');
 
-            $table->foreignId('craftingStation')->nullable()->references('id')->on('crafting_stations');
+            $table->foreignId('crafting_station_id')->nullable()->constrained();
             // $table->foreignId('repairStation')->references('id')->on('repair_stations')->nullable();
 
             $table->timestamps();

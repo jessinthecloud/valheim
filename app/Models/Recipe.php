@@ -24,13 +24,14 @@ class Recipe extends Model
     ];
 
     /**
-     * Store bar in protected variable instead of attributes
-     * Because bar is not set in attributes, Laravel will not try to save it to database
+     * Store var in protected variable instead of attributes
+     * Because var is not set in attributes, Laravel will not try to save it to database
      */
     protected $resources;
+    protected $crafting_station;
 
     /**
-     * Mutator method to set bar's value
+     * Mutator method to set var's value
      */
     public function setResourcesAttribute($value)
     {
@@ -38,7 +39,7 @@ class Recipe extends Model
     }
 
     /**
-     * Accessor method to retrieve bar's value
+     * Accessor method to retrieve var's value
      */
     public function getResourcesAttribute()
     {
@@ -59,28 +60,25 @@ class Recipe extends Model
 
     public function __construct($data=null)
     {
-        /*dump("*~*~*~*~*~*~*~*~*~*~*");
+        dump("*~*~*~*~*~*~*~*~*~*~*");
         dump("RECIPE CLASS ");
         dump($data);
-        dump("*~*~*~*~*~*~*~*~*~*~*");*/
+        dump("*~*~*~*~*~*~*~*~*~*~*");
         // extract($data);
         $this->name = $data['name'] ?? '';
         $this->internalName = $data['itemName'] ?? JsonAdapter::internalName($this->name);
         $this->name_EN = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->internalName);
         $this->amount = $data['amount'] ?? 1;
         $this->minStationLevel = $data['minStationLevel'] ?? 1;
-        $craftstation = isset($data['craftingStation']) ? new CraftingStation($data['craftingStation']) : null;
-        $this->craftingStation = $craftStation/*JsonAdapter::createObject('craftingStation', $data['craftingStation'])*/ ?? null;
-
-        /*if (isset($data['craftingStation'])) {
-            if (is_object($data['craftingStation'])) {
-                $this->craftingStation = $data['craftingStation'];
+        if (isset($data['crafting_station'])) {
+            if (is_object($data['crafting_station'])) {
+                $this->crafting_station = $data['crafting_station'];
             } else {
-                $this->craftingStation = JsonAdapter::createObject('craftingStation', $data['craftingStation']) ?? null;
+                $this->crafting_station = JsonAdapter::createObject('crafting_station', $data['crafting_station']) ?? null;
             }
         } else {
-            $this->craftingStation = null;
-        }*/
+            $this->crafting_station = $this->crafting_station ?? null;
+        }
 
         $resources = [];
         if (isset($data['resources'])) {
@@ -115,6 +113,11 @@ class Recipe extends Model
     {
         $this->attributes['resources'] = $value;
     }*/
+
+    public function craftingStation()
+    {
+        return $this->hasOne(CraftingStation::class);
+    }
 
     public function resources()
     {

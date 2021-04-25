@@ -32,4 +32,9 @@ class CraftingStation extends Model
     {
         $this->attributes['name_EN'] = $value;
     }*/
+
+    public function recipes()
+    {
+        return $this->belongsToMany(Recipe::class);
+    }
 }

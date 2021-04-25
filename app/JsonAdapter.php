@@ -7,7 +7,7 @@ class JsonAdapter
     private static $childPropNames = [
         'resources',
         'item',
-        'craftingStation',
+        'crafting_station',
         'shared'
     ];
 
@@ -34,6 +34,7 @@ class JsonAdapter
     {
         // dump("check member name: $name");
         $name = (str_contains($name, 'resItem')) ? 'item' : $name;
+        $name = (str_contains($name, 'craftingstation')) ? 'crafting_station' : $name;
 
         return (substr($name, 0, 2) === 'm_') ? substr($name, 2) : $name;
     }
@@ -98,7 +99,7 @@ class JsonAdapter
 
     public static function createObject($className, $data)
     {
-        dump("*~* CREATING $className *~*");
+        dump("*~* CREATING $className (".self::mapClassName($className).")*~*");
 
         $className = self::mapClassName($className);
         // dump("fixed name: $className");
@@ -138,21 +139,21 @@ class JsonAdapter
         } // end if is array
         if (isset($className)) {
             dump(" @@@ $className being created! @@@");
-            if (isset($data['name'])) {
+            /*if (isset($data['name'])) {
                 dump("name: {$data['name']}");
-            }
-            dump($data);
+            }*/
+            // dump($data);
             $object = !is_object($data) ? new $className($data) : $data;
-            dump($object);
+            // dump($object);
             if (isset($object->name) && $className::where('name', $object->name)->first()) {
                 dump("{$object->name} already exists. ({$object->id})");
             } else {
-                dump("object doesn't exist or doesn't have name");
+                // dump("object doesn't exist or DOESN'T HAVE A NAME");
                 // check and attach relations
                 // need to find
-                dump("after child chekc", $object);
+                // dump("before $className save: ", $object);
                 $saved = $object->save();
-                dump("save: ".$saved);
+                // dump("save $className: ".$saved);
                 $object = JsonAdapter::attachRelationsTo($object);
             }
             return $object;
@@ -164,13 +165,12 @@ class JsonAdapter
     {
         // dump("checking for relations");
         $vars = array_merge($object->getAttributes(), get_object_vars($object));
-        dump($vars);
+        // dump("CHECKING ATTACHABLE VARS: ", $vars);
 
-        dump('names to chekc', self::$childPropNames);
         foreach ($vars as $propName => $value) {
-            dump("propname: $propName");
-            if (isset($value) && in_array($propName, self::$childPropNames)) {
-                dump("CHILD FOUND", $value);
+            // dump("propname: $propName");
+            if (isset($value) && in_array(strtolower($propName), self::$childPropNames)) {
+                // dump("CHILD FOUND", $value);
                 // TODO: query for this child and save to $object
                 self::determineAttach($object, $value, $propName);
                 // dump("attacher: $attacher");
