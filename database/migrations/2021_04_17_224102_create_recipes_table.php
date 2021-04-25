@@ -16,6 +16,7 @@ class CreateRecipesTable extends Migration
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('interpolated_name')->nullable();
             $table->string('name_EN');
             $table->timestamps();
         });
@@ -117,10 +118,11 @@ class CreateRecipesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('recipe_resource');
+        // Schema::dropIfExists('recipe_resource');
         Schema::dropIfExists('recipes');
-        Schema::dropIfExists('shared_data');
         Schema::dropIfExists('item');
+        Schema::dropIfExists('shared_data');
         Schema::dropIfExists('resource');
+        Schema::dropIfExists('crafting_stations');
     }
 }

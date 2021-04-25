@@ -7,7 +7,7 @@ class JsonAdapter
     private static $childPropNames = [
         'resources',
         'item',
-        'crafting_station',
+        'craftingStation',
         'shared'
     ];
 
@@ -34,8 +34,8 @@ class JsonAdapter
     {
         // dump("check member name: $name");
         $name = (str_contains($name, 'resItem')) ? 'item' : $name;
-        // $name = (str_contains($name, 'shared')) ? 'shared_data' : $name;
-        $name = (str_contains($name, 'craftingstation')) ? 'crafting_station' : $name;
+        $name = (str_contains($name, 'shared')) ? 'shared_data' : $name;
+        $name = ($name === 'm_name') ? 'interpolated_name' : $name;
 
         return (substr($name, 0, 2) === 'm_') ? substr($name, 2) : $name;
     }
@@ -101,7 +101,7 @@ class JsonAdapter
     public static function createObject($className, $data)
     {
         dump("*~* CREATING $className (".self::mapClassName($className).")*~*");
-
+        dump($data);
         $className = self::mapClassName($className);
         // dump("fixed name: $className");
         if (is_array($data)) {
@@ -109,57 +109,56 @@ class JsonAdapter
             foreach ($data as $key => $val) {
                 if (is_array($val)) {
                     $keyClass = self::mapClassName($key);
-                    // dump("key: $key, class: $keyClass");
+                    dump("key: $key, class: $keyClass");
                     if (class_exists($keyClass)) {
-                        // dump("### EXISTS! create $keyClass with val ###");
-                        $v = $val;
-                        // dump($v);
+                        dump("### EXISTS! create $keyClass with val ###");
                         if (is_int(array_key_first($val))) {
                             $val = self::createFromArray($val, $keyClass);
                         } else {
                             $val = self::createObject($keyClass, $val);
                         }
-                        // dump("-- V:", $v);
                         $data[$key] = $val;
-                        // dump("data[key]: ", $data[$key]);
+                        // dump("data[key]: $key", $data[$key]);
+                        // dump("val: ", $val);
                     }
-                } /*else {
-                    dump("key: $key");
-                }*/
-                // dump("val: ", $val);
-                // save key as the nice name
-                $newkey = self::convertMemberName($key) ?? $key;
-                // dump("newkey: $newkey");
-                if ($newkey !== 'itemData') {
-                    $data [$newkey]= $val;
                 }
-                // dump("data[NEWkey]: ", $data[$newkey]);
+                // save key as the nice name but don't overwrite another existing key
+                if (self::convertMemberName($key) !== null
+                    && !in_array(self::convertMemberName($key), array_keys($data))) {
+                    $newkey = self::convertMemberName($key);
+                } else {
+                    $newkey = $key;
+                }
+
+                // dump("newkey: $newkey");
+                // if ($newkey !== 'itemData') {
+                $data [$newkey]= $val;
+                // }
+                dump("data[NEWkey]: $newkey", $data[$newkey]);
+                dump("val: ", $val);
+
                 if ($key !== $newkey) {
                     unset($data[$key]);
                 }
                 // dump("=-=-=-=-=-=-=");
             } // endforeach
         } // end if is array
+        dump("-----------------------------
+NEW DATA: ", $data, "
+------------------------------------");
         if (isset($className)) {
-            dump(" @@@ $className being created! @@@");
-            /*if (isset($data['name'])) {
-                dump("name: {$data['name']}");
-            }*/
+            $msg = " @@@ $className is being initialized! @@@";
+            if (isset($data['name'])) {
+                $msg .= " -- name: {$data['name']}";
+            }
+            $msg .= " -- with data: ";
+            dump($msg);
+
             dump($data);
             $object = !is_object($data) ? $className::create($data) : $data;
-            dump($object);
+            dump("BASE OBJ CREATED: ", $object);
             self::attachRelationsTo($object, $data);
-            /*if (isset($object->name) && $className::where('name', $object->name)->first()) {
-                dump("{$object->name} already exists. ({$object->id})");
-            } else {
-                // dump("object doesn't exist or DOESN'T HAVE A NAME");
-                // check and attach relations
-                // need to find
-                // dump("before $className save: ", $object);
-                $saved = $object->save();
-                // dump("save $className: ".$saved);
-                $object = JsonAdapter::attachRelationsTo($object);
-            }*/
+            dump("$$$ $className FINISHED $$$");
             return $object;
         } // if classname set
         return null;
@@ -167,18 +166,20 @@ class JsonAdapter
 
     public static function attachRelationsTo($object, $data)
     {
-        // dump("checking for relations");
+        dump("checking for relations in data: ", $data);
         $vars = $object->getGuarded();
-        // dump("CHECKING FOR ATTACHABLE VARS: ", $vars);
+        dump("CHECKING FOR ATTACHABLE VARS: ", $vars);
 
         foreach ($vars as $propName) {
             dump("propname: $propName");
-            if (in_array(strtolower($propName), self::$childPropNames)) {
+            if (in_array($propName, self::$childPropNames)) {
                 dump("CHILD FOUND");
                 // TODO: query for this child and save to $object
                 if (isset($data[$propName])) {
                     dump($data[$propName]);
                     self::determineAttach($object, $data[$propName], $propName);
+                } else {
+                    dump("child is empty");
                 }
                 // dump("attacher: $attacher");
                 // $object->$attacher()->save($value);
@@ -246,13 +247,17 @@ class JsonAdapter
                         // item is array
                         if (is_int(array_key_first($item))) {
                             // key is objectname, item is array of these objects");
-
+                            dump('+++ INSIDE ::: is array of OBJECTS +++
+createFromArray($item, $key, $objarray)');
+                            dump($item, 'key: '.$key, $objarray);
                             return self::createFromArray($item, $key, $objarray);
                         } else {
                             // item is ASSOC ARRAY");
 
                             // key is objectname, item is array of obj properties
-
+                            dump('+++ INSIDE ::: is ASSOC array+++
+createObject($key, $item)');
+                            dump('key: '.$key, $item);
                             // create object
                             return self::createObject($key, $item);
                         }
@@ -261,7 +266,9 @@ class JsonAdapter
                         // key is property name, item is property value
                         // create obj from all data this loop
                         // should probably check each property for class names instead
-
+                        dump('+++ INSIDE ::: is NOT array +++
+createObject($key, $item)');
+                        dump('key: '.$key, $item);
                         return self::createObject($name, $data);
                     }
                 } else {
@@ -269,7 +276,9 @@ class JsonAdapter
 
                     if (is_array($item)) {
                         // item is array
-
+                        dump('+++ INSIDE ::: is array +++
+createFromArray($item, $key, $objarray)');
+                        dump($item, 'key: '.$key, $objarray);
                         // item is array of obj properties
                         $objarray []= self::createFromArray($item, $name, $objarray);
                     } else {
