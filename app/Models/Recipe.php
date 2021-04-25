@@ -40,7 +40,7 @@ class Recipe extends Model
     /**
      * Accessor method to retrieve bar's value
      */
-    public function getBarAttribute()
+    public function getResourcesAttribute()
     {
         return $this->resources;
     }
@@ -118,7 +118,7 @@ class Recipe extends Model
 
     public function resources()
     {
-        return $this->hasMany(Resource::class);
+        return $this->belongsToMany(Resource::class);
     }
 
     /**

@@ -186,7 +186,10 @@ class JsonAdapter
         // we can use "s" because only the plurals end in s here
         if (substr($propName, -1) === 's') {
             // many to many
-            return $object->{$propName.'s'}()->save($child);
+            if (is_array($child)) {
+                return $object->$propName()->attach(array_column($child, 'id'));
+            }
+            return $object->$propName()->save($child);
         }
         // one to one
         return $object->$propName()->associate($child);
