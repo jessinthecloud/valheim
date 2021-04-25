@@ -12,7 +12,7 @@ class Recipe extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = ['resources', 'crafting_station', 'repair_station'];
+    protected $guarded = ['resources', 'craftingStation', 'repairStation'];
 
     /**
      * The model's default values for attributes.
@@ -37,7 +37,7 @@ class Recipe extends Model
      * Because var is not set in attributes, Laravel will not try to save it to database
      *
     protected $resources;
-    protected $crafting_station;
+    protected $craftingStation;
 
     /**
      * Mutator method to set var's value
@@ -79,14 +79,14 @@ class Recipe extends Model
         $this->name_EN = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->internalName);
         $this->amount = $data['amount'] ?? 1;
         $this->minStationLevel = $data['minStationLevel'] ?? 1;
-        if (isset($data['crafting_station'])) {
-            if (is_object($data['crafting_station'])) {
-                $this->crafting_station = $data['crafting_station'];
+        if (isset($data['craftingStation'])) {
+            if (is_object($data['craftingStation'])) {
+                $this->craftingStation = $data['craftingStation'];
             } else {
-                $this->crafting_station = JsonAdapter::createObject('crafting_station', $data['crafting_station']) ?? null;
+                $this->craftingStation = JsonAdapter::createObject('craftingStation', $data['craftingStation']) ?? null;
             }
         } else {
-            $this->crafting_station = $this->crafting_station ?? null;
+            $this->craftingStation = $this->craftingStation ?? null;
         }
 
         $resources = [];
@@ -123,7 +123,7 @@ class Recipe extends Model
         $this->attributes['resources'] = $value;
     }*/
 
-    public function crafting_station()
+    public function craftingStation()
     {
         return $this->belongsTo(CraftingStation::class);
     }
