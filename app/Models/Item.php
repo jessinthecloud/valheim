@@ -14,15 +14,15 @@ class Item extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [];
+    protected $guarded = ['itemData', 'shared_data'];
 
     /*public string $name; // internalID - as seen on wiki
     public string $name_EN; // internalID - as seen on wiki
     // public $data; // ItemData -- not used, is not instanced from game
     */
-    public $shared_data; // ItemSharedData
+    // public $shared_data; // ItemSharedData
 
-    public function __construct($data=null)
+    /*public function __construct($data=null)
     {
         $this->name = $data['name'] ?? '';
         $this->name = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->name);
@@ -31,7 +31,7 @@ class Item extends Model
         // dump($shared);
         $this->shared_data = $shared->id ?? null;
         // $this->shared_data = $data['shared'] ?? null;
-    }
+    }*/
 
     /*public function setNameAttribute($value)
     {

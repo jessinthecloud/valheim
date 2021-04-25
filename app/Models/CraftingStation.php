@@ -18,11 +18,11 @@ class CraftingStation extends Model
     /*public string $name;
     public string $name_EN;*/
 
-    public function __construct($data=null/*$name=null, $name_EN=null*/)
+    /*public function __construct($data=null)
     {
         $this->name = $data['name'] ?? '';
         $this->name_EN = $data['name_EN'] ?? $this->name;
-    }
+    }*/
 
     /*public function setNameAttribute($value)
     {

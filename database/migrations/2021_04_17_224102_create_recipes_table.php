@@ -103,15 +103,16 @@ class CreateRecipesTable extends Migration
             $table->tinyInteger('amount');
             $table->tinyInteger('amountPerLevel');
             $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('recipe_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
 
-        Schema::create('recipe_resource', function (Blueprint $table) {
+        /*Schema::create('recipe_resource', function (Blueprint $table) {
             $table->id();
             $table->foreignId('recipe_id')->references('id')->on('recipes')->onDelete('cascade');
             $table->foreignId('resource_id')->references('id')->on('resources')->onDelete('cascade');
             $table->timestamps();
-        });
+        });*/
     }
 
     /**

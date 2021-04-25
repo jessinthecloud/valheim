@@ -34,6 +34,7 @@ class JsonAdapter
     {
         // dump("check member name: $name");
         $name = (str_contains($name, 'resItem')) ? 'item' : $name;
+        // $name = (str_contains($name, 'shared')) ? 'shared_data' : $name;
         $name = (str_contains($name, 'craftingstation')) ? 'crafting_station' : $name;
 
         return (substr($name, 0, 2) === 'm_') ? substr($name, 2) : $name;
@@ -129,7 +130,9 @@ class JsonAdapter
                 // save key as the nice name
                 $newkey = self::convertMemberName($key) ?? $key;
                 // dump("newkey: $newkey");
-                $data [$newkey]= $val;
+                if ($newkey !== 'itemData') {
+                    $data [$newkey]= $val;
+                }
                 // dump("data[NEWkey]: ", $data[$newkey]);
                 if ($key !== $newkey) {
                     unset($data[$key]);
@@ -142,10 +145,11 @@ class JsonAdapter
             /*if (isset($data['name'])) {
                 dump("name: {$data['name']}");
             }*/
-            // dump($data);
-            $object = !is_object($data) ? new $className($data) : $data;
-            // dump($object);
-            if (isset($object->name) && $className::where('name', $object->name)->first()) {
+            dump($data);
+            $object = !is_object($data) ? $className::create($data) : $data;
+            dump($object);
+            self::attachRelationsTo($object, $data);
+            /*if (isset($object->name) && $className::where('name', $object->name)->first()) {
                 dump("{$object->name} already exists. ({$object->id})");
             } else {
                 // dump("object doesn't exist or DOESN'T HAVE A NAME");
@@ -155,24 +159,27 @@ class JsonAdapter
                 $saved = $object->save();
                 // dump("save $className: ".$saved);
                 $object = JsonAdapter::attachRelationsTo($object);
-            }
+            }*/
             return $object;
         } // if classname set
         return null;
     }
 
-    public static function attachRelationsTo($object)
+    public static function attachRelationsTo($object, $data)
     {
         // dump("checking for relations");
-        $vars = array_merge($object->getAttributes(), get_object_vars($object));
-        // dump("CHECKING ATTACHABLE VARS: ", $vars);
+        $vars = $object->getGuarded();
+        // dump("CHECKING FOR ATTACHABLE VARS: ", $vars);
 
-        foreach ($vars as $propName => $value) {
-            // dump("propname: $propName");
-            if (isset($value) && in_array(strtolower($propName), self::$childPropNames)) {
-                // dump("CHILD FOUND", $value);
+        foreach ($vars as $propName) {
+            dump("propname: $propName");
+            if (in_array(strtolower($propName), self::$childPropNames)) {
+                dump("CHILD FOUND");
                 // TODO: query for this child and save to $object
-                self::determineAttach($object, $value, $propName);
+                if (isset($data[$propName])) {
+                    dump($data[$propName]);
+                    self::determineAttach($object, $data[$propName], $propName);
+                }
                 // dump("attacher: $attacher");
                 // $object->$attacher()->save($value);
             }
@@ -187,11 +194,40 @@ class JsonAdapter
         if (substr($propName, -1) === 's') {
             // many to many
             if (is_array($child)) {
-                return $object->$propName()->attach(array_column($child, 'id'));
+                $children = [];
+                foreach ($child as $c) {
+                    dump("child", $c);
+                    if (is_object($c)) {
+                        $children []= $c;
+                        dump("attaching child ", $c);
+                        $object->$propName()->save($c);
+                    // $object->$propName()->create($c);
+                    // $object->$propName()->associate($c);
+                        // $object->$propName()->attach($c);
+                        /*$object->$propName = $c;
+                        $object->save();*/
+                    } else {
+                        $children []= self::mapClassName($propName)::create($c);
+                        dump("attaching child ", end($children));
+                        $object->$propName()->save(end($children));
+                        // $object->$propName()->attach(end($children));
+                        // $object->$propName()->create(end($children));
+                        // $object->$propName()->associate(end($children));
+                    }
+                }
+                dump("many to many -- $propName");
+                // dump($children);
+                // dump(array_column($children, 'id'));
+                return; // $object->$propName()->attach(array_column($children, 'id'));
             }
+            dump("one to many");
             return $object->$propName()->save($child);
         }
-        // one to one
+        // one to ?
+        dump("one to one $propName");
+        if (!is_object($child)) {
+            $child = self::mapClassName($propName)::create($child);
+        }
         return $object->$propName()->associate($child);
     }
 

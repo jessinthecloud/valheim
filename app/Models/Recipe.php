@@ -12,13 +12,22 @@ class Recipe extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [];
+    protected $guarded = ['resources', 'crafting_station', 'repair_station'];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'name_EN' => '',
+    ];
 
     /**
     * The attributes that should be cast.
     *
     * @var array
-    */
+    *
     protected $casts = [
         'resources' => 'array',
     ];
@@ -26,13 +35,13 @@ class Recipe extends Model
     /**
      * Store var in protected variable instead of attributes
      * Because var is not set in attributes, Laravel will not try to save it to database
-     */
+     *
     protected $resources;
     protected $crafting_station;
 
     /**
      * Mutator method to set var's value
-     */
+     *
     public function setResourcesAttribute($value)
     {
         $this->resources = $value;
@@ -40,7 +49,7 @@ class Recipe extends Model
 
     /**
      * Accessor method to retrieve var's value
-     */
+     *
     public function getResourcesAttribute()
     {
         return $this->resources;
@@ -56,7 +65,7 @@ class Recipe extends Model
      public $craftingStation; // CraftingStation object/class used to create item
      public $repairStation; // seems unused so far?
      public array $resources; // array of Resource objects (which contain Item objects)
-*/
+*
 
     public function __construct($data=null)
     {
@@ -114,14 +123,14 @@ class Recipe extends Model
         $this->attributes['resources'] = $value;
     }*/
 
-    public function craftingStation()
+    public function crafting_station()
     {
         return $this->hasOne(CraftingStation::class);
     }
 
     public function resources()
     {
-        return $this->belongsToMany(Resource::class);
+        return $this->hasMany(Resource::class);
     }
 
     /**

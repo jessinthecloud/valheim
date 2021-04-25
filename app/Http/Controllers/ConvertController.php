@@ -78,14 +78,14 @@ class ConvertController extends Controller
 
         dump($recipes);
         foreach ($recipes as $recipe) {
-            // dump($recipe);
+            dump($recipe->resources);
             // dump($recipe->name);
             // dump($recipe->getAttributes());
             /* if (Recipe::where('name', $recipe->name)->first()) {
                  dump("Recipe {$recipe->name} already exists.");
              } else {*/
-            $saved = $recipe->save();
-            dump("save: ".$saved);
+           /* $saved = $recipe->save();
+            dump("save: ".$saved);*/
             // }
         }
     }
