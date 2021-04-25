@@ -6,12 +6,12 @@ use App\JsonAdapter;
 use App\Enums\AnimationState;
 use App\Enums\SkillType;
 use App\Enums\ItemType;
-use App\Models\Recipe;
+use App\Models\Item;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ItemSharedData extends Model
+class SharedData extends Model
 {
     use HasFactory;
 
@@ -89,8 +89,8 @@ class ItemSharedData extends Model
     // setName
     // setSize
 
-    public function recipe()
+    public function items()
     {
-        return $this->hasOne(Recipe::class);
+        return $this->hasMany(Item::class);
     }
 }

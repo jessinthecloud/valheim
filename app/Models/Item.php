@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\ItemSharedData;
+use App\Models\SharedData;
 use App\JsonAdapter;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -56,8 +56,8 @@ class Item extends Model
         return $this->hasMany(Resource::class);
     }
 
-    public function sharedData()
+    public function shared_data()
     {
-        return $this->hasOne(ItemSharedData::class);
+        return $this->belongsTo(SharedData::class);
     }
 }

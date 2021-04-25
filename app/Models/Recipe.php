@@ -125,7 +125,7 @@ class Recipe extends Model
 
     public function crafting_station()
     {
-        return $this->hasOne(CraftingStation::class);
+        return $this->belongsTo(CraftingStation::class);
     }
 
     public function resources()

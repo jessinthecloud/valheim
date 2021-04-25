@@ -36,9 +36,6 @@ class CreateRecipesTable extends Migration
 
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
-            // $table->foreignId('item_id')->constrained();
-            // recipe if craftable
-            $table->foreignId('recipe_id')->nullable()->constrained();
 
             $table->string('name')->unique();
             $table->string('name_EN')->nullable();
@@ -85,8 +82,6 @@ class CreateRecipesTable extends Migration
             $table->integer('variants')->nullable();
             // weight of single item
             $table->float('weight')->nullable();
-
-
 
             $table->timestamps();
         });
