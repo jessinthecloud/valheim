@@ -1,7 +1,9 @@
 <?php
 namespace App\Enums;
 
-abstract class StatusAttribute
+use App\Enums\Enum;
+
+abstract class StatusAttribute extends Enum
 {
     const NONE = 0;
     const COLDRESISTANCE = 1;

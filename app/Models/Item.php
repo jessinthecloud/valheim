@@ -14,7 +14,18 @@ class Item extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = ['itemData', 'shared_data'];
+    protected $guarded = ['itemData', 'sharedData'];
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'quality' => 1,
+        'variant' => 0,
+        'durability' => 100
+    ];
 
     /*public string $name; // internalID - as seen on wiki
     public string $name_EN; // internalID - as seen on wiki
@@ -56,7 +67,7 @@ class Item extends Model
         return $this->hasMany(Resource::class);
     }
 
-    public function shared_data()
+    public function sharedData()
     {
         return $this->belongsTo(SharedData::class);
     }

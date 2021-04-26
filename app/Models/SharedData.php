@@ -17,8 +17,11 @@ class SharedData extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [];
+    protected $guarded = [
+        'trophyPos', // ignore
+    ];
 
+    ///////////////////////
     /*public $id;
     public $name;
     // default human readable name
@@ -68,7 +71,7 @@ class SharedData extends Model
     // recipe if craftable
     public Recipe $recipe;
     public string $dlc;
-      public $armorPerLevel;
+    public $armorPerLevel;
     public $toolTier;*/
 
     // destroyBroken

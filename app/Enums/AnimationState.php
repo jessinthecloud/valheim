@@ -1,7 +1,9 @@
 <?php
 namespace App\Enums;
 
-abstract class AnimationState
+use App\Enums\Enum;
+
+abstract class AnimationState extends Enum
 {
     const UNARMED       = 'Unarmed';
     const ONEHANDED     = 'OneHanded';

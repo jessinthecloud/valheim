@@ -107,10 +107,13 @@ class ConvertController extends Controller
             true
         )];
 
+        //////
+        $contents['items'] = array_slice($contents['items'], 0, 2);
+        /////
         $items = JsonAdapter::createFromArray($contents);
 
-        // dump($items);
-        foreach ($items as $item) {
+        dump($items);
+        /*foreach ($items as $item) {
             // dump($item);
             // dump($item->name);
             // dump($item->getAttributes());
@@ -120,7 +123,7 @@ class ConvertController extends Controller
                 $saved = $item->save();
                 dump("save: ".$saved);
             }
-        }
+        }*/
     }
 
     /**

@@ -1,7 +1,9 @@
 <?php
 namespace App\Enums;
 
-abstract class ItemType
+use App\Enums\Enum;
+
+abstract class ItemType extends Enum
 {
     const NONE = 0;
     const MATERIAL = 1;

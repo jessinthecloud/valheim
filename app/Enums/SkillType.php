@@ -1,7 +1,9 @@
 <?php
 namespace App\Enums;
 
-abstract class SkillType
+use App\Enums\Enum;
+
+abstract class SkillType extends Enum
 {
     const NONE        = 0;
     const SWORDS      = 1;

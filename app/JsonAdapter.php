@@ -1,6 +1,11 @@
 <?php
 namespace App;
 
+use App\Enums\StatusAttribute;
+use App\Enums\AnimationState;
+use App\Enums\SkillType;
+use App\Enums\ItemType;
+
 class JsonAdapter
 {
     public static $count=0;
@@ -8,7 +13,11 @@ class JsonAdapter
         'resources',
         'item',
         'craftingStation',
-        'shared'
+        'sharedData',
+        'skillType',
+        'itemType',
+        'animationState',
+        'statusAttribute'
     ];
 
     /**
@@ -34,7 +43,7 @@ class JsonAdapter
     {
         // dump("check member name: $name");
         $name = (str_contains($name, 'resItem')) ? 'item' : $name;
-        $name = (str_contains($name, 'shared')) ? 'shared_data' : $name;
+        $name = (str_contains($name, 'shared')) ? 'sharedData' : $name;
         $name = ($name === 'm_name') ? 'interpolated_name' : $name;
 
         return (substr($name, 0, 2) === 'm_') ? substr($name, 2) : $name;
@@ -68,7 +77,7 @@ class JsonAdapter
         return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
     }
 
-    public static function mapClassName($name)
+    public static function mapClassName($name, $namespace='App\Models\\')
     {
         // dump("check class name: $name");
         if (class_exists($name)) {
@@ -76,7 +85,7 @@ class JsonAdapter
         }
 
         $name = self::convertMemberName($name);
-        $fqcname = 'App\Models\\'.ucwords($name);
+        $fqcname = $namespace.ucwords($name);
 
         // exact class name
         if (class_exists($fqcname)) {
@@ -88,11 +97,11 @@ class JsonAdapter
         }
         // is recipe object
         if (str_contains($name, 'Recipe')) {
-            return 'App\Models\\'.'Recipe';
+            return $namespace.'Recipe';
         }
         // is Item
         if (str_contains($name, 'resItem')) {
-            return 'App\Models\\'.'Item';
+            return $namespace.'Item';
         }
 
         return null;
@@ -105,23 +114,41 @@ class JsonAdapter
         $className = self::mapClassName($className);
         // dump("fixed name: $className");
         if (is_array($data)) {
+            if (array_key_exists('m_itemData', $data) && !empty($data['m_itemData'])) {
+                // flatten itemData for items
+                $data = array_merge($data, $data['m_itemData']);
+                // remove old itemData
+                unset($data['m_itemData']);
+                dump("ITEMDATA MERGED: ", $data);
+            }
             // convert property names to correct names
             foreach ($data as $key => $val) {
-                if (is_array($val)) {
-                    $keyClass = self::mapClassName($key);
-                    dump("key: $key, class: $keyClass");
-                    if (class_exists($keyClass)) {
-                        dump("### EXISTS! create $keyClass with val ###");
-                        if (is_int(array_key_first($val))) {
-                            $val = self::createFromArray($val, $keyClass);
-                        } else {
-                            $val = self::createObject($keyClass, $val);
-                        }
-                        $data[$key] = $val;
-                        // dump("data[key]: $key", $data[$key]);
-                        // dump("val: ", $val);
+                // look for Model
+                $keyClass = self::mapClassName($key);
+                dump("key: $key, class: $keyClass");
+                // find the class for this property
+                if (class_exists($keyClass)) {
+                    dump("### EXISTS! create $keyClass with val ###");
+                    if (is_array($val) && is_int(array_key_first($val))) {
+                        $val = self::createFromArray($val, $keyClass);
+                    } else {
+                        $val = self::createObject($keyClass, $val);
+                    }
+                    // $data[$key] = $val;
+                // dump("data[key]: $key", $data[$key]);
+                    // dump("val: ", $val);
+                } else {
+                    // look for enums
+                    $enumName = self::mapClassName($key, 'App\Enums\\');
+                    if (class_exists($enumName)) {
+                        $enumVar = strtoupper($val);
+                        dump("### ENUM FOUND $enumName :: $enumVar ### ".constant("$enumName::$enumVar"));
+                        // use constant() to fix 'undeclared static constant' error
+                        $val = constant("$enumName::$enumVar");
+                        dump("data[key]: $key", $data[$key]);
                     }
                 }
+
                 // save key as the nice name but don't overwrite another existing key
                 if (self::convertMemberName($key) !== null
                     && !in_array(self::convertMemberName($key), array_keys($data))) {

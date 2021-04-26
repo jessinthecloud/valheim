@@ -38,7 +38,7 @@ class CreateRecipesTable extends Migration
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name')->unique();
+            $table->string('interpolated_name')->unique();
             $table->string('name_EN')->nullable();
             $table->string('description')->nullable();
             $table->string('description_EN')->nullable();
@@ -90,6 +90,9 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->string('name')->unique();
             // $table->string('name_EN')->nullable();
+            $table->integer('quality')->nullable();
+            $table->integer('variant')->nullable();
+            $table->integer('durability')->nullable();
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             $table->timestamps();
         });
