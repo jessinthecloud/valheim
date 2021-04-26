@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\JsonAdapter;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,23 +19,6 @@ class CraftingStation extends Model
      */
     public static $ignore = [];
 
-    /*public string $name;
-    public string $name_EN;*/
-
-    /*public function __construct($data=null)
-    {
-        $this->name = $data['name'] ?? '';
-        $this->name_EN = $data['name_EN'] ?? $this->name;
-    }*/
-
-    /*public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = $value;
-    }
-    public function setName_ENAttribute($value)
-    {
-        $this->attributes['name_EN'] = $value;
-    }*/
 
     public function recipes()
     {
