@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\JsonAdapter;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,23 +25,6 @@ class Resource extends Model
         'item'
     ];
 
-    // public $item; // Item
-    /*public int $id;
-    public int $amount = 1;
-    public int $amountPerLevel = 1;*/
-
-    /*public function setAmountAttribute($value)
-    {
-        $this->attributes['amount'] = $value;
-    }
-    public function setAmountPerLevelAttribute($value)
-    {
-        $this->attributes['amountPerLevel'] = $value;
-    }
-    public function setResItemAttribute($value)
-    {
-        $this->attributes['resItem'] = $value;
-    }*/
 
     public function recipe()
     {
