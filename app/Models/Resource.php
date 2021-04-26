@@ -13,7 +13,19 @@ class Resource extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = ['recover','item'];
+    protected $guarded = ['item'];
+    /*
+        vars to remove if present in JSON
+        -- prevents table and relationship checking
+     */
+    public static $ignore = [
+    ];
+    /*
+        vars to ignore on updateOrCreate()
+     */
+    public static $ignoreInTable = [
+        'item'
+    ];
 
     // public $item; // Item
     /*public int $id;

@@ -14,6 +14,21 @@ class Recipe extends Model
     // empty array means nothing is locked down
     protected $guarded = ['resources', 'craftingStation', 'repairStation'];
 
+    /*
+        vars to remove if present in JSON
+        -- prevents table and relationship checking
+     */
+    public static $ignore = [];
+
+    /*
+        vars to ignore on updateOrCreate()
+     */
+    public static $ignoreInTable = [
+        'resources',
+        'craftingStation',
+        'repairStation'
+    ];
+
     /**
      * The model's default values for attributes.
      *
@@ -23,105 +38,6 @@ class Recipe extends Model
         'name_EN' => '',
     ];
 
-    /**
-    * The attributes that should be cast.
-    *
-    * @var array
-    *
-    protected $casts = [
-        'resources' => 'array',
-    ];
-
-    /**
-     * Store var in protected variable instead of attributes
-     * Because var is not set in attributes, Laravel will not try to save it to database
-     *
-    protected $resources;
-    protected $craftingStation;
-
-    /**
-     * Mutator method to set var's value
-     *
-    public function setResourcesAttribute($value)
-    {
-        $this->resources = $value;
-    }
-
-    /**
-     * Accessor method to retrieve var's value
-     *
-    public function getResourcesAttribute()
-    {
-        return $this->resources;
-    }
-
-
-    /* public int $id; // DB id
-     public string $name;
-     public string $name_EN; // English name
-     public string $internalName; // $this->name converted to InternalId for item name
-     public int $amount; // the number of items created from the recipe
-     public int $minStationLevel; // minimum station level needed to create item
-     public $craftingStation; // CraftingStation object/class used to create item
-     public $repairStation; // seems unused so far?
-     public array $resources; // array of Resource objects (which contain Item objects)
-*
-
-    public function __construct($data=null)
-    {
-        dump("*~*~*~*~*~*~*~*~*~*~*");
-        dump("RECIPE CLASS ");
-        dump($data);
-        dump("*~*~*~*~*~*~*~*~*~*~*");
-        // extract($data);
-        $this->name = $data['name'] ?? '';
-        $this->internalName = $data['itemName'] ?? JsonAdapter::internalName($this->name);
-        $this->name_EN = $data['name_EN'] ?? JsonAdapter::camelToEnglish($this->internalName);
-        $this->amount = $data['amount'] ?? 1;
-        $this->minStationLevel = $data['minStationLevel'] ?? 1;
-        if (isset($data['craftingStation'])) {
-            if (is_object($data['craftingStation'])) {
-                $this->craftingStation = $data['craftingStation'];
-            } else {
-                $this->craftingStation = JsonAdapter::createObject('craftingStation', $data['craftingStation']) ?? null;
-            }
-        } else {
-            $this->craftingStation = $this->craftingStation ?? null;
-        }
-
-        $resources = [];
-        if (isset($data['resources'])) {
-            foreach ($data['resources'] as $resource) {
-                $resources []= JsonAdapter::createObject('resource', $resource);
-            }
-        }
-        $this->resources = $resources;
-    }
-
-    /*public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = $value;
-    }
-    public function setName_ENAttribute($value)
-    {
-        $this->attributes['name_EN'] = $value;
-    }
-    public function setAmountAttribute($value)
-    {
-        $this->attributes['amount'] = $value;
-    }
-    public function setMinStationLevelAttribute($value)
-    {
-        $this->attributes['minStationLevel'] = $value;
-    }
-    public function setCraftingStationAttribute($value)
-    {
-        $this->attributes['craftingStation'] = $value;
-    }
-    public function setResourcesAttribute($value)
-    {
-        $this->attributes['resources'] = $value;
-    }*/
 
     public function craftingStation()
     {

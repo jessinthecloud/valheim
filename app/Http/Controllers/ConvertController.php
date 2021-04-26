@@ -79,6 +79,7 @@ class ConvertController extends Controller
         dump($recipes);
         foreach ($recipes as $recipe) {
             dump($recipe->resources);
+            dump($recipe->craftingStation);
             // dump($recipe->name);
             // dump($recipe->getAttributes());
             /* if (Recipe::where('name', $recipe->name)->first()) {

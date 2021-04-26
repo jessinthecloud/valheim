@@ -15,6 +15,12 @@ class CraftingStation extends Model
     // empty array means nothing is locked down
     protected $guarded = [];
 
+    /*
+        vars to remove if present in JSON
+        -- prevents table and relationship checking
+     */
+    public static $ignore = [];
+
     /*public string $name;
     public string $name_EN;*/
 

@@ -15,6 +15,19 @@ class Item extends Model
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
     protected $guarded = ['itemData', 'sharedData'];
+    /*
+        vars to remove if present in JSON
+        -- prevents table and relationship checking
+     */
+    public static $ignore = [
+    ];
+    /*
+        vars to ignore on updateOrCreate()
+     */
+    public static $ignoreInTable = [
+        'itemData',
+        'sharedData'
+    ];
 
     /**
      * The model's default values for attributes.

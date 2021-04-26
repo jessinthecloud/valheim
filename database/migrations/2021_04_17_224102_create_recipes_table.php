@@ -21,16 +21,25 @@ class CreateRecipesTable extends Migration
             $table->timestamps();
         });
 
+        Schema::create('repair_stations', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('interpolated_name')->nullable();
+            $table->string('name_EN');
+            $table->timestamps();
+        });
+
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
             $table->string('name_EN');
+            $table->boolean('enabled')->default(true);
             $table->string('internalName')->nullable()->unique();
             $table->tinyInteger('amount');
             $table->tinyInteger('minStationLevel');
 
             $table->foreignId('crafting_station_id')->nullable()->constrained();
-            // $table->foreignId('repairStation')->references('id')->on('repair_stations')->nullable();
+            $table->foreignId('repair_station_id')->nullable()->constrained();
 
             $table->timestamps();
         });
@@ -45,7 +54,7 @@ class CreateRecipesTable extends Migration
             // enums
             $table->float('skillType')->nullable();
             $table->float('itemType')->nullable();
-            $table->tinyInteger('animation_state')->nullable();
+            $table->string('animationState')->nullable();
 
             $table->string('ammoType')->nullable();
             $table->float('armor')->nullable();
@@ -56,9 +65,10 @@ class CreateRecipesTable extends Migration
             $table->float('blockPower')->nullable();
             $table->float('blockPowerPerLevel')->nullable();
             $table->float('canBeReparied')->nullable();
-            $table->string('dlc')->nullable();
             $table->float('deflectionForce')->nullable();
             $table->float('deflectionForcePerLevel')->nullable();
+            $table->boolean('destroyBroken')->default(false);
+            $table->string('dlc')->nullable();
             $table->float('dodgeable')->nullable();
             $table->float('durabilityDrain')->nullable();
             $table->float('durabilityPerLevel')->nullable();
@@ -72,17 +82,32 @@ class CreateRecipesTable extends Migration
             $table->float('foodRegen')->nullable();
             // total stamina granted when eaten
             $table->float('foodStamina')->nullable();
+            $table->boolean('helmetHideHair')->default(true);
+            $table->string('holdAnimationState')->nullable();
+            $table->float('holdDurationMin')->default(0);
+            $table->float('holdStaminaDrain')->default(0);
             $table->float('maxDurability')->nullable();
             // max upgradeable level
             $table->tinyInteger('maxQuality')->nullable();
             // max number you can stack
-            $table->tinyInteger('maxStackSize')->nullable();
-            $table->boolean('teleportable')->nullable();
-            $table->boolean('questItem')->nullable();
+            $table->tinyInteger('maxStackSize')->default(1);
+            $table->float('movementModifier')->default(0);
+            $table->boolean('questItem')->default(false);
+            $table->boolean('teleportable')->default(true);
+            $table->float('timedBlockBonus')->default(1.5);
+            $table->tinyInteger('toolTier')->nullable();
+            $table->boolean('useDurability')->nullable();
+            $table->float('useDurabilityDrain')->default(1);
             $table->integer('value')->nullable();
             $table->integer('variants')->nullable();
             // weight of single item
-            $table->float('weight')->nullable();
+            $table->float('weight')->default('1');
+            // status effects -- not sure of type, is StatusEffect in C#
+            $table->integer('attackStatusEffect')->nullable();
+            $table->integer('consumeStatusEffect')->nullable();
+            $table->integer('equipStatusEffect')->nullable();
+            $table->integer('setStatusEffect')->nullable();
+
 
             $table->timestamps();
         });
@@ -99,8 +124,9 @@ class CreateRecipesTable extends Migration
 
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
-            $table->tinyInteger('amount');
-            $table->tinyInteger('amountPerLevel');
+            $table->tinyInteger('amount')->default(1);
+            $table->tinyInteger('amountPerLevel')->default(1);
+            $table->boolean('recover')->default(true);
             $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('recipe_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
@@ -127,5 +153,6 @@ class CreateRecipesTable extends Migration
         Schema::dropIfExists('shared_data');
         Schema::dropIfExists('resource');
         Schema::dropIfExists('crafting_stations');
+        Schema::dropIfExists('repair_stations');
     }
 }

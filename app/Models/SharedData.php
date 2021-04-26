@@ -18,7 +18,32 @@ class SharedData extends Model
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
     protected $guarded = [
-        'trophyPos', // ignore
+        // ignore
+
+        // end ignore
+    ];
+    /*
+        vars to remove if present in JSON
+        -- prevents table and relationship checking
+     */
+    public static $ignore = [
+        'm_aiAttackInterval',
+        'm_aiAttackMaxAngle',
+        'm_aiAttackRange',
+        'm_aiAttackRangeMin',
+        'm_aiPrioritized',
+        'm_aiTargetType',
+        'm_aiWhenFlying',
+        'm_aiWhenSwiming',
+        'm_aiWhenWalking',
+        'm_foodColor',
+        'm_setName',
+        'm_setSize',
+        'm_damageModifiers',
+        'm_trophyPos',
+    ];
+
+    public static $ignoreInTable = [
     ];
 
     ///////////////////////

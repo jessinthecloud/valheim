@@ -107,12 +107,24 @@ class JsonAdapter
         return null;
     }
 
+    public static function removeIgnored($className, $data, $ignore)
+    {
+        dump(" !! REMOVING IGNORED !!
+ignore in $className: ", array_flip($ignore));
+        dump("keep: ", array_diff_key($data, array_flip($ignore)));
+        return array_diff_key($data, array_flip($ignore));
+    }
+
     public static function createObject($className, $data)
     {
         dump("*~* CREATING $className (".self::mapClassName($className).")*~*");
         dump($data);
         $className = self::mapClassName($className);
         // dump("fixed name: $className");
+        if (!empty($className::$ignore)) {
+            // remove ignored properties
+            $data = self::removeIgnored($className, $data, $className::$ignore);
+        }
         if (is_array($data)) {
             if (array_key_exists('m_itemData', $data) && !empty($data['m_itemData'])) {
                 // flatten itemData for items
@@ -121,6 +133,7 @@ class JsonAdapter
                 unset($data['m_itemData']);
                 dump("ITEMDATA MERGED: ", $data);
             }
+
             // convert property names to correct names
             foreach ($data as $key => $val) {
                 // look for Model
@@ -173,16 +186,25 @@ class JsonAdapter
         dump("-----------------------------
 NEW DATA: ", $data, "
 ------------------------------------");
-        if (isset($className)) {
+        if (isset($className) && !empty($data)) {
             $msg = " @@@ $className is being initialized! @@@";
             if (isset($data['name'])) {
                 $msg .= " -- name: {$data['name']}";
             }
             $msg .= " -- with data: ";
             dump($msg);
+            // make data for table (props that match columns)
+            if (!is_object($data) && !empty($className::$ignoreInTable)) {
+                // remove properties that aren't directly DB columns
+                $dataForTable = self::removeIgnored($className, $data, $className::$ignoreInTable);
+                dump("-- FOR TABLE: ", $dataForTable);
+            } else {
+                $dataForTable = $data ?? [];
+            }
+            dump($dataForTable);
 
-            dump($data);
-            $object = !is_object($data) ? $className::create($data) : $data;
+            $object = !is_object($dataForTable) ? $className::updateOrCreate($dataForTable) : $dataForTable;
+
             dump("BASE OBJ CREATED: ", $object);
             self::attachRelationsTo($object, $data);
             dump("$$$ $className FINISHED $$$");
