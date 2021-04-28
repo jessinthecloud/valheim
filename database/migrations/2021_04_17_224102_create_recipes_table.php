@@ -65,7 +65,7 @@ class CreateRecipesTable extends Migration
 
             $table->string('ammoType')->default("");
             $table->float('armor')->default(10);
-            $table->float('armorPerLevel')->deafult(1);
+            $table->float('armorPerLevel')->default(1);
             $table->float('attackForce')->default(30);
             $table->float('backstabBonus')->default(4);
             $table->float('blockable')->nullable();
@@ -93,7 +93,7 @@ class CreateRecipesTable extends Migration
             $table->string('holdAnimationState')->default("");
             $table->float('holdDurationMin')->default(0);
             $table->float('holdStaminaDrain')->default(0);
-            $table->float('maxDurability')->deafult(100);
+            $table->float('maxDurability')->default(100);
             // max upgradeable level
             $table->tinyInteger('maxQuality')->default(1);
             // max number you can stack
