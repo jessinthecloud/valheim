@@ -45,6 +45,10 @@ class Item extends Model
     */
     // public $shared_data; // ItemSharedData
 
+    public function slug()
+    {
+        return Str::slug($this->name);
+    }
 
     public function recipes()
     {

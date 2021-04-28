@@ -16,6 +16,7 @@ class CreateRecipesTable extends Migration
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('slug')->nullable();
             $table->string('interpolated_name')->nullable();
             $table->string('name_EN');
             // belong to Crafting station itself (data not in recipes json that we have)
@@ -28,9 +29,11 @@ class CreateRecipesTable extends Migration
             $table->timestamps();
         });
 
+        // is this needed?
         Schema::create('repair_stations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('slug')->nullable();
             $table->string('interpolated_name')->nullable();
             $table->string('name_EN');
             $table->timestamps();
@@ -39,6 +42,7 @@ class CreateRecipesTable extends Migration
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('slug')->nullable();
             $table->string('name_EN');
             $table->boolean('enabled')->default(true);
             $table->string('internalName')->nullable()->unique();
@@ -120,6 +124,7 @@ class CreateRecipesTable extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('slug')->nullable();
             // $table->string('name_EN')->nullable();
             $table->integer('quality')->default(1);
             $table->integer('variant')->nullable();

@@ -19,6 +19,10 @@ class CraftingStation extends Model
      */
     public static $ignore = [];
 
+    public function slug()
+    {
+        return Str::slug($this->name);
+    }
 
     public function recipes()
     {

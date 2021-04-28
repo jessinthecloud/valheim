@@ -37,6 +37,10 @@ class Recipe extends Model
         'name_EN' => '',
     ];
 
+    public function slug()
+    {
+        return Str::slug($this->name);
+    }
 
     public function craftingStation()
     {

@@ -13,9 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Valheim ------------------------------------------------------------------
+// Convert ------------------------------------------------------------------
 
-Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
 Route::get(
     '/convert/',
     [App\Http\Controllers\ConvertController::class, 'index']
@@ -36,5 +35,10 @@ Route::get(
     [App\Http\Controllers\ConvertController::class, 'convert']
 )->name('convert.name');
 
+// END Convert ------------------------------------------------------------------
+
+Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
+
 Route::get('/recipe', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipe.index');
+
 Route::get('/item', [App\Http\Controllers\ItemController::class, 'index'])->name('item.index');
