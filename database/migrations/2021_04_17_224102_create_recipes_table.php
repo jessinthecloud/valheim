@@ -18,6 +18,13 @@ class CreateRecipesTable extends Migration
             $table->string('name')->unique();
             $table->string('interpolated_name')->nullable();
             $table->string('name_EN');
+            // belong to Crafting station itself (data not in recipes json that we have)
+            // $table->float('discoverRange')->default(4);
+            // $table->float('rangeBuild')->default(10);
+            // $table->boolean('craftRequireRoof')->default(true);
+            // $table->boolean('craftRequireFire')->default(true);
+            // $table->float('useTimer')->default(10);
+            // $table->float('useDistance')->default(2);
             $table->timestamps();
         });
 
@@ -35,8 +42,8 @@ class CreateRecipesTable extends Migration
             $table->string('name_EN');
             $table->boolean('enabled')->default(true);
             $table->string('internalName')->nullable()->unique();
-            $table->tinyInteger('amount');
-            $table->tinyInteger('minStationLevel');
+            $table->tinyInteger('amount')->default(1);
+            $table->tinyInteger('minStationLevel')->default(1);
 
             $table->foreignId('crafting_station_id')->nullable()->constrained();
             $table->foreignId('repair_station_id')->nullable()->constrained();
@@ -52,28 +59,28 @@ class CreateRecipesTable extends Migration
             $table->string('description')->nullable();
             $table->string('description_EN')->nullable();
             // enums
-            $table->float('skillType')->nullable();
-            $table->float('itemType')->nullable();
-            $table->string('animationState')->nullable();
+            $table->float('skillType')->default(1); // Skills.SkillType.Swords
+            $table->float('itemType')->default(0x10);
+            $table->string('animationState')->default('OneHanded');
 
-            $table->string('ammoType')->nullable();
-            $table->float('armor')->nullable();
-            $table->float('armorPerLevel')->nullable();
-            $table->float('attackForce')->nullable();
-            $table->float('backstabBonus')->nullable();
+            $table->string('ammoType')->default("");
+            $table->float('armor')->default(10);
+            $table->float('armorPerLevel')->deafult(1);
+            $table->float('attackForce')->default(30);
+            $table->float('backstabBonus')->default(4);
             $table->float('blockable')->nullable();
-            $table->float('blockPower')->nullable();
+            $table->float('blockPower')->default(10);
             $table->float('blockPowerPerLevel')->nullable();
-            $table->float('canBeReparied')->nullable();
+            $table->float('canBeReparied')->default(true);
             $table->float('deflectionForce')->nullable();
             $table->float('deflectionForcePerLevel')->nullable();
-            $table->boolean('destroyBroken')->default(false);
+            $table->boolean('destroyBroken')->default(true);
             $table->string('dlc')->nullable();
             $table->float('dodgeable')->nullable();
-            $table->float('durabilityDrain')->nullable();
-            $table->float('durabilityPerLevel')->nullable();
+            $table->float('durabilityDrain')->default(1);
+            $table->float('durabilityPerLevel')->default(50);
             // how long it takes to equip item after selected
-            $table->float('equipDuration')->nullable();
+            $table->float('equipDuration')->default(1);
             // total HP granted when eaten
             $table->float('food')->nullable();
             // effects duration
@@ -83,16 +90,16 @@ class CreateRecipesTable extends Migration
             // total stamina granted when eaten
             $table->float('foodStamina')->nullable();
             $table->boolean('helmetHideHair')->default(true);
-            $table->string('holdAnimationState')->nullable();
+            $table->string('holdAnimationState')->default("");
             $table->float('holdDurationMin')->default(0);
             $table->float('holdStaminaDrain')->default(0);
-            $table->float('maxDurability')->nullable();
+            $table->float('maxDurability')->deafult(100);
             // max upgradeable level
-            $table->tinyInteger('maxQuality')->nullable();
+            $table->tinyInteger('maxQuality')->default(1);
             // max number you can stack
             $table->tinyInteger('maxStackSize')->default(1);
             $table->float('movementModifier')->default(0);
-            $table->boolean('questItem')->default(false);
+            $table->boolean('questItem')->nullable();
             $table->boolean('teleportable')->default(true);
             $table->float('timedBlockBonus')->default(1.5);
             $table->tinyInteger('toolTier')->nullable();
@@ -101,13 +108,12 @@ class CreateRecipesTable extends Migration
             $table->integer('value')->nullable();
             $table->integer('variants')->nullable();
             // weight of single item
-            $table->float('weight')->default('1');
+            $table->float('weight')->default(1);
             // status effects -- not sure of type, is StatusEffect in C#
             $table->integer('attackStatusEffect')->nullable();
             $table->integer('consumeStatusEffect')->nullable();
             $table->integer('equipStatusEffect')->nullable();
             $table->integer('setStatusEffect')->nullable();
-
 
             $table->timestamps();
         });
@@ -115,9 +121,9 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->string('name')->unique();
             // $table->string('name_EN')->nullable();
-            $table->integer('quality')->nullable();
+            $table->integer('quality')->default(1);
             $table->integer('variant')->nullable();
-            $table->integer('durability')->nullable();
+            $table->float('durability')->default(100);
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             $table->timestamps();
         });
