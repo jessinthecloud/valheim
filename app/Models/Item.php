@@ -45,6 +45,12 @@ class Item extends Model
     */
     // public $shared_data; // ItemSharedData
 
+    // split string into array on uppercase letter and turn it into string
+    public function name_EN()
+    {
+        return trim(implode(' ', preg_split('/(?=[A-Z])/', $this->name))) ?? $this->name;
+    }
+
     public function slug()
     {
         return Str::slug($this->name);

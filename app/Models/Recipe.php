@@ -42,6 +42,13 @@ class Recipe extends Model
         return Str::slug($this->name);
     }
 
+    // remove Recipe_ prefix
+    public function name_EN()
+    {
+        $this->name = trim(implode(' ', preg_split('/(?=[A-Z])/', $this->name))) ?? $this->name;
+        return (explode('_', $this->name)[1]) ?? $this->name;
+    }
+
     public function craftingStation()
     {
         return $this->belongsTo(CraftingStation::class);
