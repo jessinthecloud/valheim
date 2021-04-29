@@ -39,6 +39,28 @@ class CreateRecipesTable extends Migration
             $table->timestamps();
         });
 
+        Schema::create('status_effects', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('interpolated_name')->nullable();
+            $table->string('name_EN')->nullable();
+            $table->string('category')->nullable();
+            $table->string('tooltip')->nullable();
+            $table->string('tooltip_EN')->nullable();
+            $table->string('attributes')->nullable();
+            $table->string('startMessage')->nullable();
+            $table->string('startMessage_EN')->nullable();
+            $table->string('startMessageType')->default("TopLeft");
+            $table->string('stopMessage')->nullable();
+            $table->string('stopMessage_EN')->nullable();
+            $table->string('stopMessageType')->default("TopLeft");
+            $table->string('repeatMessage')->nullable();
+            $table->string('repeatMessage_EN')->nullable();
+            $table->string('repeatMessageType')->default("TopLeft");
+            $table->float('repeatInterval')->default(0);
+            $table->float('cooldown')->default(0);
+        });
+
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
@@ -58,7 +80,7 @@ class CreateRecipesTable extends Migration
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
 
-            $table->string('interpolated_name')->unique();
+            $table->string('interpolated_name');
             $table->string('name_EN')->nullable();
             $table->string('description')->nullable();
             $table->string('description_EN')->nullable();
@@ -101,7 +123,7 @@ class CreateRecipesTable extends Migration
             // max upgradeable level
             $table->tinyInteger('maxQuality')->default(1);
             // max number you can stack
-            $table->tinyInteger('maxStackSize')->default(1);
+            $table->smallInteger('maxStackSize')->default(1);
             $table->float('movementModifier')->default(0);
             $table->boolean('questItem')->nullable();
             $table->boolean('teleportable')->default(true);
@@ -113,11 +135,11 @@ class CreateRecipesTable extends Migration
             $table->integer('variants')->nullable();
             // weight of single item
             $table->float('weight')->default(1);
-            // status effects -- not sure of type, is StatusEffect in C#
-            $table->integer('attackStatusEffect')->nullable();
-            $table->integer('consumeStatusEffect')->nullable();
-            $table->integer('equipStatusEffect')->nullable();
-            $table->integer('setStatusEffect')->nullable();
+            // status effects -- are objects
+            $table->foreignId('attack_status_effect_id')->nullable()->references('id')->on('status_effects')->onDelete('cascade');
+            $table->foreignId('consume_status_effect_id')->nullable()->references('id')->on('status_effects')->onDelete('cascade');
+            $table->foreignId('equip_status_effect_id')->nullable()->references('id')->on('status_effects')->onDelete('cascade');
+            $table->foreignId('set_status_effect_id')->nullable()->references('id')->on('status_effects')->onDelete('cascade');
 
             $table->timestamps();
         });
@@ -163,6 +185,7 @@ class CreateRecipesTable extends Migration
         Schema::dropIfExists('item');
         Schema::dropIfExists('shared_data');
         Schema::dropIfExists('resource');
+        Schema::dropIfExists('status_effects');
         Schema::dropIfExists('crafting_stations');
         Schema::dropIfExists('repair_stations');
     }
