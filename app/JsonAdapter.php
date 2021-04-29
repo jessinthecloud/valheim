@@ -17,7 +17,11 @@ class JsonAdapter
         'skillType',
         'itemType',
         'animationState',
-        'statusAttribute'
+        'statusAttribute',
+        'attackStatusEffect',
+        'consumeStatusEffect',
+        'equipStatusEffect',
+        'setStatusEffect',
     ];
 
     /**
@@ -41,7 +45,7 @@ class JsonAdapter
      */
     public static function convertMemberName(string $name)
     {
-        // dump("check member name: $name");
+        // // dump("check member name: $name");
         $name = (str_contains($name, 'resItem')) ? 'item' : $name;
         $name = (str_contains($name, 'shared')) ? 'sharedData' : $name;
         $name = ($name === 'm_name') ? 'interpolated_name' : $name;
@@ -79,7 +83,7 @@ class JsonAdapter
 
     public static function mapClassName($name, $namespace='App\Models\\')
     {
-        // dump("check class name: $name");
+        // // dump("check class name: $name");
         if (class_exists($name)) {
             return $name;
         }
@@ -96,12 +100,17 @@ class JsonAdapter
             return rtrim($fqcname, 's');
         }
         // is recipe object
-        if (str_contains($name, 'Recipe')) {
+        if (str_contains(strtolower($name), 'recipe')) {
             return $namespace.'Recipe';
         }
         // is Item
-        if (str_contains($name, 'resItem')) {
+        if (str_contains(strtolower($name), 'resitem')) {
             return $namespace.'Item';
+        }
+
+        // is statusEffect
+        if (str_contains(strtolower($name), 'statuseffect')) {
+            return $namespace.'StatusEffect';
         }
 
         return null;
@@ -109,19 +118,19 @@ class JsonAdapter
 
     public static function removeIgnored($className, $data, $ignore)
     {
-        dump(" !! REMOVING IGNORED !!
-ignore in $className: ", array_flip($ignore));
-        dump("keep: ", array_diff_key($data, array_flip($ignore)));
+        // dump(" !! REMOVING IGNORED !!
+        // ignore in $className: ", array_flip($ignore));
+        // dump("keep: ", array_diff_key($data, array_flip($ignore)));
         return array_diff_key($data, array_flip($ignore));
     }
 
     public static function createObject($className, $data)
     {
-        dump("*~* CREATING $className (".self::mapClassName($className).")*~*");
-        dump($data);
+        // dump("*~* CREATING $className (".self::mapClassName($className).")*~*");
+        // dump($data);
         $className = self::mapClassName($className);
         // dump("fixed name: $className");
-        if (!empty($className::$ignore)) {
+        if (!empty($className::$ignore) && !empty($data)) {
             // remove ignored properties
             $data = self::removeIgnored($className, $data, $className::$ignore);
         }
@@ -131,34 +140,34 @@ ignore in $className: ", array_flip($ignore));
                 $data = array_merge($data, $data['m_itemData']);
                 // remove old itemData
                 unset($data['m_itemData']);
-                dump("ITEMDATA MERGED: ", $data);
+                // dump("ITEMDATA MERGED: ", $data);
             }
 
             // convert property names to correct names
             foreach ($data as $key => $val) {
                 // look for Model
                 $keyClass = self::mapClassName($key);
-                dump("key: $key, class: $keyClass");
+                // dump("key: $key, class: $keyClass");
                 // find the class for this property
                 if (class_exists($keyClass)) {
-                    dump("### EXISTS! create $keyClass with val ###");
+                    // dump("### EXISTS! create $keyClass with val ###");
                     if (is_array($val) && is_int(array_key_first($val))) {
                         $val = self::createFromArray($val, $keyClass);
                     } else {
                         $val = self::createObject($keyClass, $val);
                     }
                     // $data[$key] = $val;
-                // dump("data[key]: $key", $data[$key]);
+                    // dump("data[key]: $key", $data[$key]);
                     // dump("val: ", $val);
                 } else {
                     // look for enums
                     $enumName = self::mapClassName($key, 'App\Enums\\');
                     if (class_exists($enumName)) {
                         $enumVar = strtoupper($val);
-                        dump("### ENUM FOUND $enumName :: $enumVar ### ".constant("$enumName::$enumVar"));
+                        // dump("### ENUM FOUND $enumName :: $enumVar ### ".constant("$enumName::$enumVar"));
                         // use constant() to fix 'undeclared static constant' error
                         $val = constant("$enumName::$enumVar");
-                        dump("data[key]: $key", $data[$key]);
+                        // dump("data[key]: $key", $data[$key]);
                     }
                 }
 
@@ -170,22 +179,22 @@ ignore in $className: ", array_flip($ignore));
                     $newkey = $key;
                 }
 
-                // dump("newkey: $newkey");
+                // // dump("newkey: $newkey");
                 // if ($newkey !== 'itemData') {
                 $data [$newkey]= $val;
                 // }
-                dump("data[NEWkey]: $newkey", $data[$newkey]);
-                dump("val: ", $val);
+                // dump("data[NEWkey]: $newkey", $data[$newkey]);
+                // dump("val: ", $val);
 
                 if ($key !== $newkey) {
                     unset($data[$key]);
                 }
-                // dump("=-=-=-=-=-=-=");
+                // // dump("=-=-=-=-=-=-=");
             } // endforeach
         } // end if is array
-        dump("-----------------------------
-NEW DATA: ", $data, "
-------------------------------------");
+        // dump("-----------------------------
+// NEW DATA: ", $data, "
+// ------------------------------------");
         if (isset($className) && !empty($data)) {
             $msg = " @@@ $className is being initialized! @@@";
             if (isset($data['name'])) {
@@ -197,16 +206,17 @@ NEW DATA: ", $data, "
             if (!is_object($data) && !empty($className::$ignoreInTable)) {
                 // remove properties that aren't directly DB columns
                 $dataForTable = self::removeIgnored($className, $data, $className::$ignoreInTable);
-                dump("-- FOR TABLE: ", $dataForTable);
+            // dump("-- FOR TABLE: ", $dataForTable);
             } else {
                 $dataForTable = $data ?? [];
             }
-            dump($dataForTable);
+            // dump($dataForTable);
 
             $object = !is_object($dataForTable) ? $className::updateOrCreate($dataForTable) : $dataForTable;
 
-            dump("BASE OBJ CREATED: ", $object);
+            // dump("BASE OBJ CREATED: ", $object);
             self::attachRelationsTo($object, $data);
+            $object->save();
             dump("$$$ $className FINISHED $$$");
             return $object;
         } // if classname set
@@ -215,23 +225,20 @@ NEW DATA: ", $data, "
 
     public static function attachRelationsTo($object, $data)
     {
-        dump("checking for relations in data: ", $data);
+        // dump("checking for relations in data: ", $data, ' from set: ', self::$childPropNames);
         $vars = $object->getGuarded();
-        dump("CHECKING FOR ATTACHABLE VARS: ", $vars);
+        // dump("CHECKING FOR ATTACHABLE VARS: ", $vars);
 
         foreach ($vars as $propName) {
-            dump("propname: $propName");
+            // dump("propname: $propName");
             if (in_array($propName, self::$childPropNames)) {
-                dump("CHILD FOUND");
-                // TODO: query for this child and save to $object
+                dump("CHILD $propName FOUND");
                 if (isset($data[$propName])) {
-                    dump($data[$propName]);
+                    // dump($data[$propName]);
                     self::determineAttach($object, $data[$propName], $propName);
                 } else {
                     dump("child is empty");
                 }
-                // dump("attacher: $attacher");
-                // $object->$attacher()->save($value);
             }
         } // end foreach
 
@@ -246,10 +253,10 @@ NEW DATA: ", $data, "
             if (is_array($child)) {
                 $children = [];
                 foreach ($child as $c) {
-                    dump("child", $c);
+                    // dump("child", $c);
                     if (is_object($c)) {
                         $children []= $c;
-                        dump("attaching child ", $c);
+                        // dump("attaching child ", $c);
                         $object->$propName()->save($c);
                     // $object->$propName()->create($c);
                     // $object->$propName()->associate($c);
@@ -257,26 +264,26 @@ NEW DATA: ", $data, "
                         /*$object->$propName = $c;
                         $object->save();*/
                     } else {
-                        $children []= self::mapClassName($propName)::create($c);
-                        dump("attaching child ", end($children));
+                        $children []= self::mapClassName($propName)::updateOrCreate($c);
+                        // dump("attaching child ", end($children));
                         $object->$propName()->save(end($children));
                         // $object->$propName()->attach(end($children));
                         // $object->$propName()->create(end($children));
                         // $object->$propName()->associate(end($children));
                     }
                 }
-                dump("many to many -- $propName");
+                dump("many to many -- $propName -- NOT DONE");
                 // dump($children);
                 // dump(array_column($children, 'id'));
                 return; // $object->$propName()->attach(array_column($children, 'id'));
             }
-            dump("one to many");
+            // dump("one to many");
             return $object->$propName()->save($child);
         }
         // one to ?
         dump("one to one $propName");
         if (!is_object($child)) {
-            $child = self::mapClassName($propName)::create($child);
+            $child = self::mapClassName($propName)::updateOrCreate($child);
         }
         return $object->$propName()->associate($child);
     }
@@ -296,17 +303,17 @@ NEW DATA: ", $data, "
                         // item is array
                         if (is_int(array_key_first($item))) {
                             // key is objectname, item is array of these objects");
-                            dump('+++ INSIDE ::: is array of OBJECTS +++
-createFromArray($item, $key, $objarray)');
-                            dump($item, 'key: '.$key, $objarray);
+                            // dump('+++ INSIDE ::: is array of OBJECTS +++
+                            // createFromArray($item, $key, $objarray)');
+                            // dump($item, 'key: '.$key, $objarray);
                             return self::createFromArray($item, $key, $objarray);
                         } else {
                             // item is ASSOC ARRAY");
 
                             // key is objectname, item is array of obj properties
-                            dump('+++ INSIDE ::: is ASSOC array+++
-createObject($key, $item)');
-                            dump('key: '.$key, $item);
+                            // dump('+++ INSIDE ::: is ASSOC array+++
+                            // createObject($key, $item)');
+                            // dump('key: '.$key, $item);
                             // create object
                             return self::createObject($key, $item);
                         }
@@ -315,9 +322,9 @@ createObject($key, $item)');
                         // key is property name, item is property value
                         // create obj from all data this loop
                         // should probably check each property for class names instead
-                        dump('+++ INSIDE ::: is NOT array +++
-createObject($key, $item)');
-                        dump('key: '.$key, $item);
+                        // dump('+++ INSIDE ::: is NOT array +++
+                        // createObject($key, $item)');
+                        // dump('key: '.$key, $item);
                         return self::createObject($name, $data);
                     }
                 } else {
@@ -325,9 +332,9 @@ createObject($key, $item)');
 
                     if (is_array($item)) {
                         // item is array
-                        dump('+++ INSIDE ::: is array +++
-createFromArray($item, $key, $objarray)');
-                        dump($item, 'key: '.$key, $objarray);
+                        // dump('+++ INSIDE ::: is array +++
+                        // createFromArray($item, $key, $objarray)');
+                        // dump($item, 'key: '.$key, $objarray);
                         // item is array of obj properties
                         $objarray []= self::createFromArray($item, $name, $objarray);
                     } else {
@@ -346,8 +353,8 @@ createFromArray($item, $key, $objarray)');
     public static function convertFromModel($model)
     {
         $type = $model->getTable();
-        dump($type);
-        dump("========");
+        // dump($type);
+        // dump("========");
         $contents = self::decodeJsonFile(
             storage_path('app\\'.strtolower($type).'.json'),
             true
@@ -359,8 +366,8 @@ createFromArray($item, $key, $objarray)');
                 break;
             }
             foreach ($content as $key => $value) {
-                dump("$value === $name");
-                dump($value === $name);
+                // dump("$value === $name");
+                // dump($value === $name);
                 if ($value === $name) {
                     $found = true;
                     break;
@@ -372,113 +379,7 @@ createFromArray($item, $key, $objarray)');
                 break;
             }
         }
-        dump($contents);
+//         dump($contents);
         die;
     }
-
-    /*
-    ///////////////////////
-    public static function createFromJson($data, object $parent=null)
-    {
-        // associative arrays are objects
-        // numeric arrays are arrays
-
-        dump($data);
-
-        dump("//////////////////////////////////////////////////////");
-
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveArrayIterator($data),
-            \RecursiveIteratorIterator::SELF_FIRST
-        );
-        $i=0;
-
-        $className = $parent ? get_class($parent) : get_called_class();
-        $parent = $parent ?? new $className();
-        dump("PARENT: $className");
-        dump("//////////////////////////////////////////////////////");
-
-        foreach ($iterator as $key => $leaf) {
-
-            // remove m_ prefix if exists
-            if (!is_int($key)) {
-                $key = self::convertMemberName($key);
-                if ($i > 0) {
-                    $className = self::mapClassName($key) ?? $className;
-                }
-            }
-
-            if (isset($className) && class_exists($className)/*
-                && $className !== get_class($parent)*) {
-                if (is_int($key)) {
-                    dump('END OF CHILD LEAF '.$className);
-                    dump(get_class($parent)."->$key = $className");
-                    dump($leaf);
-                    return self::createFromJson($leaf, new $className());
-                } elseif ($leaf !== null) {
-                    if (is_array($leaf)) {
-                        // will be array of this child class
-                        // dd(array_shift($leaf));
-                        if (is_int(array_key_first($leaf))) {
-                            dump("Array of CHILD: $className");
-                            dump(get_class($parent)."->$key []= $className");
-                            $parent->$key []= self::createFromJson(array_shift($leaf), new $className());
-                        } else {
-                            dump("END OF LEAF");
-                            dump(get_class($parent)."->$key = $className");
-                            $parent->$key = self::createFromJson($leaf, new $className());
-                        }
-                    } elseif ($className !== get_class($parent)) {
-                        dump(get_class($parent)."->$key = $className");
-                        $parent->$key = new $className();
-                    }
-                } /*else {
-                    dump(get_class($parent)."->$key = $leaf");
-                    $parent->$key = $leaf;
-                }*
-            } elseif (!is_int($key)) {
-                echo "NO CLASS FOUND for $key";
-                dump(get_class($parent)."->$key = $leaf");
-                $parent->$key = $leaf;
-            } else {
-                // key is int
-            }
-
-            if (!is_int($key) && !is_array($leaf)) {
-                // non-class key
-                dump(get_class($parent)."->$key = $leaf");
-                $parent->$key = $leaf;
-            }
-            /*dump('Key: '.$key."
-Leaf: ");
-            dump($leaf);*
-
-
-            echo "=======================";
-
-            /* if (is_array($leaf) && !is_int($key) && !is_int(array_key_first($leaf))) {
-                 // this is an object (assoc array) key is obj name
-                 echo "<BR>$key Is an obj<BR>";
-                 // dump($key);
-                 dump($leaf);
-                 echo "====";
-             } elseif (is_array($leaf) && !is_int($key)) {
-                 // this is an array of objects (assoc array) key is obj name
-                 echo "<BR>Array of $key obj<BR>";
-                 // dump($key);
-                 dump($leaf);
-                 echo "====";
-                 return self::createFromJson($leaf);
-             } elseif (!is_array($leaf)) {
-                 // dump($key);
-                 dump($leaf);
-                 echo "====";
-             }
-             *
-            $i++;
-        }
-
-        return $parent;
-
-    } // */
 }

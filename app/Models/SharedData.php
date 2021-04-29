@@ -44,7 +44,14 @@ class SharedData extends Model
         'm_trophyPos',
     ];
 
+    /*
+       vars to ignore on updateOrCreate()
+    */
     public static $ignoreInTable = [
+        'attackStatusEffect',
+        'consumeStatusEffect',
+        'equipStatusEffect',
+        'setStatusEffect',
     ];
 
     public function items()
