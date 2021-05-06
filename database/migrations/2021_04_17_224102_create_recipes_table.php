@@ -13,9 +13,11 @@ class CreateRecipesTable extends Migration
      */
     public function up()
     {
+        // potential tables:
         // game_objects
         // pieces
         // attacks
+        // effect_lists
 
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
@@ -57,10 +59,12 @@ class CreateRecipesTable extends Migration
             $table->id();
             // name of item being created
             $table->string('name')->unique();
+            // slug of name
             $table->string('slug')->nullable();
+            // translated name
             $table->string('localized_name')->nullable();
             $table->boolean('enabled')->default(true);
-            $table->string('internal_name')->nullable()->unique();
+            // amount of items the recipe creates
             $table->tinyInteger('amount')->default(1);
             $table->tinyInteger('min_station_level')->default(1);
 
@@ -188,10 +192,10 @@ class CreateRecipesTable extends Migration
             $table->string('slug')->nullable();
             $table->string('localized_name')->nullable();
             $table->string('name')->unique();
-            $table->integer('stack')->default(1);
-            $table->integer('quality')->default(1);
-            $table->integer('variant')->nullable();
-            $table->float('durability')->default(100);
+            // $table->integer('stack')->default(1);
+            // $table->integer('quality')->default(1);
+            // $table->integer('variant')->nullable();
+            // $table->float('durability')->default(100);
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             // GameObject
             // $table->foreignId('drop_prefab_id')->nullable()->references('id')->on('game_objects');
