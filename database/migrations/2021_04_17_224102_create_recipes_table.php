@@ -37,22 +37,23 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name')->nullable();
-            $table->string('localized_name')->nullable();
+            // $table->string('localized_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();
-            $table->string('localized_tooltip')->nullable();
+            // $table->string('localized_tooltip')->nullable();
             $table->string('attributes')->nullable();
             $table->string('start_message')->nullable();
-            $table->string('localized_start_message')->nullable();
-            $table->string('start_message_type')->default("TopLeft");
+            // $table->string('localized_start_message')->nullable();
+            // $table->string('start_message_type')->default("TopLeft");
             $table->string('stop_message')->nullable();
-            $table->string('localized_stop_message')->nullable();
-            $table->string('stop_message_type')->default("TopLeft");
+            // $table->string('localized_stop_message')->nullable();
+            // $table->string('stop_message_type')->default("TopLeft");
             $table->string('repeat_message')->nullable();
-            $table->string('localized_repeat_message')->nullable();
-            $table->string('repeat_message_type')->default("TopLeft");
+            // $table->string('localized_repeat_message')->nullable();
+            // $table->string('repeat_message_type')->default("TopLeft");
             $table->float('repeat_interval')->default(0);
             $table->float('cooldown')->default(0);
+            $table->string('activation_animation')->default("gpower");
         });
 
         Schema::create('recipes', function (Blueprint $table) {
