@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\JsonAdapter;
+
+use App\Enums\ItemType;
+use App\Enums\AnimationState;
+use App\Enums\DamageType;
+use App\Enums\SkillType;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ItemController;
 use App\Models\Recipe;
+use App\Models\Resource;
+use App\Models\CraftingStation;
 use App\Models\Item;
+use App\Models\SharedData;
 
 class ConvertController extends Controller
 {
@@ -21,10 +28,10 @@ class ConvertController extends Controller
     {
         dump("Convert: $name");
         if (file_exists('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json')) {
-            $contents = JsonAdapter::decodeJsonFile(
+            $contents = json_decode(file_get_contents(
                 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json',
                 true
-            );
+            ));
         } else {
             dump('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json'." doesn't exist.");
         }
@@ -43,11 +50,26 @@ class ConvertController extends Controller
 
         $json = json_decode(file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json'), true);
         dump($json);
-        foreach ($json as $recipe) {
-            Recipe::updateOrCreate(
-                ['name'=>$recipe['name']],
-                $recipe
+        foreach ($json as $recipe_info) {
+            $recipe = Recipe::updateOrCreate(
+                ['name'=>$recipe_info['name']],
+                $recipe_info
             );
+            // TODO: setup resources
+            if (!empty($recipe_info['resources'])) {
+                foreach ($recipe_info['resources'] as $resource_info) {
+                    $resource = Resource::create(
+                        $resource_info
+                    );
+                    // attach resource to recipe
+                    $resource->recipe()->associate($recipe);
+                    $resource->save();
+
+                    $item = Item::where('name', $resource_info['name'])->first();
+                    $resource->item()->associate($item);
+                    $resource->save();
+                } // end each resource
+            }
             // TODO: set crafting station
             // TODO: set repair station
         } // end foreach recipe
@@ -65,20 +87,39 @@ class ConvertController extends Controller
         }
 
         // decode json file to array
-        $json = json_decode(
+        $items = json_decode(
             file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\item-list.json'),
             true
         );
-        dump($json);
-        foreach ($json as $item) {
-            Item::updateOrCreate(
-                ['name'=>$item['name']],
-                $item
+        // dump($items);
+        foreach ($items as $item_info) {
+            $item = Item::updateOrCreate(
+                ['name'=>$item_info['name']],
+                $item_info
             );
             // TODO: set shared_data
-                // TODO: set damages
+            if (!empty($item_info['shared_data'])) {
+                dump($item_info['shared_data']);
+                // php is being very difficult about getting this value
+                $item_info['shared_data']['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($item_info['shared_data']['item_type']));
+                dump([
+                        'name' => $item_info['shared_data']['name'],
+                        'item_type' => $item_info['shared_data']['item_type'],
+                    ]);
+                $shared_data = SharedData::updateOrCreate(
+                    [
+                        'name' => $item_info['shared_data']['name'],
+                        'item_type' => $item_info['shared_data']['item_type'],
+                    ],
+                    $item_info['shared_data']
+                );
+                // attach to item
+                $item->sharedData()->associate($shared_data);
+                $item->save();
+            }
+            // TODO: set damages
                 // TODO: set damages_per_level
-        } // end foreach recipe
+        } // end foreach item
     }
 
     /**
@@ -88,6 +129,9 @@ class ConvertController extends Controller
     */
     public function index()
     {
+        // convert all
+        $this->item();
+        $this->recipe();
     }
 
 
