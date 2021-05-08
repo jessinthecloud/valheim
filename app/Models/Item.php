@@ -13,37 +13,8 @@ class Item extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = ['itemData', 'sharedData'];
-    /*
-        vars to remove if present in JSON
-        -- prevents table and relationship checking
-     */
-    public static $ignore = [
-    ];
-    /*
-        vars to ignore on updateOrCreate()
-     */
-    public static $ignoreInTable = [
-        'itemData',
-        'sharedData'
-    ];
+    protected $guarded = ['shared_data_id'];
 
-    /**
-     * The model's default values for attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'quality' => 1,
-        'variant' => 0,
-        'durability' => 100
-    ];
-
-    /*public string $name; // internalID - as seen on wiki
-    public string $name_EN; // internalID - as seen on wiki
-    // public $data; // ItemData -- not used, is not instanced from game
-    */
-    // public $shared_data; // ItemSharedData
 
     // split string into array on uppercase letter and turn it into string
     public function name_EN()

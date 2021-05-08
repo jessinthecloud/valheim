@@ -18,40 +18,12 @@ class SharedData extends Model
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
     protected $guarded = [
-        'attackStatusEffect',
-        'consumeStatusEffect',
-        'equipStatusEffect',
-        'setStatusEffect',
-    ];
-    /*
-        vars to remove if present in JSON
-        -- prevents table and relationship checking
-     */
-    public static $ignore = [
-        'm_aiAttackInterval',
-        'm_aiAttackMaxAngle',
-        'm_aiAttackRange',
-        'm_aiAttackRangeMin',
-        'm_aiPrioritized',
-        'm_aiTargetType',
-        'm_aiWhenFlying',
-        'm_aiWhenSwiming',
-        'm_aiWhenWalking',
-        'm_foodColor',
-        'm_setName',
-        'm_setSize',
-        'm_damageModifiers',
-        'm_trophyPos',
-    ];
-
-    /*
-       vars to ignore on updateOrCreate()
-    */
-    public static $ignoreInTable = [
-        'attackStatusEffect',
-        'consumeStatusEffect',
-        'equipStatusEffect',
-        'setStatusEffect',
+        'attack_status_effect_id',
+        'consume_status_effect_id',
+        'equip_status_effect_id',
+        'set_status_effect_id',
+        'damages',
+        'damages_per_level',
     ];
 
     public function items()

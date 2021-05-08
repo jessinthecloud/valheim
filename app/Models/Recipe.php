@@ -13,8 +13,6 @@ class Recipe extends Model
     // empty array means nothing is locked down
     protected $guarded = [
         'resources',
-        'crafting_station',
-        'repair_station',
         'crafting_station_id',
         'repair_station_id',
     ];
