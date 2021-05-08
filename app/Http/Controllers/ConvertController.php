@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 use App\Enums\ItemType;
 use App\Enums\AnimationState;
@@ -29,6 +30,7 @@ class ConvertController extends Controller
     {
         dump("Convert: $name");
         if (file_exists('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json')) {
+            // remove invalid hex characters
             $contents = json_decode(file_get_contents(
                 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json',
                 true
@@ -42,56 +44,20 @@ class ConvertController extends Controller
     *
     * @return \Illuminate\Http\Response
     */
-    public function status_effect()
+    public function statusEffect()
     {
         echo "CONVERT status_effect";
+        // remove invalid hex characters
+        $contents = preg_replace('/[\x00-\x1F\x7F]/u', '', file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\status-effects\status-effect-list.json'));
+        $status_effects = json_decode($contents, true);
 
-        $status_effects = json_decode(file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\status-effects\status-effect-list.json'), true);
-        dump('STATUS EFFECTS', $status_effects);
         foreach ($status_effects as $status_effect_info) {
+            $status_effect_info['slug'] = Str::slug($status_effect_info['name']);
             $status_effect = StatusEffect::updateOrCreate(
                 ['name'=>$status_effect_info['name']],
                 $status_effect_info
             );
         } // end foreach status_effect
-    }
-
-    /**
-    *
-    * @return \Illuminate\Http\Response
-    */
-    public function recipe($name='')
-    {
-        echo "CONVERT RECIPE";
-        if (!empty($name)) {
-            return $this->convert($name, 'recipe');
-        }
-
-        $recipes = json_decode(file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json'), true);
-        // dump('RECIPES', $recipes);
-        foreach ($recipes as $recipe_info) {
-            $recipe = Recipe::updateOrCreate(
-                ['name'=>$recipe_info['name']],
-                $recipe_info
-            );
-            // TODO: setup resources
-            if (!empty($recipe_info['resources'])) {
-                foreach ($recipe_info['resources'] as $resource_info) {
-                    $resource = Resource::create(
-                        $resource_info
-                    );
-                    // attach resource to recipe
-                    $resource->recipe()->associate($recipe);
-                    $resource->save();
-
-                    $item = Item::where('name', $resource_info['name'])->first();
-                    $resource->item()->associate($item);
-                    $resource->save();
-                } // end each resource
-            }
-            // TODO: set crafting station
-            // TODO: set repair station
-        } // end foreach recipe
     }
 
     /**
@@ -106,16 +72,18 @@ class ConvertController extends Controller
         }
 
         // decode json file to array
+        // remove invalid hex characters
+        $contents = preg_replace('/[\x00-\x1F\x7F]/u', '', file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\item-list.json'));
         $items = json_decode(
-            file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\item-list.json'),
+            $contents,
             true
         );
-        dump('ITEMS');
+        dump($items);
         foreach ($items as $item_info) {
-            dump($item_info['name']);
-
+            $item_info['slug'] = Str::slug($item_info['name']);
+            $item_info['name'] = Item::name_EN($item_info['name']);
             $item = Item::updateOrCreate(
-                ['name'=>$item_info['name']],
+                ['raw_name'=>$item_info['raw_name']],
                 $item_info
             );
 
@@ -146,7 +114,6 @@ class ConvertController extends Controller
                 }
 
                 if (isset($status_effect_name)) {
-                    dump($shared_data_info);
                     $status_effect = StatusEffect::updateOrCreate(
                         ['name' => $status_effect_name],
                         ['name' => $status_effect_name]
@@ -162,6 +129,47 @@ class ConvertController extends Controller
         } // end foreach item
     } // end item
 
+        /**
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function recipe($name='')
+    {
+        echo "CONVERT RECIPE";
+        if (!empty($name)) {
+            return $this->convert($name, 'recipe');
+        }
+        // remove invalid hex characters
+        $contents = preg_replace('/[\x00-\x1F\x7F]/u', '', file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json'));
+        $recipes = json_decode($contents, true);
+        // dump('RECIPES', $recipes);
+        foreach ($recipes as $recipe_info) {
+            $recipe_info['slug'] = Str::slug(Recipe::name_EN($recipe_info['name']));
+            $recipe_info['name'] = Recipe::name_EN($recipe_info['name']);
+            $recipe = Recipe::updateOrCreate(
+                ['name'=>$recipe_info['name']],
+                $recipe_info
+            );
+            // TODO: setup resources
+            if (!empty($recipe_info['resources'])) {
+                foreach ($recipe_info['resources'] as $resource_info) {
+                    $resource = Resource::create(
+                        $resource_info
+                    );
+                    // attach resource to recipe
+                    $resource->recipe()->associate($recipe);
+                    $resource->save();
+
+                    $item = Item::where('name', $resource_info['name'])->first();
+                    $resource->item()->associate($item);
+                    $resource->save();
+                } // end each resource
+            }
+            // TODO: set crafting station
+            // TODO: set repair station
+        } // end foreach recipe
+    }
+
     /**
     * Display a listing of the resource.
     *
@@ -170,76 +178,8 @@ class ConvertController extends Controller
     public function index()
     {
         // convert all
-        $this->status_effect();
+        $this->statusEffect();
         $this->item();
         $this->recipe();
-    }
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function tester()
-    {
-        $base_uri = 'https://valheim.fandom.com';
-        // $uri_path = '/wiki/Category:Food/';
-        $uri_path = '/api.php';
-        // ?action=parse&page=Lox meat pie&format=json
-        // https://valheim.fandom.com/api.php?format=json&action=parse&page=Food
-        // https://valheim.fandom.com/api.php?format=json&action=parse&page=sausages&section=1
-        $uri = $base_uri.$uri_path;
-        // $uri = 'https://google.com';
-
-        // TODO: store values in database and only make HTTP request periodically
-        /*Http::get($uri, [
-            'action' => 'parse',
-            'page' => "sausages",
-            'format'=> 'json'
-        ]);*/
-
-        // fake response out for now
-        // same as: https://valheim.fandom.com/api.php?format=json&action=parse&page=sausages
-        $response = json_decode(file_get_contents(storage_path('app/sausages.json')))->parse;
-
-        // dump($response);
-
-        $title = $response->displaytitle;
-        dump($title);
-        $images = $response->images;
-        dump($images);
-        $sections = $response->sections;
-        dump($sections);
-        $text = stripslashes(reset($response->text));
-        // dump($text);
-
-        // https://github.com/paquettg/php-html-parser
-        $dom = new Dom;
-        $dom->loadStr($text);
-        $labelnodes = $dom->find('.pi-data-label');
-        $valuenodes = $dom->find('.pi-data-value');
-
-        $info = array_map(function ($label, $value) {
-            // dump('label: '.$label->text."\nvalue: ".(empty(trim($value->text)) ? $value->getChildren()[0]->text : $value->text));
-
-            if (empty(trim($value->text))) {
-                $val = $value->getChildren()[0];
-                if ($value->getChildren()[0]->tag->name() === 'a') {
-                    return [
-                        'label'=>$label->text,
-                        'val'=>[
-                            'link' => $val->tag->getAttribute('href')->getValue(),
-                            'text' => $val->text
-                        ]
-                    ];
-                }
-                return ['label'=>$label->text,'val'=>['text' => $val->text]];
-            }
-
-            return ['label'=>$label->text, 'val'=>['text'=>$value->text]];
-        }, $labelnodes->toArray(), $valuenodes->toArray());
-
-        dump($info);
     }
 }

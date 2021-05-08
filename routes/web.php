@@ -14,31 +14,39 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Convert ------------------------------------------------------------------
+Route::prefix('convert')->name('convert.')->group(function () {
+    Route::get(
+        '/',
+        [App\Http\Controllers\ConvertController::class, 'index']
+    )->name('index');
 
-Route::get(
-    '/convert/',
-    [App\Http\Controllers\ConvertController::class, 'index']
-)->name('convert.index');
+    Route::get(
+        '/status-effect/{name?}',
+        [App\Http\Controllers\ConvertController::class, 'statusEffect']
+    )->name('status-effect');
 
-Route::get(
-    '/convert/recipe/{name?}',
-    [App\Http\Controllers\ConvertController::class, 'recipe']
-)->name('convert.recipe');
+    Route::get(
+        '/recipe/{name?}',
+        [App\Http\Controllers\ConvertController::class, 'recipe']
+    )->name('recipe');
 
-Route::get(
-    '/convert/item/{name?}',
-    [App\Http\Controllers\ConvertController::class, 'item']
-)->name('convert.item');
+    Route::get(
+        '/item/{name?}',
+        [App\Http\Controllers\ConvertController::class, 'item']
+    )->name('item');
 
-Route::get(
-    '/convert/{name}',
-    [App\Http\Controllers\ConvertController::class, 'convert']
-)->name('convert.name');
+    Route::get(
+        '/{name}',
+        [App\Http\Controllers\ConvertController::class, 'convert']
+    )->name('name');
+});
 
 // END Convert ------------------------------------------------------------------
 
 Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
 
 Route::get('/recipe', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipe.index');
+Route::get('/recipe/{name}', [App\Http\Controllers\RecipeController::class, 'show'])->name('recipe.show');
 
 Route::get('/item', [App\Http\Controllers\ItemController::class, 'index'])->name('item.index');
+Route::get('/item/{slug}', [App\Http\Controllers\ItemController::class, 'index'])->name('item.index');

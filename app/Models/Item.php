@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\SharedData;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,14 +15,9 @@ class Item extends Model
 
 
     // split string into array on uppercase letter and turn it into string
-    public function name_EN()
+    public static function name_EN($name)
     {
-        return trim(implode(' ', preg_split('/(?=[A-Z])/', $this->name))) ?? $this->name;
-    }
-
-    public function slug()
-    {
-        return Str::slug($this->name);
+        return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
     }
 
     public function recipes()

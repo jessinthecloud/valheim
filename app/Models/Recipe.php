@@ -17,16 +17,11 @@ class Recipe extends Model
         'repair_station_id',
     ];
 
-    public function slug()
-    {
-        return Str::slug($this->name);
-    }
-
     // remove Recipe_ prefix
-    public function name_EN()
+    public static function name_EN($name)
     {
-        $this->name = trim(implode(' ', preg_split('/(?=[A-Z])/', $this->name))) ?? $this->name;
-        return (explode('_', $this->name)[1]) ?? $this->name;
+        $name = trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
+        return (explode('_', $name)[1]) ?? $name;
     }
 
     public function craftingStation()

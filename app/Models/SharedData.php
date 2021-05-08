@@ -2,12 +2,6 @@
 
 namespace App\Models;
 
-use App\JsonAdapter;
-use App\Enums\AnimationState;
-use App\Enums\SkillType;
-use App\Enums\ItemType;
-use App\Models\Item;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

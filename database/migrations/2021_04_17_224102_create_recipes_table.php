@@ -39,6 +39,7 @@ class CreateRecipesTable extends Migration
             $table->timestamps();
             $table->string('name');
             $table->string('raw_name')->nullable();
+            $table->string('slug')->nullable();
             // $table->string('localized_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();
@@ -192,9 +193,10 @@ class CreateRecipesTable extends Migration
 
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('slug')->nullable();
-            $table->string('localized_name')->nullable();
             $table->string('name')->unique();
+            $table->string('raw_name')->unique();
+            $table->string('slug')->nullable();
+            // $table->string('localized_name')->nullable();
             // $table->integer('stack')->default(1);
             // $table->integer('quality')->default(1);
             // $table->integer('variant')->nullable();
