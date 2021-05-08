@@ -12,20 +12,9 @@ class StatusEffect extends Model
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
     protected $guarded = [
-        // ignore
 
-        // end ignore
     ];
-    /*
-        vars to remove if present in JSON
-        -- prevents table and relationship checking
-     */
-    public static $ignore = [
-        "m_flashIcon",
-        "m_cooldownIcon",
-        "m_ttl",
-        "m_activationAnimation",
-    ];
+
 
     public function sharedData()
     {
