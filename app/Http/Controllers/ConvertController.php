@@ -99,13 +99,10 @@ class ConvertController extends Controller
             );
             // TODO: set shared_data
             if (!empty($item_info['shared_data'])) {
-                dump($item_info['shared_data']);
+
                 // php is being very difficult about getting this value
                 $item_info['shared_data']['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($item_info['shared_data']['item_type']));
-                dump([
-                        'name' => $item_info['shared_data']['name'],
-                        'item_type' => $item_info['shared_data']['item_type'],
-                    ]);
+
                 $shared_data = SharedData::updateOrCreate(
                     [
                         'name' => $item_info['shared_data']['name'],
@@ -116,11 +113,12 @@ class ConvertController extends Controller
                 // attach to item
                 $item->sharedData()->associate($shared_data);
                 $item->save();
-            }
-            // TODO: set damages
+                // TODO: status effect ids
+                // TODO: set damages
                 // TODO: set damages_per_level
+            } // shared data
         } // end foreach item
-    }
+    } // end item
 
     /**
     * Display a listing of the resource.

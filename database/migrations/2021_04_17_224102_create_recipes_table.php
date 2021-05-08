@@ -79,7 +79,7 @@ class CreateRecipesTable extends Migration
 
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('localized_name')->nullable();
             $table->string('dlc')->nullable();
             $table->string('description')->nullable();
