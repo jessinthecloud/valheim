@@ -37,7 +37,7 @@ class CreateRecipesTable extends Migration
         Schema::create('status_effects', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name')->nullable();
+            $table->string('name');
             // $table->string('localized_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();
