@@ -20,37 +20,13 @@ class ConvertController extends Controller
     public function convert($name, $type='')
     {
         dump("Convert: $name");
-        if (file_exists(storage_path('app\\'.strtolower($type).'s.json'))) {
+        if (file_exists('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json')) {
             $contents = JsonAdapter::decodeJsonFile(
-                storage_path('app\\'.strtolower($type).'s.json'),
+                'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json',
                 true
             );
-
-            foreach ($contents as $k => $content) {
-                // dump($content);
-                $content = array_filter($content, function ($val, $key) use ($name) {
-                    // dump("$key === name");
-                    return (is_string($val) && $key === 'name' && $val === $name);
-                }, ARRAY_FILTER_USE_BOTH);
-
-                if (!empty($content)) {
-                    $contents = $contents[$k];
-                    break;
-                }
-            }
-
-            $item = JsonAdapter::createObject($name, $contents);
-
-            $className = '\App\Models\\'.ucfirst($type);
-            if ($className::where('name', $contents['name'])->first()) {
-                dump(ucfirst($type)." {$contents['name']} already exists.");
-                dump($item);
-            } else {
-                $saved = $item->save();
-                dump("save: ".$saved);
-            }
         } else {
-            dump(storage_path('app\\'.strtolower($type).'s.json')." doesn't exist.");
+            dump('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json'." doesn't exist.");
         }
     } // end func convert()
 
@@ -65,30 +41,16 @@ class ConvertController extends Controller
             return $this->convert($name, 'recipe');
         }
 
-        // decode json file to array
-        $contents = ['recipes'=>JsonAdapter::decodeJsonFile(
-            storage_path('app\recipes.json'),
-            true
-        )];
-
-        //////
-        $contents['recipes'] = array_slice($contents['recipes'], 0, 2);
-        /////
-        $recipes = JsonAdapter::createFromArray($contents);
-
-        dump($recipes);
-        foreach ($recipes as $recipe) {
-            dump($recipe->resources);
-            dump($recipe->craftingStation);
-            // dump($recipe->name);
-            // dump($recipe->getAttributes());
-            /* if (Recipe::where('name', $recipe->name)->first()) {
-                 dump("Recipe {$recipe->name} already exists.");
-             } else {*/
-           /* $saved = $recipe->save();
-            dump("save: ".$saved);*/
-            // }
-        }
+        $json = json_decode(file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json'), true);
+        dump($json);
+        foreach ($json as $recipe) {
+            Recipe::updateOrCreate(
+                ['name'=>$recipe['name']],
+                $recipe
+            );
+            // TODO: set crafting station
+            // TODO: set repair station
+        } // end foreach recipe
     }
 
     /**
@@ -103,28 +65,20 @@ class ConvertController extends Controller
         }
 
         // decode json file to array
-        $contents = ['items'=>JsonAdapter::decodeJsonFile(
-            storage_path('app\itemdrops.json'),
+        $json = json_decode(
+            file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\item-list.json'),
             true
-        )];
-
-        //////
-        $contents['items'] = array_slice($contents['items'], 0, 2);
-        /////
-        $items = JsonAdapter::createFromArray($contents);
-
-        dump($items);
-        /*foreach ($items as $item) {
-            // dump($item);
-            // dump($item->name);
-            // dump($item->getAttributes());
-            if (Item::where('name', $item->name)->first()) {
-                dump("item {$item->name} already exists.");
-            } else {
-                $saved = $item->save();
-                dump("save: ".$saved);
-            }
-        }*/
+        );
+        dump($json);
+        foreach ($json as $item) {
+            Item::updateOrCreate(
+                ['name'=>$item['name']],
+                $item
+            );
+            // TODO: set shared_data
+                // TODO: set damages
+                // TODO: set damages_per_level
+        } // end foreach recipe
     }
 
     /**

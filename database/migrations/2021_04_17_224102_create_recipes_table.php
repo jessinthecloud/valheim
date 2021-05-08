@@ -60,6 +60,7 @@ class CreateRecipesTable extends Migration
             $table->id();
             // name of item being created
             $table->string('name')->unique();
+            $table->string('item_name')->nullable();
             // slug of name
             $table->string('slug')->nullable();
             // translated name
@@ -77,8 +78,7 @@ class CreateRecipesTable extends Migration
 
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
-
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('localized_name')->nullable();
             $table->string('dlc')->nullable();
             $table->string('description')->nullable();
@@ -127,9 +127,9 @@ class CreateRecipesTable extends Migration
             $table->float('skill_type')->default(1);
             $table->tinyInteger('tool_tier')->nullable();
             // HitData.DamageTypes
-            // $table->string('damages')->nullable();
+            $table->string('damages')->nullable();
             // HitData.DamageTypes
-            // $table->string('damages_per_level')->nullable();
+            $table->string('damages_per_level')->nullable();
             $table->float('attack_force')->default(30);
             $table->float('backstab_bonus')->default(4);
             $table->float('dodgeable')->nullable();

@@ -11,30 +11,12 @@ class Recipe extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = ['resources', 'craftingStation', 'repairStation'];
-
-    /*
-        vars to remove if present in JSON
-        -- prevents table and relationship checking
-     */
-    public static $ignore = [];
-
-    /*
-        vars to ignore on updateOrCreate()
-     */
-    public static $ignoreInTable = [
+    protected $guarded = [
         'resources',
-        'craftingStation',
-        'repairStation'
-    ];
-
-    /**
-     * The model's default values for attributes.
-     *
-     * @var array
-     */
-    protected $attributes = [
-        'name_EN' => '',
+        'crafting_station',
+        'repair_station',
+        'crafting_station_id',
+        'repair_station_id',
     ];
 
     public function slug()
