@@ -12,11 +12,29 @@ abstract class Enum
      */
     public static function toString($val) : string
     {
-        $enum = (new ReflectionClass(__CLASS__))->getConstants();
+        $enum = (new \ReflectionClass(get_called_class()))->getConstants();
         $enum = array_flip($enum);
         if (!isset($enum[$val])) {
-            throw new ErrorException("Enum does not exist");
+            throw new \ErrorException("Enum does not exist");
         }
         return strtoupper($enum[$val]) ?? null;
+    }
+
+    public static function isValidName($name, $strict = false)
+    {
+        $constants = (new \ReflectionClass(get_called_class()))->getConstants();
+
+        if ($strict) {
+            return array_key_exists($name, $constants);
+        }
+
+        $keys = array_map('strtolower', array_keys($constants));
+        return in_array(strtolower($name), $keys);
+    }
+
+    public static function isValidValue($value, $strict = true)
+    {
+        $values = array_values((new \ReflectionClass(get_called_class()))->getConstants());
+        return in_array($value, $values, $strict);
     }
 }
