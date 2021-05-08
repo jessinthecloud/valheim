@@ -38,6 +38,7 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->timestamps();
             $table->string('name');
+            $table->string('raw_name')->nullable();
             // $table->string('localized_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();

@@ -15,6 +15,7 @@ use App\Models\Resource;
 use App\Models\CraftingStation;
 use App\Models\Item;
 use App\Models\SharedData;
+use App\Models\StatusEffect;
 
 class ConvertController extends Controller
 {
@@ -41,6 +42,24 @@ class ConvertController extends Controller
     *
     * @return \Illuminate\Http\Response
     */
+    public function status_effect()
+    {
+        echo "CONVERT status_effect";
+
+        $status_effects = json_decode(file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\status-effects\status-effect-list.json'), true);
+        dump('STATUS EFFECTS', $status_effects);
+        foreach ($status_effects as $status_effect_info) {
+            $status_effect = StatusEffect::updateOrCreate(
+                ['name'=>$status_effect_info['name']],
+                $status_effect_info
+            );
+        } // end foreach status_effect
+    }
+
+    /**
+    *
+    * @return \Illuminate\Http\Response
+    */
     public function recipe($name='')
     {
         echo "CONVERT RECIPE";
@@ -48,9 +67,9 @@ class ConvertController extends Controller
             return $this->convert($name, 'recipe');
         }
 
-        $json = json_decode(file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json'), true);
-        dump($json);
-        foreach ($json as $recipe_info) {
+        $recipes = json_decode(file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json'), true);
+        // dump('RECIPES', $recipes);
+        foreach ($recipes as $recipe_info) {
             $recipe = Recipe::updateOrCreate(
                 ['name'=>$recipe_info['name']],
                 $recipe_info
@@ -91,29 +110,52 @@ class ConvertController extends Controller
             file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\item-list.json'),
             true
         );
-        // dump($items);
+        dump('ITEMS');
         foreach ($items as $item_info) {
+            dump($item_info['name']);
+
             $item = Item::updateOrCreate(
                 ['name'=>$item_info['name']],
                 $item_info
             );
-            // TODO: set shared_data
-            if (!empty($item_info['shared_data'])) {
 
+            $shared_data_info = $item_info['shared_data'];
+            if (!empty($shared_data_info)) {
                 // php is being very difficult about getting this value
-                $item_info['shared_data']['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($item_info['shared_data']['item_type']));
+                $shared_data_info['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($shared_data_info['item_type']));
 
                 $shared_data = SharedData::updateOrCreate(
                     [
-                        'name' => $item_info['shared_data']['name'],
-                        'item_type' => $item_info['shared_data']['item_type'],
+                        'name' => $shared_data_info['name'],
+                        'item_type' => $shared_data_info['item_type'],
                     ],
-                    $item_info['shared_data']
+                    $shared_data_info
                 );
                 // attach to item
                 $item->sharedData()->associate($shared_data);
                 $item->save();
-                // TODO: status effect ids
+                $status_effect_name = null;
+                if (!empty($shared_data_info['set_status_effect_name'])) {
+                    $status_effect_name = $shared_data_info['set_status_effect_name'];
+                } elseif (!empty($shared_data_info['consume_status_effect_name'])) {
+                    $status_effect_name = $shared_data_info['consume_status_effect_name'];
+                } elseif (!empty($shared_data_info['attack_status_effect_name'])) {
+                    $status_effect_name = $shared_data_info['attack_status_effect_name'];
+                } elseif (!empty($shared_data_info['equip_status_effect_name'])) {
+                    $status_effect_name = $shared_data_info['equip_status_effect_name'];
+                }
+
+                if (isset($status_effect_name)) {
+                    dump($shared_data_info);
+                    $status_effect = StatusEffect::updateOrCreate(
+                        ['name' => $status_effect_name],
+                        ['name' => $status_effect_name]
+                    );
+                    // attach to item
+                    $shared_data->setStatusEffect()->associate($status_effect);
+                    $shared_data->save();
+                }
+
                 // TODO: set damages
                 // TODO: set damages_per_level
             } // shared data
@@ -128,6 +170,7 @@ class ConvertController extends Controller
     public function index()
     {
         // convert all
+        $this->status_effect();
         $this->item();
         $this->recipe();
     }
