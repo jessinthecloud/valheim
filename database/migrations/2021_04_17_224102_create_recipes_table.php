@@ -22,6 +22,7 @@ class CreateRecipesTable extends Migration
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->string('raw_name')->unique(); // $piece_forge
             $table->string('slug')->nullable();
             $table->string('localized_name')->nullable();
             $table->float('discover_range')->default(4);
@@ -205,6 +206,7 @@ class CreateRecipesTable extends Migration
 
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->tinyInteger('amount')->default(1);
             $table->tinyInteger('amount_per_level')->default(1);
             $table->boolean('recover')->default(true);
