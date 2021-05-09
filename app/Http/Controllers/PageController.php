@@ -14,8 +14,9 @@ class PageController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::all();
-        $items = Item::all();
+        // flag as case insensitive
+        $recipes = Recipe::all()->sortBy('name', SORT_NATURAL|SORT_FLAG_CASE);
+        $items = Item::all()->sortBy('name', SORT_NATURAL|SORT_FLAG_CASE);
 
         return view('home', compact('recipes', 'items'));
     }
