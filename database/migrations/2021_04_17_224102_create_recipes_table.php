@@ -21,9 +21,13 @@ class CreateRecipesTable extends Migration
 
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
+            $table->string('var_name')->nullable();
             $table->string('name')->unique();
-            $table->string('raw_name')->unique(); // $piece_forge
-            $table->string('slug')->nullable();
+            $table->string('slug')->unique();
+            $table->string('raw_name')->unique();
+            $table->string('raw_slug')->unique();
+            $table->string('true_name')->nullable(); // kind of secret name
+            $table->string('true_slug')->nullable()->unique();
             // $table->string('localized_name')->nullable();
             $table->float('discover_range')->default(4);
             $table->float('range_build')->default(10);
@@ -37,9 +41,13 @@ class CreateRecipesTable extends Migration
         Schema::create('status_effects', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name');
-            $table->string('raw_name')->nullable();
-            $table->string('slug')->nullable();
+            $table->string('var_name')->nullable();
+            $table->string('name')->unique();
+            $table->string('slug')->unique();
+            $table->string('raw_name')->unique();
+            $table->string('raw_slug')->unique();
+            $table->string('true_name')->nullable(); // kind of secret name
+            $table->string('true_slug')->nullable()->unique();
             // $table->string('localized_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();
@@ -62,11 +70,14 @@ class CreateRecipesTable extends Migration
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             // name of item being created
+            $table->string('var_name')->nullable();
             $table->string('name');
-            $table->string('raw_name')->unique();
-            // slug of name
             $table->string('slug')->unique();
+            $table->string('raw_name')->unique();
             $table->string('raw_slug')->unique();
+            // actual recipe name
+            $table->string('true_name')->nullable(); // kind of secret name
+            $table->string('true_slug')->nullable()->unique();
             // translated name
             // $table->string('localized_name')->nullable();
             $table->boolean('enabled')->default(true);
@@ -82,8 +93,13 @@ class CreateRecipesTable extends Migration
 
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
+            $table->string('var_name')->nullable();
             $table->string('name');
+            $table->string('slug')->nullable()->unique();
             $table->string('raw_name');
+            $table->string('raw_slug')->nullable()->unique();
+            $table->string('true_name')->nullable(); // kind of secret name
+            $table->string('true_slug')->nullable()->unique();
             // $table->string('localized_name')->nullable();
             $table->string('dlc')->nullable();
             $table->string('description')->nullable();
@@ -195,10 +211,14 @@ class CreateRecipesTable extends Migration
 
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('raw_name')->unique();
+            $table->string('var_name')->nullable();
+            $table->string('name')->unique();
             $table->string('slug')->unique();
+            $table->string('raw_name')->unique();
             $table->string('raw_slug')->unique();
+            $table->string('true_name')->nullable(); // kind of secret name
+            $table->string('true_slug')->nullable()->unique();
+            // is probably instanced data?
             // $table->string('localized_name')->nullable();
             // $table->integer('stack')->default(1);
             // $table->integer('quality')->default(1);
@@ -214,7 +234,8 @@ class CreateRecipesTable extends Migration
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug');
+            $table->string('raw_name');
+            $table->string('var_name')->nullable();
             $table->tinyInteger('amount')->default(1);
             $table->tinyInteger('amount_per_level')->default(1);
             $table->boolean('recover')->default(true);
