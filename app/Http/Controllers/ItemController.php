@@ -48,7 +48,10 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        //
+        dd($item);
+        $item = Item::find();
+
+        return view('home', compact('item'));
     }
 
     /**

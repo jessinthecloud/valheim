@@ -15,38 +15,51 @@ use Illuminate\Support\Facades\Route;
 
 // Convert ------------------------------------------------------------------
 Route::prefix('convert')->name('convert.')->group(function () {
-    Route::get(
+    /*Route::get(
         '/',
         [App\Http\Controllers\ConvertController::class, 'index']
-    )->name('index');
+    )->name('index');*/
 
     Route::get(
-        '/status-effect/{name?}',
+        '/status-effects/{name?}',
         [App\Http\Controllers\ConvertController::class, 'statusEffect']
-    )->name('status-effect');
+    )->name('status-effects');
 
     Route::get(
-        '/recipe/{name?}',
+        '/recipes/{name?}',
         [App\Http\Controllers\ConvertController::class, 'recipe']
-    )->name('recipe');
+    )->name('recipes');
 
     Route::get(
-        '/item/{name?}',
+        '/items/{name?}',
         [App\Http\Controllers\ConvertController::class, 'item']
-    )->name('item');
+    )->name('items');
 
     Route::get(
         '/{name}',
         [App\Http\Controllers\ConvertController::class, 'convert']
-    )->name('name');
+    )->name('names');
 });
-
 // END Convert ------------------------------------------------------------------
+
 
 Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
 
-Route::get('/recipe', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipe.index');
-Route::get('/recipe/{name}', [App\Http\Controllers\RecipeController::class, 'show'])->name('recipe.show');
+Route::resources(
+    [
+        'status-effects' => StatusEffectController::class,
+        'recipes' => RecipeController::class,
+        'items' => ItemController::class,
+    ],
+    // options -- ['index', 'show', 'store', 'update', 'destroy'];
+    [
+        // don't create routes for modifying the resources
+        'only' => ['index', 'show']
+    ]
+);
 
-Route::get('/item', [App\Http\Controllers\ItemController::class, 'index'])->name('item.index');
-Route::get('/item/{slug}', [App\Http\Controllers\ItemController::class, 'index'])->name('item.index');
+/*Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipes.index');
+Route::get('/recipes/{name}', [App\Http\Controllers\RecipeController::class, 'show'])->name('recipes.show');
+
+Route::get('/items', [App\Http\Controllers\ItemController::class, 'index'])->name('items.index');
+Route::get('/items/{slug}', [App\Http\Controllers\ItemController::class, 'index'])->name('items.index');*/
