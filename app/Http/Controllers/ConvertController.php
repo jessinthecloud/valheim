@@ -21,24 +21,58 @@ use App\Models\StatusEffect;
 class ConvertController extends Controller
 {
     /**
-     * convert an item by unqiue name
+     * Remove invalid hex characters from a string
      *
-     * @param  [type] $name [description]
+     * @param  string $string string to sanitize
+     *
+     * @return string         sanitized string
+     */
+    public function removeInvalidHex(string $string)
+    {
+        return preg_replace('/[\x00-\x1F\x7F]/u', '', $string);
+    }
+
+    public function convertJsonList(string $json_filepath, string $class, array $unique_keys, array $related_keys=[])
+    {
+        $contents = $this->removeInvalidHex(file_get_contents($json_filepath));
+        $objects = json_decode($contents, true);
+        dump($objects);
+
+        foreach ($objects as $object_info) {
+            $object_info = $this->createAllNames($object_info);
+            dump($object_info);
+            // setup info for updateOrCreate()
+            $check_columns = [];
+            foreach ($unique_keys as $keyname) {
+                $check_columns [$keyname]= $object_info[$keyname];
+            }
+            $object = $class::updateOrCreate(
+                $check_columns,
+                $object_info
+            );
+
+            // check for related Models
+            if (!empty($related_keys)) {
+            }
+        } // end foreach status_effect
+    }
+
+    /**
+     * populate name and slug data
+     *
+     * @param  array  $info
+     *
      * @return [type]       [description]
      */
-    public function convert($name, $type='')
+    public function createAllNames(array $info)
     {
-        dump("Convert: $name");
-        if (file_exists('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json')) {
-            // remove invalid hex characters
-            $contents = json_decode(file_get_contents(
-                'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json',
-                true
-            ));
-        } else {
-            dump('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\\'.strtolower($type).'-list.json'." doesn't exist.");
-        }
-    } // end func convert()
+        $info['name'] = $this->prettify(trim($info['raw_name'])); // add spaces to make pretty
+        $info['slug'] = Str::slug(trim($info['name']));
+        $info['raw_slug'] = Str::slug(trim($info['raw_name']));
+        $info['true_slug'] = Str::slug(trim($info['true_name'])) ?? null;
+
+        return $info;
+    }
 
     /**
     *
@@ -47,17 +81,10 @@ class ConvertController extends Controller
     public function statusEffect()
     {
         echo "CONVERT status_effect";
-        // remove invalid hex characters
-        $contents = preg_replace('/[\x00-\x1F\x7F]/u', '', file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\status-effects\status-effect-list.json'));
-        $status_effects = json_decode($contents, true);
 
-        foreach ($status_effects as $status_effect_info) {
-            $status_effect_info['slug'] = Str::slug($status_effect_info['name']);
-            $status_effect = StatusEffect::updateOrCreate(
-                ['name'=>$status_effect_info['name']],
-                $status_effect_info
-            );
-        } // end foreach status_effect
+        $status_effects_file = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\status-effects\status-effect-list.json';
+
+        $this->convertJsonList($status_effects_file, StatusEffect::class, ['raw_name']);
     }
 
     /**
@@ -135,7 +162,6 @@ class ConvertController extends Controller
                 }
 
                 if (isset($status_effect_name)) {
-                    dump($status_effect_name);
                     $status_effect = StatusEffect::updateOrCreate(
                         ['name' => $status_effect_name],
                         ['name' => $status_effect_name]
@@ -147,17 +173,19 @@ class ConvertController extends Controller
                         $shared_data->setStatusEffect()->associate($status_effect);
                         $shared_data->save();
                     }
+
+                    // attach to data
+                    // make sure we don't already have this effect attached
+                    $matching_status_effect = StatusEffect::where('name', $status_effect_name)->first();
+                    $existing_item = $shared_data->item;
+                    // dump($recipe_info['slug'], $item, $existing_item);
+                    if (isset($existing_item)) {
+                        // item to attach
+                        $item = $existing_item->getKey() === $item->getKey() ? null : $item;
+                    }
                 }
 
-                // attach to data
-                // make sure we don't already have this effect attached
-                $item = Item::where('name', $status_effect_name)->first();
-                $existing_item = $shared_data->item;
-                // dump($recipe_info['slug'], $item, $existing_item);
-                if (isset($existing_item)) {
-                    // item to attach
-                    $item = $existing_item->getKey() === $item->getKey() ? null : $item;
-                }
+
 
                 // we don't want to attach unless it isn't already
                 if (isset($status_effect)) {
@@ -265,5 +293,50 @@ class ConvertController extends Controller
         $this->statusEffect();
         $this->item();
         $this->recipe();
+    }
+
+    /**
+     * decode a JSON file
+     *
+     * @param  [string] $filepath filepath of JSON file
+     *
+     * @return Object    Decoded JSON
+     */
+    public static function decodeJsonFile($filepath, bool $toArray=false)
+    {
+        return json_decode(file_get_contents($filepath), $toArray);
+    }
+
+    /**
+     * convert class name from C# (remove prefix)
+     * e.g., Recipe_ArmorBronzeChest -> ArmorBronzeChest
+     * Then this naem can be used to find the item
+     *
+     * @param  string $name
+     *
+     * @return string       the trimmed name
+     */
+    public static function removeCsPrefix(string $name)
+    {
+        return (explode('_', $name)[1]) ?? $name;
+    }
+
+    /**
+     * Convert a name to pretty name by replacing underscores
+     * with spaces, then splitting string into array on
+     * camel or Studly case and turning it into a space delimited string
+     * e.g., Recipe_ArmorBronzeChest -> Recipe Armor Bronze Chest
+     *
+     * regex: https://stackoverflow.com/questions/7593969/regex-to-split-camelcase-or-titlecase-advanced/7599674#7599674
+     *
+     * @param  string $name
+     *
+     * @return string       the converted name
+     */
+    public static function prettify(string $name)
+    {
+        $name = Str::of(trim($name))->replace('_', ' ');
+        $name = Str::of($name)->split('/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/')->toArray();
+        return implode(' ', $name) ?? $name;
     }
 }
