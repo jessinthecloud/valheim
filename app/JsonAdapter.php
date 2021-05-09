@@ -3,21 +3,6 @@ namespace App;
 
 class JsonAdapter
 {
-    public static $count=0;
-    private static $childPropNames = [
-        'resources',
-        'item',
-        'craftingStation',
-        'sharedData',
-        'skillType',
-        'itemType',
-        'animationState',
-        'statusAttribute',
-        'attackStatusEffect',
-        'consumeStatusEffect',
-        'equipStatusEffect',
-        'setStatusEffect',
-    ];
 
     /**
      * decode a JSON file
@@ -92,78 +77,5 @@ class JsonAdapter
         }
 
         return null;
-    }
-
-    public static function removeIgnored($className, $data, $ignore)
-    {
-        // dump(" !! REMOVING IGNORED !!
-        // ignore in $className: ", array_flip($ignore));
-        // dump("keep: ", array_diff_key($data, array_flip($ignore)));
-        return array_diff_key($data, array_flip($ignore));
-    }
-
-    public static function attachRelationsTo($object, $data)
-    {
-        // dump("checking for relations in data: ", $data, ' from set: ', self::$childPropNames);
-        $vars = $object->getGuarded();
-        // dump("CHECKING FOR ATTACHABLE VARS: ", $vars);
-
-        foreach ($vars as $propName) {
-            // dump("propname: $propName");
-            if (in_array($propName, self::$childPropNames)) {
-                dump("CHILD $propName FOUND");
-                if (isset($data[$propName])) {
-                    // dump($data[$propName]);
-                    self::determineAttach($object, $data[$propName], $propName);
-                } else {
-                    dump("child is empty");
-                }
-            }
-        } // end foreach
-
-        return $object;
-    }
-
-    public static function determineAttach($object, $child, $propName)
-    {
-        // we can use "s" because only the plurals end in s here
-        if (substr($propName, -1) === 's') {
-            // many to many
-            if (is_array($child)) {
-                $children = [];
-                foreach ($child as $c) {
-                    // dump("child", $c);
-                    if (is_object($c)) {
-                        $children []= $c;
-                        // dump("attaching child ", $c);
-                        $object->$propName()->save($c);
-                    // $object->$propName()->create($c);
-                    // $object->$propName()->associate($c);
-                        // $object->$propName()->attach($c);
-                        /*$object->$propName = $c;
-                        $object->save();*/
-                    } else {
-                        $children []= self::mapClassName($propName)::updateOrCreate($c);
-                        // dump("attaching child ", end($children));
-                        $object->$propName()->save(end($children));
-                        // $object->$propName()->attach(end($children));
-                        // $object->$propName()->create(end($children));
-                        // $object->$propName()->associate(end($children));
-                    }
-                }
-                dump("many to many -- $propName -- NOT DONE");
-                // dump($children);
-                // dump(array_column($children, 'id'));
-                return; // $object->$propName()->attach(array_column($children, 'id'));
-            }
-            // dump("one to many");
-            return $object->$propName()->save($child);
-        }
-        // one to ?
-        dump("one to one $propName");
-        if (!is_object($child)) {
-            $child = self::mapClassName($propName)::updateOrCreate($child);
-        }
-        return $object->$propName()->associate($child);
     }
 }
