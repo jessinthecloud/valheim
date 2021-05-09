@@ -38,12 +38,12 @@ class Item extends Model
     }
 
     /**
-     * shared data item_type in nice caps
+     * shared_data item_type as string
      *
      * @return string   item type
      */
     public function itemType() : string
     {
-        return ucwords(strtolower(ItemType::toString($this->sharedData->item_type)));
+        return ItemType::toString($this->sharedData->item_type);
     }
 }
