@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Route;
 
 // Convert ------------------------------------------------------------------
 Route::prefix('convert')->name('convert.')->group(function () {
-    /*Route::get(
+    Route::get(
         '/',
         [App\Http\Controllers\ConvertController::class, 'index']
-    )->name('index');*/
+    )->name('index');
 
     Route::get(
         '/status-effects/{name?}',
@@ -40,8 +40,8 @@ Route::prefix('convert')->name('convert.')->group(function () {
         [App\Http\Controllers\ConvertController::class, 'convert']
     )->name('names');
 });
-// END Convert ------------------------------------------------------------------
 
+// END Convert ------------------------------------------------------------------
 
 Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
 
