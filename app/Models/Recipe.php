@@ -29,9 +29,9 @@ class Recipe extends Model
         return $this->belongsTo(CraftingStation::class);
     }
 
-    public function resources()
+    public function requirements()
     {
-        return $this->belongsToMany(Resource::class);
+        return $this->belongsToMany(Requirement::class);
     }
 
     // item this recipe creates

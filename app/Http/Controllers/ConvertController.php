@@ -12,7 +12,7 @@ use App\Enums\SkillType;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ItemController;
 use App\Models\Recipe;
-use App\Models\Resource;
+use App\Models\Requirement;
 use App\Models\CraftingStation;
 use App\Models\Item;
 use App\Models\SharedData;
@@ -101,12 +101,28 @@ class ConvertController extends Controller
                     ],
                     $shared_data_info
                 );
-                // we don't want to attach unless a new resource was created
-                if ($shared_data->wasRecentlyCreated) {
-                    // attach to item
-                    $item->sharedData()->associate($shared_data);
-                    $item->save();
+
+
+                // attach to item
+                // make sure we don't already have this item attached
+                $matching_items = Item::where('name', $shared_data_info['name'])->get();
+                $existing_items = $shared_data->items ?? null;
+                // dd($shared_data_info['name'], $matching_items, $existing_items);
+                if (isset($existing_items)) {
+                    // items to attach
+                    $items = $matching_items->diff($existing_items) ?? null;
                 }
+
+                // we don't want to attach unless it isn't already
+                if (isset($items)) {
+                    $items->each(function ($item, $key) use ($shared_data) {
+                        $item->sharedData()->associate($shared_data);
+                        $item->save();
+                    });
+                }
+
+
+
                 $status_effect_name = null;
                 if (!empty($shared_data_info['set_status_effect_name'])) {
                     $status_effect_name = $shared_data_info['set_status_effect_name'];
@@ -119,16 +135,34 @@ class ConvertController extends Controller
                 }
 
                 if (isset($status_effect_name)) {
+                    dump($status_effect_name);
                     $status_effect = StatusEffect::updateOrCreate(
                         ['name' => $status_effect_name],
                         ['name' => $status_effect_name]
                     );
-                    // we don't want to attach unless a new resource was created
+
+                    // dd($shared_data_info['name'], $matching_items, $existing_items);
                     if ($status_effect->wasRecentlyCreated) {
                         // attach to item
                         $shared_data->setStatusEffect()->associate($status_effect);
                         $shared_data->save();
                     }
+                }
+
+                // attach to data
+                // make sure we don't already have this effect attached
+                $item = Item::where('name', $status_effect_name)->first();
+                $existing_item = $shared_data->item;
+                // dump($recipe_info['slug'], $item, $existing_item);
+                if (isset($existing_item)) {
+                    // item to attach
+                    $item = $existing_item->getKey() === $item->getKey() ? null : $item;
+                }
+
+                // we don't want to attach unless it isn't already
+                if (isset($status_effect)) {
+                    $shared_data->setStatusEffect()->associate($status_effect);
+                    $shared_data->save();
                 }
 
                 // TODO: set damages
@@ -160,7 +194,7 @@ class ConvertController extends Controller
                 $recipe_info
             );
 
-            // attach to item it creates
+            // attach to item
             // make sure we don't already have this item attached
             $item = Item::where('slug', $recipe_info['slug'])->first();
             $existing_item = $recipe->item;
@@ -176,52 +210,52 @@ class ConvertController extends Controller
             }
 
             if (!empty($recipe_info['resources'])) {
-                // make sure we don't already have this resource attached
-                $existing_resources = $recipe->resources;
-                $recipe_info['resources'] = collect($recipe_info['resources'])->filter(function ($value, $key) use ($existing_resources) {
-                    $existing = collect($existing_resources->toArray());
-                    // if even one part doesn't match, it's a new resource
+                // make sure we don't already have this requirement attached
+                $existing_requirements = $recipe->requirements;
+                $recipe_info['resources'] = collect($recipe_info['resources'])->filter(function ($value, $key) use ($existing_requirements) {
+                    $existing = collect($existing_requirements->toArray());
+                    // if even one part doesn't match, it's a new requirement
                     // Eloquent collection uses contains() differently, so set to regular collection
                     return (!$existing->contains('name', $value['name']) || !$existing->contains('amount', $value['amount']) || !$existing->contains('amount_per_level', $value['amount_per_level']) || !$existing->contains('recover', $value['recover']));
                 })->toArray();
 
-                foreach ($recipe_info['resources'] as $resource_info) {
-                    $resource_info['slug'] = Str::slug(Item::name_EN($resource_info['name']));
+                foreach ($recipe_info['resources'] as $requirement_info) {
+                    $requirement_info['slug'] = Str::slug(Item::name_EN($requirement_info['name']));
 
-                    $resource = Resource::updateOrCreate(
+                    $requirement = Requirement::updateOrCreate(
                         [
-                            'name'=>$resource_info['name'],
-                            'amount'=>$resource_info['amount'],
-                            'amount_per_level'=>$resource_info['amount_per_level'],
-                            'recover'=>$resource_info['recover'],
+                            'name'=>$requirement_info['name'],
+                            'amount'=>$requirement_info['amount'],
+                            'amount_per_level'=>$requirement_info['amount_per_level'],
+                            'recover'=>$requirement_info['recover'],
                         ],
-                        $resource_info
+                        $requirement_info
                     );
 
-                    // attach resource to recipe
-                    $resource->recipe()->attach($recipe);
-                    $resource->save();
+                    // attach requirement to recipe
+                    $requirement->recipe()->attach($recipe);
+                    $requirement->save();
 
                     // make sure we don't already have this item attached
-                    $item = Item::where('slug', $resource_info['slug'])->first();
-                    $existing_item = $resource->item;
+                    $item = Item::where('slug', $requirement_info['slug'])->first();
+                    $existing_item = $requirement->item;
                     if (isset($existing_item)) {
                         // $item = $existing_item->contains($item) ? null : $item;
                         $item = $existing_item->getKey() === $item->getKey() ? null : $item;
                     }
                     if (isset($item)) {
-                        $resource->item()->associate($item);
-                        $resource->save();
+                        $requirement->item()->associate($item);
+                        $requirement->save();
                     }
-                } // end each resource
-            } // endif resources
+                } // end each requirement
+            } // endif requirements
             // TODO: set crafting station
             // TODO: set repair station
         } // end foreach recipe
     }
 
     /**
-    * Display a listing of the resource.
+    * Display a listing of the requirement.
     *
     * @return \Illuminate\Http\Response
     */

@@ -11,14 +11,14 @@
             <li>
                 {{ ucwords($recipe->name) }} ({{ $recipe->raw_name }}) {{-- {{ $recipe->slug }} ({{ $recipe->raw_slug }}) --}}
                 <ul>
-                    @foreach($recipe->resources as $resource)
+                    @foreach($recipe->requirements as $requirement)
                         <li>
-                            {{ $resource->amount }} <strong>{{ $resource->name }}</strong>
+                            {{ $requirement->amount }} <strong>{{ $requirement->name }}</strong>
                         </li>
                     @endforeach
                 </ul>
             </li>
-            {{-- <?php dd($recipe->resources); ?> --}}
+            {{-- <?php dd($recipe->requirements); ?> --}}
         @endforeach
     </ol>
 

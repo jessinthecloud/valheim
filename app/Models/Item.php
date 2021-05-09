@@ -27,14 +27,14 @@ class Item extends Model
         return $this->belongsTo(Recipe::class);
     }
 
-    public function resourceForRecipes()
+    public function requirementForRecipes()
     {
-        return $this->belongsToManyThrough(Recipe::class, Resource::class);
+        return $this->belongsToManyThrough(Recipe::class, Requirement::class);
     }
 
-    public function resources()
+    public function requirements()
     {
-        return $this->hasMany(Resource::class);
+        return $this->hasMany(Requirement::class);
     }
 
     public function sharedData()

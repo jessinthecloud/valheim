@@ -211,7 +211,7 @@ class CreateRecipesTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('resources', function (Blueprint $table) {
+        Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('slug');
@@ -223,10 +223,10 @@ class CreateRecipesTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('recipe_resource', function (Blueprint $table) {
+        Schema::create('recipe_requirement', function (Blueprint $table) {
             $table->id();
             $table->foreignId('recipe_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('resource_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('requirement_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -238,11 +238,11 @@ class CreateRecipesTable extends Migration
      */
     public function down()
     {
-        // Schema::dropIfExists('recipe_resource');
+        Schema::dropIfExists('recipe_requirement');
         Schema::dropIfExists('recipes');
         Schema::dropIfExists('item');
         Schema::dropIfExists('shared_data');
-        Schema::dropIfExists('resource');
+        Schema::dropIfExists('requirement');
         Schema::dropIfExists('status_effects');
         Schema::dropIfExists('crafting_stations');
     }
