@@ -8,8 +8,17 @@
     <h2>Recipes</h2>
     <ol>
         @foreach($recipes as $recipe)
-            <li>{{ ucwords($recipe->name) }} ({{ $recipe->raw_name }}) -- {{ $recipe->slug }} ({{ $recipe->raw_slug }})</li>
-            {{-- <?php dump($recipe); ?> --}}
+            <li>
+                {{ ucwords($recipe->name) }} ({{ $recipe->raw_name }}) {{-- {{ $recipe->slug }} ({{ $recipe->raw_slug }}) --}}
+                <ul>
+                    @foreach($recipe->resources as $resource)
+                        <li>
+                            <strong>{{ $resource->name }}</strong> ({{ $resource->amount }})
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+            {{-- <?php dd($recipe->resources); ?> --}}
         @endforeach
     </ol>
 

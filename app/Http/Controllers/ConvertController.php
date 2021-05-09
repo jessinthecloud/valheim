@@ -101,9 +101,12 @@ class ConvertController extends Controller
                     ],
                     $shared_data_info
                 );
-                // attach to item
-                $item->sharedData()->associate($shared_data);
-                $item->save();
+                // we don't want to attach unless a new resource was created
+                if ($shared_data->wasRecentlyCreated) {
+                    // attach to item
+                    $item->sharedData()->associate($shared_data);
+                    $item->save();
+                }
                 $status_effect_name = null;
                 if (!empty($shared_data_info['set_status_effect_name'])) {
                     $status_effect_name = $shared_data_info['set_status_effect_name'];
@@ -120,14 +123,17 @@ class ConvertController extends Controller
                         ['name' => $status_effect_name],
                         ['name' => $status_effect_name]
                     );
-                    // attach to item
-                    $shared_data->setStatusEffect()->associate($status_effect);
-                    $shared_data->save();
+                    // we don't want to attach unless a new resource was created
+                    if ($status_effect->wasRecentlyCreated) {
+                        // attach to item
+                        $shared_data->setStatusEffect()->associate($status_effect);
+                        $shared_data->save();
+                    }
                 }
 
                 // TODO: set damages
                 // TODO: set damages_per_level
-            } // shared data
+            } // endif shared data
         } // end foreach item
     } // end item
 
@@ -153,21 +159,41 @@ class ConvertController extends Controller
                 ['slug'=>$recipe_info['slug']],
                 $recipe_info
             );
-            // TODO: setup resources
+
             if (!empty($recipe_info['resources'])) {
                 foreach ($recipe_info['resources'] as $resource_info) {
-                    $resource = Resource::create(
+                    $resource = Resource::updateOrCreate(
+                        [
+                            'name'=>$resource_info['name'],
+                            'amount'=>$resource_info['amount'],
+                            'amount_per_level'=>$resource_info['amount_per_level'],
+                            'recover'=>$resource_info['recover'],
+                        ],
                         $resource_info
                     );
-                    // attach resource to recipe
-                    $resource->recipe()->associate($recipe);
-                    $resource->save();
 
-                    $item = Item::where('name', $resource_info['name'])->first();
-                    $resource->item()->associate($item);
-                    $resource->save();
+                    /*
+                    if (!$resource->wasRecentlyCreated && $resource->wasChanged()) {
+                        // updateOrCreate performed an update
+                    }
+
+                    if (!$resource->wasRecentlyCreated && !$resource->wasChanged()) {
+                        // updateOrCreate performed nothing, row did not change
+                    }
+                    */
+                    // we don't want to attach unless a new resource was created
+                    if ($resource->wasRecentlyCreated) {
+                        // updateOrCreate performed create
+                        // attach resource to recipe
+                        $resource->recipe()->attach($recipe);
+                        $resource->save();
+
+                        $item = Item::where('name', $resource_info['name'])->first();
+                        $resource->item()->associate($item);
+                        $resource->save();
+                    }
                 } // end each resource
-            }
+            } // endif resources
             // TODO: set crafting station
             // TODO: set repair station
         } // end foreach recipe

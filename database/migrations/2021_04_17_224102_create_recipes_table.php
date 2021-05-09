@@ -217,7 +217,14 @@ class CreateRecipesTable extends Migration
             $table->tinyInteger('amount_per_level')->default(1);
             $table->boolean('recover')->default(true);
             $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade');
+            // $table->foreignId('recipe_id')->nullable()->constrained()->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        Schema::create('recipe_resource', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('recipe_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('resource_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -31,7 +31,7 @@ class Recipe extends Model
 
     public function resources()
     {
-        return $this->hasMany(Resource::class);
+        return $this->belongsToMany(Resource::class);
     }
 
     /**
