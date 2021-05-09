@@ -223,7 +223,9 @@ class CreateRecipesTable extends Migration
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug')->nullable();
             $table->string('raw_name');
+            $table->string('raw_slug')->nullable();
             $table->string('var_name')->nullable();
             $table->tinyInteger('amount')->default(1);
             $table->tinyInteger('amount_per_level')->default(1);
