@@ -6,16 +6,19 @@
 
 @section('content')
     <h2>Recipes</h2>
-    <ul>
+    <ol>
         @foreach($recipes as $recipe)
-            <li>{{ $recipe->name_EN() }}</li>
+            <li>{{ ucwords($recipe->name) }} ({{ $recipe->raw_name }}) -- {{ $recipe->slug }} ({{ $recipe->raw_slug }})</li>
+            {{-- <?php dump($recipe); ?> --}}
         @endforeach
-    </ul>
+    </ol>
 
     <h2>Items</h2>
-    <ul>
+    <ol>
         @foreach($items as $item)
-            <li>{{ $item->name_EN() }}</li>
+            <li>{{ $item->name }} ({{ $item->raw_name }}) -- {{ $item->itemType() }}</li>
+            {{-- <?php dump($item); ?> --}}
+            {{-- <?php dd($item->sharedData); ?> --}}
         @endforeach
-    </ul>
+    </ol>
 @endsection
