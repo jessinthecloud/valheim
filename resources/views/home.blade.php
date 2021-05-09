@@ -13,7 +13,7 @@
                 <ul>
                     @foreach($recipe->resources as $resource)
                         <li>
-                            <strong>{{ $resource->name }}</strong> ({{ $resource->amount }})
+                            {{ $resource->amount }} <strong>{{ $resource->name }}</strong>
                         </li>
                     @endforeach
                 </ul>
