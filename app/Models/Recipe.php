@@ -34,6 +34,12 @@ class Recipe extends Model
         return $this->belongsToMany(Resource::class);
     }
 
+    // item this recipe creates
+    public function item()
+    {
+        return $this->hasOne(Item::class);
+    }
+
     /**
      * calculate the required station level for this item based on its quality
      * and the minimum station level

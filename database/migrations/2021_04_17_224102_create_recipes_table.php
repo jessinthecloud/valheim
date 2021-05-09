@@ -204,6 +204,7 @@ class CreateRecipesTable extends Migration
             // $table->integer('quality')->default(1);
             // $table->integer('variant')->nullable();
             // $table->float('durability')->default(100);
+            $table->foreignId('recipe_id')->nullable()->constrained()->onUpdate('cascade');
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             // GameObject
             // $table->foreignId('drop_prefab_id')->nullable()->references('id')->on('game_objects');

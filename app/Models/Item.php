@@ -22,7 +22,12 @@ class Item extends Model
         return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
     }
 
-    public function recipes()
+    public function recipe()
+    {
+        return $this->belongsTo(Recipe::class);
+    }
+
+    public function resourceForRecipes()
     {
         return $this->belongsToManyThrough(Recipe::class, Resource::class);
     }

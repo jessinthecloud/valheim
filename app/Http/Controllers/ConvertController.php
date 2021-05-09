@@ -160,6 +160,21 @@ class ConvertController extends Controller
                 $recipe_info
             );
 
+            // attach to item it creates
+            // make sure we don't already have this item attached
+            $item = Item::where('slug', $recipe_info['slug'])->first();
+            $existing_item = $recipe->item;
+            // dump($recipe_info['slug'], $item, $existing_item);
+            if (isset($existing_item)) {
+                // item to attach
+                $item = $existing_item->getKey() === $item->getKey() ? null : $item;
+            }
+
+            if (isset($item)) {
+                $item->recipe()->associate($recipe);
+                $item->save();
+            }
+
             if (!empty($recipe_info['resources'])) {
                 // make sure we don't already have this resource attached
                 $existing_resources = $recipe->resources;
@@ -191,12 +206,12 @@ class ConvertController extends Controller
                     $item = Item::where('slug', $resource_info['slug'])->first();
                     $existing_item = $resource->item;
                     if (isset($existing_item)) {
-                        $item = $existing_item->contains($item) ? false : $item;
-
-                        if ($item !== false) {
-                            $resource->item()->associate($item);
-                            $resource->save();
-                        }
+                        // $item = $existing_item->contains($item) ? null : $item;
+                        $item = $existing_item->getKey() === $item->getKey() ? null : $item;
+                    }
+                    if (isset($item)) {
+                        $resource->item()->associate($item);
+                        $resource->save();
                     }
                 } // end each resource
             } // endif resources
