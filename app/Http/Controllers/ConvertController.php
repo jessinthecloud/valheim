@@ -161,7 +161,18 @@ class ConvertController extends Controller
             );
 
             if (!empty($recipe_info['resources'])) {
+                // make sure we don't already have this resource attached
+                $existing_resources = $recipe->resources;
+                $recipe_info['resources'] = collect($recipe_info['resources'])->filter(function ($value, $key) use ($existing_resources) {
+                    $existing = collect($existing_resources->toArray());
+                    // if even one part doesn't match, it's a new resource
+                    // Eloquent collection uses contains() differently, so set to regular collection
+                    return (!$existing->contains('name', $value['name']) || !$existing->contains('amount', $value['amount']) || !$existing->contains('amount_per_level', $value['amount_per_level']) || !$existing->contains('recover', $value['recover']));
+                })->toArray();
+
                 foreach ($recipe_info['resources'] as $resource_info) {
+                    $resource_info['slug'] = Str::slug(Item::name_EN($resource_info['name']));
+
                     $resource = Resource::updateOrCreate(
                         [
                             'name'=>$resource_info['name'],
@@ -172,25 +183,20 @@ class ConvertController extends Controller
                         $resource_info
                     );
 
-                    /*
-                    if (!$resource->wasRecentlyCreated && $resource->wasChanged()) {
-                        // updateOrCreate performed an update
-                    }
+                    // attach resource to recipe
+                    $resource->recipe()->attach($recipe);
+                    $resource->save();
 
-                    if (!$resource->wasRecentlyCreated && !$resource->wasChanged()) {
-                        // updateOrCreate performed nothing, row did not change
-                    }
-                    */
-                    // we don't want to attach unless a new resource was created
-                    if ($resource->wasRecentlyCreated) {
-                        // updateOrCreate performed create
-                        // attach resource to recipe
-                        $resource->recipe()->attach($recipe);
-                        $resource->save();
+                    // make sure we don't already have this item attached
+                    $item = Item::where('slug', $resource_info['slug'])->first();
+                    $existing_item = $resource->item;
+                    if (isset($existing_item)) {
+                        $item = $existing_item->contains($item) ? false : $item;
 
-                        $item = Item::where('name', $resource_info['name'])->first();
-                        $resource->item()->associate($item);
-                        $resource->save();
+                        if ($item !== false) {
+                            $resource->item()->associate($item);
+                            $resource->save();
+                        }
                     }
                 } // end each resource
             } // endif resources

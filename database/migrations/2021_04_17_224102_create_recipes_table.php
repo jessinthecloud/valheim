@@ -197,8 +197,8 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('raw_name')->unique();
-            $table->string('slug')->nullable()->unique();
-            $table->string('raw_slug')->nullable()->unique();
+            $table->string('slug')->unique();
+            $table->string('raw_slug')->unique();
             // $table->string('localized_name')->nullable();
             // $table->integer('stack')->default(1);
             // $table->integer('quality')->default(1);
@@ -213,6 +213,7 @@ class CreateRecipesTable extends Migration
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('slug');
             $table->tinyInteger('amount')->default(1);
             $table->tinyInteger('amount_per_level')->default(1);
             $table->boolean('recover')->default(true);
