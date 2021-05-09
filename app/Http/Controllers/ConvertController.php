@@ -21,149 +21,7 @@ use App\Models\StatusEffect;
 
 class ConvertController extends Controller
 {
-    /**
-     * Remove invalid hex characters from a string
-     *
-     * @param  string $string string to sanitize
-     *
-     * @return string         sanitized string
-     */
-    public function removeInvalidHex(string $string)
-    {
-        return preg_replace('/[\x00-\x1F\x7F]/u', '', $string);
-    }
 
-    public function convertJsonList(string $json_filepath, string $class, array $unique_keys, array $related_keys=[])
-    {
-        $contents = $this->removeInvalidHex(file_get_contents($json_filepath));
-        $entities = json_decode($contents, true);
-        // dump($entities);
-
-        foreach ($entities as $entity_info) {
-            $this->convertEntity($entity_info, $class, $unique_keys, $related_keys);
-        } // end foreach entity
-    }
-
-    public function convertEntity($entity_info, $class, $unique_keys, $related_keys)
-    {
-        $entity_info = $this->createAllNames($entity_info);
-        // dump("DATA FOR $class", $entity_info);
-        // setup info for updateOrCreate()
-        $check_columns = [];
-        foreach ($unique_keys as $keyname) {
-            $check_columns [$keyname]= $entity_info[$keyname];
-        }
-        $entity = $class::updateOrCreate(
-            $check_columns,
-            $entity_info
-        );
-        // dump($entity);
-        /*// check for related Models
-        if (!empty(array_filter($related_keys))) {
-            // TODO: refactor this
-            // Item shared data
-            if (Arr::exists($related_keys, 'shared_data')) {
-                $shared_data_info = $entity_info['shared_data'];
-                if (!empty($shared_data_info)) {
-                    // php is being very difficult about getting this value
-                    $shared_data_info['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($shared_data_info['item_type']));
-                    $this->convertItemSharedData($shared_data_info, $class);
-                } // endif empty shared data
-            } // end if shared_data related
-        }*/
-    }
-
-    /*public function convertItemSharedData($shared_data_info, $class)
-    {
-        $this->convertEntity($shared_data_info, $class, ['raw_name', 'item_type'], ['status_effects']);
-
-        // attach to item
-        // make sure we don't already have this item attached
-        $matching_items = Item::where('name', $shared_data_info['name'])->get();
-        $existing_items = $shared_data->items ?? null;
-        dd('shared data', $shared_data_info['name'], 'matching', $matching_items, 'already tied to', $existing_items);
-        if (isset($existing_items)) {
-            // items to attach
-            $items = $matching_items->diff($existing_items) ?? null;
-        }
-
-        // we don't want to attach unless it isn't already
-        if (isset($items)) {
-            $items->each(function ($item, $key) use ($shared_data) {
-                $item->sharedData()->associate($shared_data);
-                $item->save();
-            });
-        }
-
-        $status_effect_name = null;
-        if (!empty($shared_data_info['set_status_effect_name'])) {
-            $status_effect_name = $shared_data_info['set_status_effect_name'];
-        } elseif (!empty($shared_data_info['consume_status_effect_name'])) {
-            $status_effect_name = $shared_data_info['consume_status_effect_name'];
-        } elseif (!empty($shared_data_info['attack_status_effect_name'])) {
-            $status_effect_name = $shared_data_info['attack_status_effect_name'];
-        } elseif (!empty($shared_data_info['equip_status_effect_name'])) {
-            $status_effect_name = $shared_data_info['equip_status_effect_name'];
-        }
-
-        if (isset($status_effect_name)) {
-            $status_effect = StatusEffect::updateOrCreate(
-                ['name' => $status_effect_name],
-                ['name' => $status_effect_name]
-            );
-
-            // dd($shared_data_info['name'], $matching_items, $existing_items);
-            if ($status_effect->wasRecentlyCreated) {
-                // attach to item
-                $shared_data->setStatusEffect()->associate($status_effect);
-                $shared_data->save();
-            }
-
-            // attach to data
-            // make sure we don't already have this effect attached
-            $matching_status_effect = StatusEffect::where('name', $status_effect_name)->first();
-            $existing_item = $shared_data->item;
-            // dump($recipe_info['slug'], $item, $existing_item);
-            if (isset($existing_item)) {
-                // item to attach
-                $item = $existing_item->getKey() === $item->getKey() ? null : $item;
-            }
-        }
-
-
-
-        // we don't want to attach unless it isn't already
-        if (isset($status_effect)) {
-            $shared_data->setStatusEffect()->associate($status_effect);
-            $shared_data->save();
-        }
-
-        // TODO: set damages
-        // TODO: set damages_per_level
-    }*/
-
-    /**
-     * populate name and slug data
-     *
-     * @param  array  $info
-     *
-     * @return [type]       [description]
-     */
-    public function createAllNames(array $info)
-    {
-        // if strange case where only true name exists, use that as name
-        // e.g., Recipe_Adze
-        if (empty($info['raw_name']) && !empty($info['true_name'])) {
-            $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
-        }
-        // add spaces to make pretty
-        $info['name'] = $this->prettify(trim($info['raw_name']));
-        $info['slug'] = Str::slug(trim($info['name']));
-        $info['raw_slug'] = Str::slug(trim($info['raw_name']));
-        $info['true_slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : null;
-
-        return $info;
-    }
 
     /**
     *
@@ -220,8 +78,6 @@ class ConvertController extends Controller
                 // make sure we don't already have this item attached
                 $existing_items = $shared_data->items ?? null;
 
-                // dump('Requirement for ', $recipe_info, 'existing reqs on recipe', $existing_requirements, 'req to add', $requirement);
-
                 if (!empty($existing_items->toArray())) {
                     // items to attach
                     $item = collect($item)->diff($existing_items)->toArray() ?? null;
@@ -242,9 +98,8 @@ class ConvertController extends Controller
                         $type = $status_effect_info['type'];
                         // don't want to insert type
                         unset($status_effect_info['type']);
-                        $status_effect_info = $this->createAllNames($status_effect_info);
 
-                        // dd($status_effect_info);
+                        $status_effect_info = $this->createAllNames($status_effect_info);
 
                         $status_effect = StatusEffect::updateOrCreate(
                             ['slug' => $status_effect_info['slug']],
@@ -252,7 +107,6 @@ class ConvertController extends Controller
                         );
                         $matching_status_effect = StatusEffect::where('slug', $status_effect_info['slug'])->first();
                         $existing_status_effect = $shared_data->{$type.'StatusEffect'};
-                        // dump($status_effect_info['name'], $matching_status_effect, $existing_status_effect);
 
                         // attach to data
                         // make sure we don't already have this effect attached
@@ -271,6 +125,7 @@ class ConvertController extends Controller
 
                 // TODO: set damages
                 // TODO: set damages_per_level
+                //
             } // endif shared data
         } // end foreach item
     } // end item
@@ -303,7 +158,7 @@ class ConvertController extends Controller
             // make sure we don't already have this item attached
             $item = Item::where('slug', $recipe_info['slug'])->first();
             $existing_item = $recipe->item;
-            // dump($recipe_info['slug'], $item, $existing_item);
+
             if (isset($existing_item)) {
                 // item to attach
                 $item = $existing_item->getKey() === $item->getKey() ? null : $item;
@@ -314,6 +169,7 @@ class ConvertController extends Controller
                 $item->save();
             }
 
+            // create / attach recipe requirements
             if (!empty($recipe_info['requirements'])) {
                 foreach ($recipe_info['requirements'] as $requirement_info) {
                     $requirement_info = $this->createAllNames($requirement_info);
@@ -330,8 +186,6 @@ class ConvertController extends Controller
 
                     // attach requirement to recipe
                     $existing_requirements = $recipe->requirements ?? null;
-
-                    // dump('Requirement for ', $recipe_info, 'existing reqs on recipe', $existing_requirements, 'req to add', $requirement);
 
                     if (!empty($existing_requirements->toArray())) {
                         // items to attach
@@ -361,6 +215,7 @@ class ConvertController extends Controller
 
             // TODO: set crafting station
             // TODO: set repair station
+            //
         } // end foreach recipe
     }
 
@@ -421,4 +276,96 @@ class ConvertController extends Controller
         $name = Str::of($name)->split('/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/')->toArray();
         return implode(' ', $name) ?? $name;
     }
+
+    /**
+     * Remove invalid hex characters from a string
+     *
+     * @param  string $string string to sanitize
+     *
+     * @return string         sanitized string
+     */
+    public function removeInvalidHex(string $string)
+    {
+        return preg_replace('/[\x00-\x1F\x7F]/u', '', $string);
+    }
+
+    public function convertJsonList(string $json_filepath, string $class, array $unique_keys, array $related_keys=[])
+    {
+        $contents = $this->removeInvalidHex(file_get_contents($json_filepath));
+        $entities = json_decode($contents, true);
+        // dump($entities);
+
+        foreach ($entities as $entity_info) {
+            $this->convertEntity($entity_info, $class, $unique_keys, $related_keys);
+        } // end foreach entity
+    }
+
+    /**
+     * populate name and slug data
+     *
+     * @param  array  $info
+     *
+     * @return [type]       [description]
+     */
+    public function createAllNames(array $info)
+    {
+        // if strange case where only true name exists, use that as name
+        // e.g., Recipe_Adze
+        if (empty($info['raw_name']) && !empty($info['true_name'])) {
+            $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
+        }
+        // add spaces to make pretty
+        $info['name'] = $this->prettify(trim($info['raw_name']));
+        $info['slug'] = Str::slug(trim($info['name']));
+        $info['raw_slug'] = Str::slug(trim($info['raw_name']));
+        $info['true_slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : null;
+
+        return $info;
+    }
+
+    /**
+     * update or create entities from JSON
+     *
+     * @param  [type] $entity_info  [description]
+     * @param  [type] $class        [description]
+     * @param  [type] $unique_keys  [description]
+     * @param  [type] $related_keys [description]
+     *
+     * @return [type]               [description]
+     */
+    public function convertEntity($entity_info, $class, $unique_keys, $related_keys)
+    {
+        $entity_info = $this->createAllNames($entity_info);
+        // dump("DATA FOR $class", $entity_info);
+        // setup info for updateOrCreate()
+        $check_columns = [];
+        foreach ($unique_keys as $keyname) {
+            $check_columns [$keyname]= $entity_info[$keyname];
+        }
+        $entity = $class::updateOrCreate(
+            $check_columns,
+            $entity_info
+        );
+        // dump($entity);
+        /*// check for related Models
+        if (!empty(array_filter($related_keys))) {
+            // TODO: refactor this
+            // Item shared data
+            if (Arr::exists($related_keys, 'shared_data')) {
+                $shared_data_info = $entity_info['shared_data'];
+                if (!empty($shared_data_info)) {
+                    // php is being very difficult about getting this value
+                    $shared_data_info['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($shared_data_info['item_type']));
+                    $this->convertItemSharedData($shared_data_info, $class);
+                } // endif empty shared data
+            } // end if shared_data related
+        }*/
+    }
+
+    /*public function convertItemSharedData($shared_data_info, $class)
+    {
+        $this->convertEntity($shared_data_info, $class, ['raw_name', 'item_type'], ['status_effects']);
+
+
+    }*/
 }
