@@ -146,9 +146,9 @@ class ConvertController extends Controller
         $recipes = json_decode($contents, true);
         // dump('RECIPES', $recipes);
         foreach ($recipes as $recipe_info) {
-            $recipe_info['name'] = Recipe::name_EN($recipe_info['name']);
+            $recipe_info['name'] = strtoupper($recipe_info['name']) !== "NULL" ? Recipe::name_EN($recipe_info['name']) : Recipe::name_EN($recipe_info['raw_name']);
             $recipe_info['slug'] = Str::slug($recipe_info['name']);
-            $recipe_info['raw_slug'] = Str::slug(Recipe::name_EN($recipe_info['raw_name']));
+            $recipe_info['raw_slug'] = Str::slug(Item::name_EN($recipe_info['raw_name']));
             $recipe = Recipe::updateOrCreate(
                 ['slug'=>$recipe_info['slug']],
                 $recipe_info
