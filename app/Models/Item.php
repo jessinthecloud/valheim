@@ -44,6 +44,6 @@ class Item extends Model
      */
     public function itemType() : string
     {
-        return ItemType::toString($this->sharedData->item_type);
+        return $this->name_EN(ItemType::toString($this->sharedData->item_type));
     }
 }
