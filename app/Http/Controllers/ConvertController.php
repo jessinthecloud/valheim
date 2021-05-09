@@ -151,7 +151,13 @@ class ConvertController extends Controller
      */
     public function createAllNames(array $info)
     {
-        $info['name'] = $this->prettify(trim($info['raw_name'])); // add spaces to make pretty
+        // if strange case where only true name exists, use that as name
+        // e.g., Recipe_Adze
+        if (empty($info['raw_name']) && !empty($info['true_name'])) {
+            $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
+        }
+        // add spaces to make pretty
+        $info['name'] = $this->prettify(trim($info['raw_name']));
         $info['slug'] = Str::slug(trim($info['name']));
         $info['raw_slug'] = Str::slug(trim($info['raw_name']));
         $info['true_slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : null;
@@ -279,14 +285,15 @@ class ConvertController extends Controller
         if (!empty($name)) {
             return $this->convert($name, 'recipe');
         }
-        // remove invalid hex characters
-        $contents = preg_replace('/[\x00-\x1F\x7F]/u', '', file_get_contents('G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json'));
+
+        $file = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json';
+        $contents = $this->removeInvalidHex(file_get_contents($file));
         $recipes = json_decode($contents, true);
-        // dump('RECIPES', $recipes);
+        // $this->convertJsonList($file, Recipe::class, ['slug'], ['item'?]);
+
         foreach ($recipes as $recipe_info) {
-            $recipe_info['name'] = strtoupper($recipe_info['name']) !== "NULL" ? Recipe::name_EN($recipe_info['name']) : Recipe::name_EN($recipe_info['raw_name']);
-            $recipe_info['slug'] = Str::slug($recipe_info['name']);
-            $recipe_info['raw_slug'] = Str::slug(Item::name_EN($recipe_info['raw_name']));
+            $recipe_info = $this->createAllNames($recipe_info);
+
             $recipe = Recipe::updateOrCreate(
                 ['slug'=>$recipe_info['slug']],
                 $recipe_info
@@ -307,22 +314,13 @@ class ConvertController extends Controller
                 $item->save();
             }
 
-            if (!empty($recipe_info['resources'])) {
-                // make sure we don't already have this requirement attached
-                $existing_requirements = $recipe->requirements;
-                $recipe_info['resources'] = collect($recipe_info['resources'])->filter(function ($value, $key) use ($existing_requirements) {
-                    $existing = collect($existing_requirements->toArray());
-                    // if even one part doesn't match, it's a new requirement
-                    // Eloquent collection uses contains() differently, so set to regular collection
-                    return (!$existing->contains('name', $value['name']) || !$existing->contains('amount', $value['amount']) || !$existing->contains('amount_per_level', $value['amount_per_level']) || !$existing->contains('recover', $value['recover']));
-                })->toArray();
-
-                foreach ($recipe_info['resources'] as $requirement_info) {
-                    $requirement_info['slug'] = Str::slug(Item::name_EN($requirement_info['name']));
+            if (!empty($recipe_info['requirements'])) {
+                foreach ($recipe_info['requirements'] as $requirement_info) {
+                    $requirement_info = $this->createAllNames($requirement_info);
 
                     $requirement = Requirement::updateOrCreate(
                         [
-                            'name'=>$requirement_info['name'],
+                            'raw_name'=>$requirement_info['raw_name'],
                             'amount'=>$requirement_info['amount'],
                             'amount_per_level'=>$requirement_info['amount_per_level'],
                             'recover'=>$requirement_info['recover'],
@@ -331,22 +329,36 @@ class ConvertController extends Controller
                     );
 
                     // attach requirement to recipe
-                    $requirement->recipe()->attach($recipe);
-                    $requirement->save();
+                    $existing_requirements = $recipe->requirements ?? null;
 
-                    // make sure we don't already have this item attached
-                    $item = Item::where('slug', $requirement_info['slug'])->first();
-                    $existing_item = $requirement->item;
-                    if (isset($existing_item)) {
-                        // $item = $existing_item->contains($item) ? null : $item;
-                        $item = $existing_item->getKey() === $item->getKey() ? null : $item;
+                    // dump('Requirement for ', $recipe_info, 'existing reqs on recipe', $existing_requirements, 'req to add', $requirement);
+
+                    if (!empty($existing_requirements->toArray())) {
+                        // items to attach
+                        $requirement = collect($requirement)->diff($existing_requirements)->toArray() ?? null;
+                        $requirement = $requirement[0] ?? null;
                     }
-                    if (isset($item)) {
-                        $requirement->item()->associate($item);
+
+                    // we don't want to attach unless it isn't already
+                    if (isset($requirement)) {
+                        $requirement->recipe()->attach($recipe);
                         $requirement->save();
+
+                        // attach item to requirement
+                        // make sure we don't already have this item attached
+                        $item = Item::where('slug', $requirement->slug)->first();
+                        $existing_item = $requirement->item;
+                        if (isset($existing_item)) {
+                            $item = $existing_item->getKey() === $item->getKey() ? null : $item;
+                        }
+                        if (isset($item)) {
+                            $requirement->item()->associate($item);
+                            $requirement->save();
+                        }
                     }
                 } // end each requirement
             } // endif requirements
+
             // TODO: set crafting station
             // TODO: set repair station
         } // end foreach recipe

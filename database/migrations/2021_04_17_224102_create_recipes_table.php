@@ -21,13 +21,13 @@ class CreateRecipesTable extends Migration
 
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
-            $table->string('var_name')->nullable();
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->string('raw_name')->unique();
             $table->string('raw_slug')->unique();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
+            $table->string('var_name')->nullable();
             $table->float('discover_range')->default(4);
             $table->float('range_build')->default(10);
             $table->boolean('craft_require_roof')->default(true);
@@ -40,13 +40,13 @@ class CreateRecipesTable extends Migration
         Schema::create('status_effects', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('var_name')->nullable();
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->string('raw_name')->unique();
             $table->string('raw_slug')->unique();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
+            $table->string('var_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();
             $table->string('attributes')->nullable();
@@ -64,7 +64,6 @@ class CreateRecipesTable extends Migration
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             // name of item being created
-            $table->string('var_name')->nullable();
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('raw_name')->unique();
@@ -72,6 +71,7 @@ class CreateRecipesTable extends Migration
             // actual recipe name
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
+            $table->string('var_name')->nullable();
             $table->foreignId('crafting_station_id')->nullable()->constrained();
             $table->foreignId('repair_station_id')->nullable()->references('id')->on('crafting_stations');
             $table->boolean('enabled')->default(true);
@@ -83,14 +83,13 @@ class CreateRecipesTable extends Migration
 
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
-            $table->string('var_name')->nullable();
             $table->string('name');
             $table->string('slug')->nullable()->unique();
             $table->string('raw_name');
             $table->string('raw_slug')->nullable()->unique();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
-            // $table->string('localized_name')->nullable();
+            $table->string('var_name')->nullable();
             // -- StatusEffects
             $table->foreignId('attack_status_effect_id')->nullable()->references('id')->on('status_effects');
             $table->foreignId('consume_status_effect_id')->nullable()->references('id')->on('status_effects');
@@ -201,13 +200,13 @@ class CreateRecipesTable extends Migration
 
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('var_name')->nullable();
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->string('raw_name')->unique();
             $table->string('raw_slug')->unique();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
+            $table->string('var_name')->nullable();
             $table->foreignId('recipe_id')->nullable()->constrained()->onUpdate('cascade');
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             $table->timestamps();
