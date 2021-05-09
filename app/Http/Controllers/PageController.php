@@ -16,6 +16,7 @@ class PageController extends Controller
     {
         $recipes = Recipe::all();
         $items = Item::all();
+
         return view('home', compact('recipes', 'items'));
     }
 }

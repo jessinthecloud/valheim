@@ -5,23 +5,23 @@ use App\Enums\Enum;
 
 abstract class SkillType extends Enum
 {
-    const NONE        = 0;
-    const SWORDS      = 1;
-    const KNIVES      = 2;
-    const CLUBS       = 3;
-    const POLEARMS    = 4;
-    const SPEARS      = 5;
-    const BLOCKING    = 6;
-    const AXES        = 7;
-    const BOWS        = 8;
-    const FIREMAGIC   = 9;
-    const FROSTMAGIC  = 10;
-    const UNARMED     = 11;
-    const PICKAXES    = 12;
-    const WOODCUTTING = 13;
-    const JUMP        = 100;
-    const SNEAK       = 101;
-    const RUN         = 102;
-    const SWIM        = 103;
-    const ALL         = 999;
+    const None        = 0;
+    const Swords      = 1;
+    const Knives      = 2;
+    const Clubs       = 3;
+    const Polearms    = 4;
+    const Spears      = 5;
+    const Blocking    = 6;
+    const Axes        = 7;
+    const Bows        = 8;
+    const FireMagic   = 9;
+    const FrostMagic  = 10;
+    const Unarmed     = 11;
+    const Pickaxes    = 12;
+    const Woodcutting = 13;
+    const Jump        = 100;
+    const Sneak       = 101;
+    const Run         = 102;
+    const Swim        = 103;
+    const All         = 999;
 }

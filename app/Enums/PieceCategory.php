@@ -3,10 +3,10 @@ namespace App\Enums;
 
 abstract class PieceCategory
 {
-    const MISC = 0;
-    const CRAFTING = 1;
-    const BUILDING = 2;
-    const FURNITURE = 3;
-    const MAX = 4;
-    const ALL = 100;
+    const Misc = 0;
+    const Crafting = 1;
+    const Building = 2;
+    const Furniture = 3;
+    const Max = 4;
+    const All = 100;
 }

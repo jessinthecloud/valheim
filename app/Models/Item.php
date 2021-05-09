@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\ItemType;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,5 +35,15 @@ class Item extends Model
     public function sharedData()
     {
         return $this->belongsTo(SharedData::class);
+    }
+
+    /**
+     * shared data item_type in nice caps
+     *
+     * @return string   item type
+     */
+    public function itemType() : string
+    {
+        return ucwords(strtolower(ItemType::toString($this->sharedData->item_type)));
     }
 }
