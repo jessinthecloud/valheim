@@ -17,7 +17,7 @@ abstract class Enum
         if (!isset($enum[$val])) {
             throw new \ErrorException("Enum does not exist");
         }
-        return strtoupper($enum[$val]) ?? null;
+        return $enum[$val] ?? null;
     }
 
     public static function isValidName($name, $strict = false)
