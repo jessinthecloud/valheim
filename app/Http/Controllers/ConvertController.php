@@ -216,22 +216,22 @@ class ConvertController extends Controller
                     $shared_data_info
                 );
 
-                // attach to item
+                // attach data to item
                 // make sure we don't already have this item attached
-                $matching_items = Item::where('raw_name', $shared_data_info['raw_name'])->get();
                 $existing_items = $shared_data->items ?? null;
-                // dd($shared_data_info['name'], $matching_items, $existing_items);
-                if (isset($existing_items)) {
+
+                // dump('Requirement for ', $recipe_info, 'existing reqs on recipe', $existing_requirements, 'req to add', $requirement);
+
+                if (!empty($existing_items->toArray())) {
                     // items to attach
-                    $items = $matching_items->diff($existing_items) ?? null;
+                    $item = collect($item)->diff($existing_items)->toArray() ?? null;
+                    $item = $item[0] ?? null;
                 }
 
                 // we don't want to attach unless it isn't already
-                if (isset($items)) {
-                    $items->each(function ($item, $key) use ($shared_data) {
-                        $item->sharedData()->associate($shared_data);
-                        $item->save();
-                    });
+                if (isset($item)) {
+                    $item->sharedData()->associate($shared_data);
+                    $item->save();
                 }
 
                 // get status effects shared data
