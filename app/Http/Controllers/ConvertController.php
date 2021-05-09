@@ -78,12 +78,14 @@ class ConvertController extends Controller
             $contents,
             true
         );
-        dump($items);
+
         foreach ($items as $item_info) {
-            $item_info['slug'] = Str::slug($item_info['name']);
             $item_info['name'] = Item::name_EN($item_info['name']);
+            $item_info['slug'] = Str::slug($item_info['name']);
+            $item_info['raw_slug'] = Str::slug(Item::name_EN($item_info['raw_name']));
+
             $item = Item::updateOrCreate(
-                ['raw_name'=>$item_info['raw_name']],
+                ['slug'=>$item_info['slug']],
                 $item_info
             );
 
@@ -144,10 +146,11 @@ class ConvertController extends Controller
         $recipes = json_decode($contents, true);
         // dump('RECIPES', $recipes);
         foreach ($recipes as $recipe_info) {
-            $recipe_info['slug'] = Str::slug(Recipe::name_EN($recipe_info['name']));
             $recipe_info['name'] = Recipe::name_EN($recipe_info['name']);
+            $recipe_info['slug'] = Str::slug($recipe_info['name']);
+            $recipe_info['raw_slug'] = Str::slug(Recipe::name_EN($recipe_info['raw_name']));
             $recipe = Recipe::updateOrCreate(
-                ['name'=>$recipe_info['name']],
+                ['slug'=>$recipe_info['slug']],
                 $recipe_info
             );
             // TODO: setup resources

@@ -24,7 +24,7 @@ class CreateRecipesTable extends Migration
             $table->string('name')->unique();
             $table->string('raw_name')->unique(); // $piece_forge
             $table->string('slug')->nullable();
-            $table->string('localized_name')->nullable();
+            // $table->string('localized_name')->nullable();
             $table->float('discover_range')->default(4);
             $table->float('range_build')->default(10);
             $table->boolean('craft_require_roof')->default(true);
@@ -62,12 +62,13 @@ class CreateRecipesTable extends Migration
         Schema::create('recipes', function (Blueprint $table) {
             $table->id();
             // name of item being created
-            $table->string('name')->unique();
-            $table->string('item_name')->nullable();
+            $table->string('name');
+            $table->string('raw_name')->unique();
             // slug of name
-            $table->string('slug')->nullable();
+            $table->string('slug')->unique();
+            $table->string('raw_slug')->unique();
             // translated name
-            $table->string('localized_name')->nullable();
+            // $table->string('localized_name')->nullable();
             $table->boolean('enabled')->default(true);
             // amount of items the recipe creates
             $table->tinyInteger('amount')->default(1);
@@ -82,10 +83,11 @@ class CreateRecipesTable extends Migration
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('localized_name')->nullable();
+            $table->string('raw_name');
+            // $table->string('localized_name')->nullable();
             $table->string('dlc')->nullable();
             $table->string('description')->nullable();
-            $table->string('localized_description')->nullable();
+            // $table->string('localized_description')->nullable();
             $table->float('item_type')->default(0x10); // enum ItemDrop.ItemData.ItemType.Misc
             // max number you can stack
             $table->smallInteger('max_stack_size')->default(1);
@@ -193,9 +195,10 @@ class CreateRecipesTable extends Migration
 
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('raw_name')->unique();
-            $table->string('slug')->nullable();
+            $table->string('slug')->nullable()->unique();
+            $table->string('raw_slug')->nullable()->unique();
             // $table->string('localized_name')->nullable();
             // $table->integer('stack')->default(1);
             // $table->integer('quality')->default(1);
