@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ItemController;
 use App\Http\Resources\ItemResource;
+use App\Http\Resources\RecipeResource;
 use App\Models\Item;
+use App\Models\Recipe;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +49,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
 
     // https://laravel.com/docs/8.x/eloquent-resources
+    // -- ITEMS
     // specific item
+    Route::get('/items/{id}', function ($id) {
+        return new ItemResource(Item::findOrFail($id));
+    })->where('id', '[0-9]+')->name('items.show');
+    // by slug
     Route::get('/items/{slug}', function ($slug) {
         return new ItemResource(Item::where('slug', $slug)->firstOrFail());
     })->name('items.show');
@@ -56,25 +63,17 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         return ItemResource::collection(Item::all());
     })->name('items.index');
 
-
-
-    /*Route::get(
-        '/recipes',
-        [RecipeController::class, 'index']
-    )->name('recipe');
-
-    Route::get(
-        '/recipes/{slug}',
-        [RecipeController::class, 'show']
-    )->name('recipe');
-
-    Route::get(
-        '/items',
-        [ItemController::class, 'index']
-    )->name('item');
-
-    Route::get(
-        '/items/{slug}',
-        [ItemController::class, 'show']
-    )->name('item');*/
+    // -- RECIPES
+    // specific recipe
+    Route::get('/recipes/{id}', function ($id) {
+        return new RecipeResource(Recipe::findOrFail($id));
+    })->where('id', '[0-9]+')->name('recipes.show');
+    // by slug
+    Route::get('/recipes/{slug}', function ($slug) {
+        return new RecipeResource(recipe::where('slug', $slug)->firstOrFail());
+    })->name('recipes.show');
+    // all recipes
+    Route::get('/recipes', function () {
+        return RecipeResource::collection(recipe::all());
+    })->name('recipes.index');
 });
