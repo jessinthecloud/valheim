@@ -46,8 +46,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         ]
     );*/
 
-
-
     // https://laravel.com/docs/8.x/eloquent-resources
     // -- ITEMS
     // specific item
