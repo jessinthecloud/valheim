@@ -5,14 +5,14 @@ use App\Enums\Enum;
 
 abstract class AnimationState extends Enum
 {
-    const UNARMED       = 'Unarmed';
-    const ONEHANDED     = 'OneHanded';
-    const TWOHANDEDCLUB = 'TwoHandedClub';
-    const BOW           = 'Bow';
-    const SHIELD        = 'Shield';
-    const TORCH         = 'Torch';
-    const LEFTTORCH     = 'LeftTorch';
-    const ATGEIR        = 'Atgeir';
-    const TWOHANDEDAXE  = 'TwoHandedAxe';
-    const FISHINGROD    = 'FishingRod';
+    const Unarmed       = 'Unarmed';
+    const OneHanded     = 'OneHanded';
+    const TwoHandedClub = 'TwoHandedClub';
+    const Bow           = 'Bow';
+    const Shield        = 'Shield';
+    const Torch         = 'Torch';
+    const LeftTorch     = 'LeftTorch';
+    const Atgeir        = 'Atgeir';
+    const TwoHandedAxe  = 'TwoHandedAxe';
+    const FishingRod    = 'FishingRod';
 }

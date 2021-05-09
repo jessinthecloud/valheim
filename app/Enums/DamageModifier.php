@@ -5,11 +5,11 @@ use App\Enums\Enum;
 
 abstract class DamageModifier extends Enum
 {
-    const NORMAL = 0;
-    const RESISTANT = 1;
-    const WEAK = 2;
-    const IMMUNE = 3;
-    const IGNORE = 4;
-    const VERYRESISTANT = 5;
-    const VERYWEA = 6;
+    const Normal = 0;
+    const Resistant = 1;
+    const Weak = 2;
+    const Immune = 3;
+    const Ignore = 4;
+    const VeryResistant = 5;
+    const VeryWeak = 6;
 }

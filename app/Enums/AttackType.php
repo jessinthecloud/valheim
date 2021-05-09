@@ -5,10 +5,10 @@ use App\Enums\Enum;
 
 abstract class AttackType extends Enum
 {
-    const HORIZONTAL = 0;
-    const VERTICAL = 1;
-    const PROJECTILE = 2;
-    const NONE = 3;
-    const AREA = 4;
-    const TRIGGERPROJECTILE = 5;
+    const Horizontal = 0;
+    const Vertical = 1;
+    const Projectile = 2;
+    const None = 3;
+    const Area = 4;
+    const TriggerProjectile = 5;
 }

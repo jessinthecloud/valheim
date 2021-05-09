@@ -5,7 +5,7 @@ use App\Enums\Enum;
 
 abstract class AiTarget extends Enum
 {
-    const ENEMY = 0;
-    const FRIENDHURT = 1;
-    const FRIEND = 2;
+    const Enemy = 0;
+    const Friendhurt = 1;
+    const Friend = 2;
 }
