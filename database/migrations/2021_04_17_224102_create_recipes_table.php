@@ -28,7 +28,6 @@ class CreateRecipesTable extends Migration
             $table->string('raw_slug')->unique();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
-            // $table->string('localized_name')->nullable();
             $table->float('discover_range')->default(4);
             $table->float('range_build')->default(10);
             $table->boolean('craft_require_roof')->default(true);
@@ -48,23 +47,18 @@ class CreateRecipesTable extends Migration
             $table->string('raw_slug')->unique();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
-            // $table->string('localized_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();
-            // $table->string('localized_tooltip')->nullable();
             $table->string('attributes')->nullable();
             $table->string('start_message')->nullable();
-            // $table->string('localized_start_message')->nullable();
-            // $table->string('start_message_type')->default("TopLeft");
             $table->string('stop_message')->nullable();
-            // $table->string('localized_stop_message')->nullable();
-            // $table->string('stop_message_type')->default("TopLeft");
             $table->string('repeat_message')->nullable();
-            // $table->string('localized_repeat_message')->nullable();
-            // $table->string('repeat_message_type')->default("TopLeft");
             $table->float('repeat_interval')->default(0);
             $table->float('cooldown')->default(0);
             $table->string('activation_animation')->default("gpower");
+            // $table->string('start_message_type')->default("TopLeft");
+            // $table->string('stop_message_type')->default("TopLeft");
+            // $table->string('repeat_message_type')->default("TopLeft");
         });
 
         Schema::create('recipes', function (Blueprint $table) {
@@ -78,16 +72,12 @@ class CreateRecipesTable extends Migration
             // actual recipe name
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
-            // translated name
-            // $table->string('localized_name')->nullable();
+            $table->foreignId('crafting_station_id')->nullable()->constrained();
+            $table->foreignId('repair_station_id')->nullable()->references('id')->on('crafting_stations');
             $table->boolean('enabled')->default(true);
             // amount of items the recipe creates
             $table->tinyInteger('amount')->default(1);
             $table->tinyInteger('min_station_level')->default(1);
-
-            $table->foreignId('crafting_station_id')->nullable()->constrained();
-            $table->foreignId('repair_station_id')->nullable()->references('id')->on('crafting_stations');
-
             $table->timestamps();
         });
 
@@ -101,10 +91,16 @@ class CreateRecipesTable extends Migration
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
             // $table->string('localized_name')->nullable();
+            // -- StatusEffects
+            $table->foreignId('attack_status_effect_id')->nullable()->references('id')->on('status_effects');
+            $table->foreignId('consume_status_effect_id')->nullable()->references('id')->on('status_effects');
+            $table->foreignId('equip_status_effect_id')->nullable()->references('id')->on('status_effects');
+            $table->foreignId('set_status_effect_id')->nullable()->references('id')->on('status_effects');
+            // -- End StatusEffects -------
             $table->string('dlc')->nullable();
             $table->string('description')->nullable();
-            // $table->string('localized_description')->nullable();
-            $table->float('item_type')->default(0x10); // enum ItemDrop.ItemData.ItemType.Misc
+            // enum ItemDrop.ItemData.ItemType.Misc
+            $table->float('item_type')->default(0x10);
             // max number you can stack
             $table->smallInteger('max_stack_size')->default(1);
             // max upgradeable level
@@ -117,13 +113,8 @@ class CreateRecipesTable extends Migration
             // how long it takes to equip item after selected
             $table->float('equip_duration')->default(1);
             $table->integer('variants')->nullable();
-            // $table->foreignId('build_pieces_id')->nullable()->references('id')->on('pieces'); // PieceTable
             $table->string('set_name')->default("");
             $table->integer('set_size')->nullable();
-            // StatusEffect
-            $table->foreignId('equip_status_effect_id')->nullable()->references('id')->on('status_effects');
-            // StatusEffect
-            $table->foreignId('set_status_effect_id')->nullable()->references('id')->on('status_effects');
             $table->float('movement_modifier')->default(0);
             // total HP granted when eaten
             $table->float('food')->nullable();
@@ -136,7 +127,6 @@ class CreateRecipesTable extends Migration
             $table->boolean('helmet_hide_hair')->default(true);
             $table->float('armor')->default(10);
             $table->float('armor_per_level')->default(1);
-            // $table->foriengId('damageModifiers')->nullable(); // List<HitData.DamageModPair>
             $table->float('block_power')->default(10);
             $table->float('block_power_per_level')->nullable();
             $table->float('deflection_force')->nullable();
@@ -155,17 +145,6 @@ class CreateRecipesTable extends Migration
             $table->float('backstab_bonus')->default(4);
             $table->float('dodgeable')->nullable();
             $table->float('blockable')->nullable();
-            // StatusEffect
-            $table->foreignId('attack_status_effect_id')->nullable()->references('id')->on('status_effects');
-            // GameObject
-            // $table->foreignId('spawn_on_hit_id')->nullable()->references('id')->on('game_objects');
-            // GameObject
-            // $table->foreignId('spawn_on_hit_terrain_id')->nullable()->references('id')->on('game_objects');
-
-            // Attack
-            // $table->foreignId('attack_id')->nullable()->references('id')->on('attacks');
-            // Attack
-            // $table->foreignId('secondary_attack_id')->nullable()->references('id')->on('attacks');
             $table->boolean('use_durability')->nullable();
             $table->boolean('destroy_broken')->default(true);
             $table->float('can_be_repaired')->default(true); // canBeReparied
@@ -184,6 +163,20 @@ class CreateRecipesTable extends Migration
             $table->boolean('ai_when_flying')->default(true);
             $table->boolean('ai_when_walking')->default(true);
             $table->boolean('ai_when_swiming')->default(true);
+            $table->timestamps();
+
+            // $table->foreignId('damageModifiers')->nullable(); // List<HitData.DamageModPair>
+            // $table->foreignId('build_pieces_id')->nullable()->references('id')->on('pieces'); // PieceTable
+            // GameObject
+            // $table->foreignId('spawn_on_hit_id')->nullable()->references('id')->on('game_objects');
+            // GameObject
+            // $table->foreignId('spawn_on_hit_terrain_id')->nullable()->references('id')->on('game_objects');
+
+            // Attack
+            // $table->foreignId('attack_id')->nullable()->references('id')->on('attacks');
+            // Attack
+            // $table->foreignId('secondary_attack_id')->nullable()->references('id')->on('attacks');
+
             // EffectList
             // $table->foreignId('hit_effect')->nullable()->references('id')->on('effect_lists');
             //
@@ -203,9 +196,6 @@ class CreateRecipesTable extends Migration
             //
             // EffectList
             // $table->foreignId('trail_start_effect')->nullable()->references('id')->on('effect_lists');
-            // status effects -- are objects
-            $table->foreignId('consume_status_effect_id')->nullable()->references('id')->on('status_effects');
-            $table->timestamps();
         });
 
 
@@ -218,17 +208,16 @@ class CreateRecipesTable extends Migration
             $table->string('raw_slug')->unique();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
+            $table->foreignId('recipe_id')->nullable()->constrained()->onUpdate('cascade');
+            $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
+            $table->timestamps();
+            // GameObject
+            //$table->foreignId('drop_prefab_id')->nullable()->references('id')->on('game_objects');
             // is probably instanced data?
-            // $table->string('localized_name')->nullable();
             // $table->integer('stack')->default(1);
             // $table->integer('quality')->default(1);
             // $table->integer('variant')->nullable();
             // $table->float('durability')->default(100);
-            $table->foreignId('recipe_id')->nullable()->constrained()->onUpdate('cascade');
-            $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
-            // GameObject
-            // $table->foreignId('drop_prefab_id')->nullable()->references('id')->on('game_objects');
-            $table->timestamps();
         });
 
         Schema::create('requirements', function (Blueprint $table) {
@@ -240,7 +229,6 @@ class CreateRecipesTable extends Migration
             $table->tinyInteger('amount_per_level')->default(1);
             $table->boolean('recover')->default(true);
             $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade');
-            // $table->foreignId('recipe_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
 
