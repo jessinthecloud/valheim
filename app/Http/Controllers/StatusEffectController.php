@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Recipe;
+use App\Models\StatusEffect;
 use Illuminate\Http\Request;
 
-class RecipeController extends Controller
+class StatusEffectController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +14,9 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::all();
+        $statusEffects = StatusEffect::all();
 
-        return view('home', compact('recipes'));
+        return view('home', compact('statusEffects'));
     }
 
     /**
@@ -43,36 +43,21 @@ class RecipeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Recipe  $recipe
+     * @param  \App\Models\StatusEffect  $StatusEffect
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(StatusEffect $StatusEffect)
     {
-        $recipe = Recipe::findOrFail($id);
-
-        return view('home', compact('recipe'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\r  $r
-     * @return \Illuminate\Http\Response
-     */
-    public function showSlug($slug)
-    {
-        $recipe = Recipe::where('slug', $slug);
-
-        return view('home', compact('recipe'));
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Recipe  $recipe
+     * @param  \App\Models\StatusEffect  $StatusEffect
      * @return \Illuminate\Http\Response
      */
-    public function edit(Recipe $recipe)
+    public function edit(StatusEffect $StatusEffect)
     {
         //
     }
@@ -81,10 +66,10 @@ class RecipeController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Recipe  $recipe
+     * @param  \App\Models\StatusEffect  $StatusEffect
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Recipe $recipe)
+    public function update(Request $request, StatusEffect $StatusEffect)
     {
         //
     }
@@ -92,10 +77,10 @@ class RecipeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Recipe  $recipe
+     * @param  \App\Models\StatusEffect  $StatusEffect
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Recipe $recipe)
+    public function destroy(StatusEffect $StatusEffect)
     {
         //
     }

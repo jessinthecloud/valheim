@@ -46,10 +46,22 @@ class ItemController extends Controller
      * @param  \App\Models\r  $r
      * @return \Illuminate\Http\Response
      */
-    public function show(Item $item)
+    public function show($id)
     {
-        dd($item);
-        $item = Item::find();
+        $item = Item::findOrFail($id);
+
+        return view('home', compact('item'));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Models\r  $r
+     * @return \Illuminate\Http\Response
+     */
+    public function showSlug($slug)
+    {
+        $item = Item::where('slug', $slug);
 
         return view('home', compact('item'));
     }
