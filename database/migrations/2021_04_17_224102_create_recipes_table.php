@@ -84,9 +84,9 @@ class CreateRecipesTable extends Migration
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('slug')->nullable()->unique();
+            $table->string('slug')->nullable();
             $table->string('raw_name');
-            $table->string('raw_slug')->nullable()->unique();
+            $table->string('raw_slug')->nullable();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
             $table->string('var_name')->nullable();

@@ -19,7 +19,7 @@ use App\Models\Recipe;
 */
 
 // Convert ------------------------------------------------------------------
-/*Route::prefix('convert')->name('convert.')->group(function () {
+Route::prefix('convert')->name('convert.')->group(function () {
     Route::get(
         '/',
         [App\Http\Controllers\ConvertController::class, 'index']
@@ -44,7 +44,7 @@ use App\Models\Recipe;
         '/{name}',
         [App\Http\Controllers\ConvertController::class, 'convert']
     )->name('names');
-});*/
+});
 
 // END Convert ------------------------------------------------------------------
 

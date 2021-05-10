@@ -62,8 +62,9 @@ class ConvertController extends Controller
 
             $shared_data_info = $item_info['shared_data'];
             if (!empty($shared_data_info)) {
+                /*dump((float)$shared_data_info['item_type']);
                 // php is being very difficult about getting this value
-                $shared_data_info['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($shared_data_info['item_type']));
+                $shared_data_info['item_type'] = (new \ReflectionClass(ItemType::class))->getConstant(strtoupper($shared_data_info['item_type']));*/
                 $shared_data_info = $this->createAllNames($shared_data_info);
 
                 $shared_data = SharedData::updateOrCreate(
