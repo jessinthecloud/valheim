@@ -14,7 +14,7 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::all();
+        $recipes = Recipe::with('requirements')->all();
 
         return view('home', compact('recipes'));
     }

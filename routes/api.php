@@ -64,11 +64,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     // -- RECIPES
     // specific recipe
     Route::get('/recipes/{id}', function ($id) {
-        return new RecipeResource(Recipe::findOrFail($id));
+        return new RecipeResource(Recipe::with('requirements')->findOrFail($id));
     })->where('id', '[0-9]+')->name('recipes.show');
     // by slug
     Route::get('/recipes/{slug}', function ($slug) {
-        return new RecipeResource(recipe::where('slug', $slug)->firstOrFail());
+        return new RecipeResource(Recipe::with('requirements')->where('slug', $slug)->firstOrFail());
     })->name('recipes.show');
     // all recipes
     Route::get('/recipes', function () {

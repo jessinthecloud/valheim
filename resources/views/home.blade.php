@@ -19,8 +19,7 @@
     @if(!empty($item))
         <h2>{{ $item->name }}</h2>
         <p>{{ $item->sharedData->description }}</p>
-        <p>{{ $item->itemType() }}</p>
-        
+        <p>{{ $item->itemType() }}</p>        
     @endif
     @if(!empty($recipes))
         <h2>Recipes</h2>
