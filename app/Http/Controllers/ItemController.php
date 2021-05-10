@@ -61,7 +61,7 @@ class ItemController extends Controller
      */
     public function showSlug($slug)
     {
-        $item = Item::where('slug', $slug);
+        $item = Item::where('slug', $slug)->first();
 
         return view('home', compact('item'));
     }
