@@ -5,6 +5,23 @@
 @endsection
 
 @section('content')
+   @if(!empty($recipe))
+        <h2>{{ ucwords($recipe->name) }}</h2>
+        ({{ $recipe->true_name }})
+        <ul>
+            @foreach($recipe->requirements as $requirement)
+                <li>
+                    {{ $requirement->amount }} <strong>{{ $requirement->name }}</strong>
+                </li>
+            @endforeach
+        </ul>
+    @endif
+    @if(!empty($item))
+        <h2>{{ $item->name }}</h2>
+        <p>{{ $item->sharedData->description }}</p>
+        <p>{{ $item->itemType() }}</p>
+        
+    @endif
     @if(!empty($recipes))
         <h2>Recipes</h2>
         <ol>
@@ -33,21 +50,5 @@
             @endforeach
         </ol>
     @endif
-    @if(!empty($recipe))
-        <h2>{{ ucwords($recipe->name) }}</h2>
-        ({{ $recipe->true_name }})
-        <ul>
-            @foreach($recipe->requirements as $requirement)
-                <li>
-                    {{ $requirement->amount }} <strong>{{ $requirement->name }}</strong>
-                </li>
-            @endforeach
-        </ul>
-    @endif
-    @if(!empty($item))
-        <h2>{{ $item->name }}</h2>
-        <p>{{ $item->sharedData->description }}</p>
-        <p>{{ $item->itemType() }}</p>
-        
-    @endif
+   
 @endsection
