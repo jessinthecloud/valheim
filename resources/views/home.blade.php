@@ -30,9 +30,11 @@
                     {{ ucwords($recipe->name) }} ({{ $recipe->true_name }}) {{-- {{ $recipe->slug }} ({{ $recipe->raw_slug }}) --}}
                     <ul>
                         @foreach($recipe->requirements as $requirement)
-                            <li>
-                                {{ $requirement->amount }} <strong>{{ $requirement->name }}</strong>
-                            </li>
+                            @if($requirement->amount > 0)
+                                <li>
+                                    {{ $requirement->amount }} <strong>{{ $requirement->name }}</strong>
+                                </li>
+                            @endif
                         @endforeach
                     </ul>
                 </li>
