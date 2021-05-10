@@ -17,6 +17,13 @@ class Recipe extends Model
         'repair_station_id',
     ];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [];
+
     // remove Recipe_ prefix
     public static function name_EN($name)
     {

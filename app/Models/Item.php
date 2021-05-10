@@ -15,6 +15,13 @@ class Item extends Model
     // empty array means nothing is locked down
     protected $guarded = ['shared_data_id'];
 
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['created_at'];
+
 
     // split string into array on uppercase letter and turn it into string
     public static function name_EN($name)
