@@ -1,3 +1,6 @@
+# API
+[Usage](https://github.com/jessinthecloud/valheim/blob/main/docs/API.md)
+
 # Tools & Thanks
 - [Valheim Game](https://www.valheimgame.com/)
 - [Laravel](https://laravel.com)
