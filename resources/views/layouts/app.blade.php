@@ -19,14 +19,15 @@
 
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
+        @livewireStyles
     </head>
-    <body class="bg-dark color-light font-base">
+    <body class="bg-gray-900 text-gray-100">
         
-        {{-- @include('nav') --}}
+        @include('nav')
 
-        <main class="wrapper">
+        <main class="container mx-auto my-12 p-4">
             @yield('content')
         </main>
+        @livewireScripts
     </body>
 </html>
