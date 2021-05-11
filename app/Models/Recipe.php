@@ -36,6 +36,11 @@ class Recipe extends Model
         return $this->belongsTo(CraftingStation::class);
     }
 
+    public function repairStation()
+    {
+        return $this->belongsTo(CraftingStation::class, 'repair_station_id');
+    }
+
     public function requirements()
     {
         return $this->belongsToMany(Requirement::class);

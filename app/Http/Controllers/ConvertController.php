@@ -21,7 +21,19 @@ use App\Models\StatusEffect;
 
 class ConvertController extends Controller
 {
+    private $docspath = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs';
+    /**
+    *
+    * @return \Illuminate\Http\Response
+    */
+    public function craftingStation()
+    {
+        echo "CONVERT CRAFTING STATIONS";
 
+        $crafting_stations_file = $this->docspath.'\crafting-station-list.json';
+
+        $this->convertJsonList($crafting_stations_file, CraftingStation::class, ['raw_name']);
+    }
 
     /**
     *
@@ -31,7 +43,7 @@ class ConvertController extends Controller
     {
         echo "CONVERT status_effect";
 
-        $status_effects_file = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\status-effects\status-effect-list.json';
+        $status_effects_file = $this->docspath.'\status-effect-list.json';
 
         $this->convertJsonList($status_effects_file, StatusEffect::class, ['raw_name']);
     }
@@ -47,7 +59,7 @@ class ConvertController extends Controller
             return $this->convert($name, 'item');
         }
 
-        $file = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\item-list.json';
+        $file = $this->docspath.'\item-list.json';
         $contents = $this->removeInvalidHex(file_get_contents($file));
         $items = json_decode($contents, true);
         // $this->convertJsonList($file, Item::class, ['slug'], ['shared_data']);
@@ -142,7 +154,7 @@ class ConvertController extends Controller
             return $this->convert($name, 'recipe');
         }
 
-        $file = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs\conceptual\objects\recipe-list.json';
+        $file = $this->docspath.'\recipe-list.json';
         $contents = $this->removeInvalidHex(file_get_contents($file));
         $recipes = json_decode($contents, true);
         // $this->convertJsonList($file, Recipe::class, ['slug'], ['item'?]);
@@ -214,9 +226,39 @@ class ConvertController extends Controller
                 } // end each requirement
             } // endif requirements
 
-            // TODO: set crafting station
-            // TODO: set repair station
-            //
+            // attach to crafting station
+            if (isset($recipe_info['raw_crafting_station_name'])) {
+                // make sure we don't already have this station attached
+                $station = CraftingStation::where('raw_name', $recipe_info['raw_crafting_station_name'])->first();
+                $existing_station = $recipe->station;
+
+                if (isset($existing_station)) {
+                    // station to attach
+                    $station = $existing_station->getKey() === $station->getKey() ? null : $station;
+                }
+
+                if (isset($station)) {
+                    $recipe->craftingStation()->associate($station);
+                    $recipe->save();
+                }
+            }
+
+            // attach to repair station
+            if (isset($recipe_info['raw_repair_station_name'])) {
+                // make sure we don't already have this station attached
+                $station = CraftingStation::where('raw_name', $recipe_info['raw_repair_station_name'])->first();
+                $existing_station = $recipe->station;
+
+                if (isset($existing_station)) {
+                    // station to attach
+                    $station = $existing_station->getKey() === $station->getKey() ? null : $station;
+                }
+
+                if (isset($station)) {
+                    $recipe->repairStation()->associate($station);
+                    $recipe->save();
+                }
+            }
         } // end foreach recipe
     }
 
@@ -228,6 +270,7 @@ class ConvertController extends Controller
     public function index()
     {
         // convert all
+        $this->craftingStation();
         $this->statusEffect();
         $this->item();
         $this->recipe();

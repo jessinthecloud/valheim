@@ -32,8 +32,8 @@ class CreateRecipesTable extends Migration
             $table->float('range_build')->default(10);
             $table->boolean('craft_require_roof')->default(true);
             $table->boolean('craft_require_fire')->default(true);
-            $table->float('use_timer')->default(10);
             $table->float('use_distance')->default(2);
+            $table->float('use_timer')->default(10);
             $table->timestamps();
         });
 
