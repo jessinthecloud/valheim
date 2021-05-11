@@ -50,28 +50,49 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     // -- ITEMS
     // specific item
     Route::get('/items/{id}', function ($id) {
-        return new ItemResource(Item::with('recipe')->with('sharedData')->findOrFail($id));
+        return (new ItemResource(Item::with('recipe')
+            ->with('sharedData')
+            ->findOrFail($id)));
     })->where('id', '[0-9]+')->name('items.show');
     // by slug
     Route::get('/items/{slug}', function ($slug) {
-        return new ItemResource(Item::where('slug', $slug)->with('recipe')->with('sharedData')->firstOrFail());
+        return (new ItemResource(Item::where('slug', $slug)
+            ->with('recipe')
+            ->with('sharedData')
+            ->firstOrFail()));
     })->name('items.show');
     // all items
     Route::get('/items', function () {
-        return ItemResource::collection(Item::with('recipe')->with('sharedData')->get());
+        return ItemResource::collection(Item::with('recipe')
+            ->with('sharedData')
+            ->get());
     })->name('items.index');
 
     // -- RECIPES
     // specific recipe
     Route::get('/recipes/{id}', function ($id) {
-        return new RecipeResource(Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->findOrFail($id));
+        return (new RecipeResource(Recipe::with('requirements')
+            ->with('craftingStation')
+            ->with('item')
+            ->with('item.sharedData')
+            ->findOrFail($id)));
     })->where('id', '[0-9]+')->name('recipes.show');
     // by slug
     Route::get('/recipes/{slug}', function ($slug) {
-        return new RecipeResource(Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->where('slug', $slug)->firstOrFail());
+        return (new RecipeResource(Recipe::with('requirements')
+            ->with('craftingStation')
+            ->with('item')
+            ->with('item.sharedData')
+            ->where('slug', $slug)
+            ->firstOrFail()));
     })->name('recipes.show');
     // all recipes
     Route::get('/recipes', function () {
-        return RecipeResource::collection(Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->orderBy('name', 'asc')->get());
+        return RecipeResource::collection(Recipe::with('requirements')
+            ->with('craftingStation')
+            ->with('item')
+            ->with('item.sharedData')
+            ->orderBy('name', 'asc')
+            ->get());
     })->name('recipes.index');
 });
