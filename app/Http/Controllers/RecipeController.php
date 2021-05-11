@@ -14,8 +14,7 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::with('requirements')->get();
-
+        $recipes = Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->orderBy('name', 'asc')->get();
         return view('home', compact('recipes'));
     }
 
@@ -48,7 +47,7 @@ class RecipeController extends Controller
      */
     public function show($id)
     {
-        $recipe = Recipe::findOrFail($id);
+        $recipe = Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->findOrFail($id);
 
         return view('home', compact('recipe'));
     }

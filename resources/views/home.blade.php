@@ -6,50 +6,30 @@
 
 @section('content')
    @if(!empty($recipe))
-        <h2>{{ ucwords($recipe->name) }}</h2>
-        ({{ $recipe->true_name }})
-        <ul>
-            @foreach($recipe->requirements as $requirement)
-                <li>
-                    {{ $requirement->amount }} <strong>{{ $requirement->name }}</strong>
-                </li>
-            @endforeach
-        </ul>
+        @include('partials._recipe', [
+            'recipe'    => $recipe
+        ])
     @endif
     @if(!empty($item))
-        <h2>{{ $item->name }}</h2>
-        <p>{{ $item->sharedData->description }}</p>
-        <p>{{ $item->itemType() }}</p>        
+        @include('partials._item', [
+            'item'    => $item
+        ])        
     @endif
     @if(!empty($recipes))
-        <h2>Recipes</h2>
-        <ol>
-            @foreach($recipes as $recipe)
-                <li>
-                    {{ ucwords($recipe->name) }} ({{ $recipe->true_name }}) {{-- {{ $recipe->slug }} ({{ $recipe->raw_slug }}) --}}
-                    <ul>
-                        @foreach($recipe->requirements as $requirement)
-                            @if($requirement->amount > 0)
-                                <li>
-                                    {{ $requirement->amount }} <strong>{{ $requirement->name }}</strong>
-                                </li>
-                            @endif
-                        @endforeach
-                    </ul>
-                </li>
-                {{-- <?php dd($recipe->requirements); ?> --}}
-            @endforeach
-        </ol>
+        <h1>Recipes</h1>
+        @foreach($recipes as $recipe)
+            @include('partials._recipe', [
+                'recipe'    => $recipe
+            ])
+        @endforeach
     @endif
     @if(!empty($items))
         <h2>Items</h2>
-        <ol>
-            @foreach($items as $item)
-                <li>{{ $item->name }} ({{ $item->true_name }}) -- {{ $item->itemType() }}</li>
-                {{-- <?php dump($item); ?> --}}
-                {{-- <?php dd($item->sharedData); ?> --}}
-            @endforeach
-        </ol>
-    @endif
+        @foreach($items as $item)
+            @include('partials._item', [
+                'item'    => $item
+            ])
+        @endforeach
+     @endif
    
 @endsection

@@ -14,7 +14,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = Item::all();
+        $items = Item::with('recipe')->with('sharedData')->orderBy('name', 'asc')->get();
 
         return view('home', compact('items'));
     }
@@ -48,7 +48,7 @@ class ItemController extends Controller
      */
     public function show($id)
     {
-        $item = Item::findOrFail($id);
+        $item = Item::with('recipe')->with('sharedData')->findOrFail($id);
 
         return view('home', compact('item'));
     }

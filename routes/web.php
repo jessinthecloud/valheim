@@ -19,32 +19,34 @@ use App\Models\Recipe;
 */
 
 // Convert ------------------------------------------------------------------
-Route::prefix('convert')->name('convert.')->group(function () {
-    Route::get(
-        '/',
-        [App\Http\Controllers\ConvertController::class, 'index']
-    )->name('index');
+if (env('APP_ENV') === 'local') {
+    Route::prefix('convert')->name('convert.')->group(function () {
+        Route::get(
+            '/',
+            [App\Http\Controllers\ConvertController::class, 'index']
+        )->name('index');
 
-    Route::get(
-        '/status-effects/{name?}',
-        [App\Http\Controllers\ConvertController::class, 'statusEffect']
-    )->name('status-effects');
+        Route::get(
+            '/status-effects/{name?}',
+            [App\Http\Controllers\ConvertController::class, 'statusEffect']
+        )->name('status-effects');
 
-    Route::get(
-        '/recipes/{name?}',
-        [App\Http\Controllers\ConvertController::class, 'recipe']
-    )->name('recipes');
+        Route::get(
+            '/recipes/{name?}',
+            [App\Http\Controllers\ConvertController::class, 'recipe']
+        )->name('recipes');
 
-    Route::get(
-        '/items/{name?}',
-        [App\Http\Controllers\ConvertController::class, 'item']
-    )->name('items');
+        Route::get(
+            '/items/{name?}',
+            [App\Http\Controllers\ConvertController::class, 'item']
+        )->name('items');
 
-    Route::get(
-        '/{name}',
-        [App\Http\Controllers\ConvertController::class, 'convert']
-    )->name('names');
-});
+        Route::get(
+            '/{name}',
+            [App\Http\Controllers\ConvertController::class, 'convert']
+        )->name('names');
+    });
+}
 
 // END Convert ------------------------------------------------------------------
 
