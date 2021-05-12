@@ -50,7 +50,7 @@ if (env('APP_ENV') === 'local') {
 
 // END Convert ------------------------------------------------------------------
 
-// Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
+Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
 
 /*Route::resources(
     [

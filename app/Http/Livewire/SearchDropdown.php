@@ -29,10 +29,8 @@ class SearchDropdown extends Component
 
             $raw_search_results = $recipe_results->merge($item_results)->sortBy('name');
 
-            // $raw_search_results = $raw_search_results->toArray();
-
             if (!empty($raw_search_results)) {
-                // dd($raw_search_results);
+                // add table info so we know how to label and what routes to link
                 $raw_search_results = $raw_search_results->map(function ($result) {
                     return collect($result)->merge([
                         'result_type' => $result->getTable(),
@@ -41,44 +39,9 @@ class SearchDropdown extends Component
                 });
 
                 $this->search_results = $raw_search_results->toArray();
-
-                /*// get games returned as a flattened collection, convert to array, then filter out empty items, then implode into string with commas
-                $game_ids = collect($raw_search_results)->pluck('game')->toArray();
-                $game_ids = implode(", ", array_filter($game_ids));
-
-                // get game info for each result
-                $results = Http::withHeaders(config('services.igdb'))
-                    ->withBody(
-                        "fields name, slug, cover.url;
-                        where id = ($game_ids);",
-                        "text/plain"
-                    )->post('https://api.igdb.com/v4/games')
-                    ->json();
-
-                // dump($results);
-
-                $this->search_results = $this->formatForView($results);*/
-
-                // ddd($this->search_results);
             } // endif empty search result
         }
 
         return view('livewire.search-dropdown');
     } // end render()
-
-    private function formatForView($games)
-    {
-        // return a Collection of $games
-        // run the Closure function on each item of the games collection
-        return collect($games)->map(function ($game) {
-            // run this function on an item
-
-            // merge the array into the currently iterated item of the collection
-            // can use these to overwrite existing values or create new ones
-            return collect($game)->merge([
-                'cover_url' => !empty($game['cover']['url']) ? \Str::replaceFirst('thumb', 'cover_small', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
-            ]);
-            // convert to array because that is the data type of the class property we are setting it to
-        })->toArray();
-    }
 }
