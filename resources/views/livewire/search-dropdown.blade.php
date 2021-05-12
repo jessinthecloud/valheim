@@ -3,7 +3,7 @@
     search is public property on the class
     debounce - prevent requests within certain time 
         (to prevent too many as you type) --}}
-    <input wire:model.debounce.200ms="search" 
+    <input wire:model.debounce.300ms="search" 
     type="text" class="bg-gray-800 text-sm rounded-full px-3 pl-8 py-1 w-64" placeholder="Search"
     {{-- 
     on keydown event anywhere, check to see if it was /
@@ -64,7 +64,7 @@
                     @endforeach
                 </ul>
             @else
-                <div class="px-3 py-3">No Results for {{ $search }}</div>
+                <div class="px-3 py-3">No Results for <em>{{ $search }}</em></div>
             @endif
         </div>
     @endif
