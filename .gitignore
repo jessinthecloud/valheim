@@ -25,3 +25,5 @@ sftp-config.json
 *.phpintel
 
 docs/json/item-list - Copy.json
+error.log
+access.log

@@ -17,7 +17,7 @@
         </p>
     @endif
     <ul class="pl-4">
-        @foreach($recipe->requirements as $requirement)
+        @foreach($recipe->requirements->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC)->all() as $requirement)
             @if($requirement->amount > 0)
                 <li>
                     <strong>{{ $requirement->amount }}</strong> {{ $requirement->name }}
