@@ -1,4 +1,4 @@
-<section class="max-w-full flex-grow bg-gray-800 mb-4 p-6 md:w-5/12">
+<section class="max-w-full flex-grow bg-gray-800 mb-4 mr-4 p-6 md:w-5/12">
     <h2 class="w-full text-3xl mb-4">{{ ucwords($recipe->name) }}</h2>
     @if($recipe->item)
         <p class="my-4">

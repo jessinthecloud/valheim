@@ -21,11 +21,11 @@
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         @livewireStyles
     </head>
-    <body class="bg-gray-900 text-gray-100">
+    <body class="bg-gray-900 text-gray-100 flow-root">
         
         @include('nav')
 
-        <main class="container flex flex-wrap justify-between space-x-4 mx-auto my-12 p-4">
+        <main class="container flex flex-wrap justify-between mx-auto my-12 p-4">
             @yield('content')
         </main>
         @livewireScripts
