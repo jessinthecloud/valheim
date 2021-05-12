@@ -1,10 +1,10 @@
-<section>
-    <h2>{{ ucwords($recipe->name) }}</h2>
+<section class="max-w-full flex-grow bg-gray-800 mb-4 p-6 md:w-5/12">
+    <h2 class="w-full text-3xl mb-4">{{ ucwords($recipe->name) }}</h2>
     @if($recipe->item)
-        <p>
+        <p class="my-4">
             {{ $recipe->item->sharedData->description }}
         </p>
-        <p>
+        <p class="my-4">
             @if($recipe->craftingStation)
                 <strong>Crafting station:</strong> 
                 <em>
@@ -16,7 +16,7 @@
             @endif
         </p>
     @endif
-    <ul>
+    <ul class="pl-4">
         @foreach($recipe->requirements as $requirement)
             @if($requirement->amount > 0)
                 <li>

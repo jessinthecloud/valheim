@@ -20,6 +20,7 @@ module.exports = {
             DEFAULT: '#CF4322',
             400: '#EB9743',
             300: '#F1C420',
+            200: '#FC8B71',
             menu: '#070707'
         }
     }

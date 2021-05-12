@@ -25,7 +25,7 @@
         
         @include('nav')
 
-        <main class="container mx-auto my-12 p-4">
+        <main class="container flex flex-wrap justify-between space-x-4 mx-auto my-12 p-4">
             @yield('content')
         </main>
         @livewireScripts
