@@ -25,7 +25,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: ssh key with passphrase
-        uses: ./
+        uses: appleboy/scp-action@v0.1.1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
