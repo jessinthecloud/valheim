@@ -24,13 +24,12 @@ jobs:
       - uses: actions/checkout@v2
 
       # Runs a single command using the runners shell
-      - name: ssh key with passphrase
+      - name: copy file via ssh key
         uses: appleboy/scp-action@v0.1.1
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH2 }}
-          passphrase: ${{ secrets.PASSPHRASE }}
           port: ${{ secrets.PORT }}
+          key: ${{ secrets.KEY }}
           source: "tests/a.txt,tests/b.txt"
           target: "test"
