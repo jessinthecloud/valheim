@@ -1,5 +1,5 @@
 # API
-[Usage](https://github.com/jessinthecloud/valheim/blob/main/docs/API.md)
+[Usage](https://github.com/jessinthecloud/valheim/blob/main/docs/API.md) (alpha)
 
 # Tools & Thanks
 - [Valheim Game](https://www.valheimgame.com/)
