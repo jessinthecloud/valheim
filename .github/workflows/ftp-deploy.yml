@@ -13,4 +13,4 @@ jobs:
       with:
         server: valheim.recipes
         username: jessepwna
-        password: ${{ secrets.ftp_password }}
+        password: ${{ secrets.FTP_PASSWORD }}
