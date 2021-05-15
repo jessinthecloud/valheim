@@ -60,7 +60,7 @@ class RecipeController extends Controller
      */
     public function showSlug($slug)
     {
-        $recipe = Recipe::where('slug', $slug)->first();
+        $recipe = Recipe::where('slug', $slug)->firstOrFail();
 
         return view('home', compact('recipe'));
     }
