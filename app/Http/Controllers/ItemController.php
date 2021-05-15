@@ -16,7 +16,7 @@ class ItemController extends Controller
     {
         $items = Item::with('recipe')->with('sharedData')->orderBy('name', 'asc')->get();
 
-        return view('home', compact('items'));
+        return view('items.index', compact('items'));
     }
 
     /**
@@ -50,7 +50,7 @@ class ItemController extends Controller
     {
         $item = Item::with('recipe')->with('sharedData')->findOrFail($id);
 
-        return view('home', compact('item'));
+        return view('items.show', compact('item'));
     }
 
     /**
@@ -61,9 +61,9 @@ class ItemController extends Controller
      */
     public function showSlug($slug)
     {
-        $item = Item::where('slug', $slug)->first();
+        $item = Item::where('slug', $slug)->firstOrFail();
 
-        return view('home', compact('item'));
+        return view('items.show', compact('item'));
     }
 
     /**
