@@ -19,7 +19,9 @@
 
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
         @livewireStyles
+        
     </head>
     <body class="bg-gray-900 text-gray-100 flow-root">
         
@@ -28,6 +30,8 @@
         <main class="container flex flex-wrap justify-between mx-auto my-12 p-4">
             @yield('content')
         </main>
+
         @livewireScripts
+
     </body>
 </html>

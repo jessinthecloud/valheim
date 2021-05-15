@@ -1,5 +1,5 @@
-<nav class="flex justify-between items-center bg-amber-900 py-4 px-24 mt-6 lg:mt-0">
-    <ul class="justify-self-start flex items-center">
+<nav class="flex flex-wrap justify-center items-center bg-amber-900 py-4 px-24 mt-0 lg:justify-between">
+    <ul class="flex items-center mb-2 mr-4 lg:mb-0">
         <li>
             <a href="{{ route('index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
                 Home
