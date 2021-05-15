@@ -32,14 +32,14 @@
 
     > <!-- end search input tag -->
 
-    <!-- icon -->
+    <!-- magnifying glass icon -->
     <div class="absolute top-0 flex items-center h-full ml-2">
         <svg class="fill-current text-gray-400 w-4" viewBox="0 0 24 24"><path class="heroicon-ui" d="M16.32 14.9l5.39 5.4a1 1 0 01-1.42 1.4l-5.38-5.38a8 8 0 111.41-1.41zM10 16a6 6 0 100-12 6 6 0 000 12z"/></svg>
     </div>
 
-    <!-- spinner -- was deprecated, need CSS replacement -->
-    <div wire:loading class="spinner top-0 right-0 absolute mr-4 mt-3"></div>
-
+    <!-- tailwind spinner was deprecated, need replacement -->
+    {{-- <svg wire:loading class="animate-spin h-5 w-5 mr-3 top-0 right-0 absolute mr-4 mt-3" viewBox="0 0 24 24"></svg> --}}
+ 
     <!-- dynamic drop down -->
     @if(strlen($search) >= 3)
         {{-- don't show until we've typed a search --}}

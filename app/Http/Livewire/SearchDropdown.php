@@ -38,7 +38,7 @@ class SearchDropdown extends Component
                     ]);
                 });
 
-                $this->search_results = $raw_search_results->toArray();
+                $this->search_results = $raw_search_results->take(8)->toArray();
             } // endif empty search result
         }
 
