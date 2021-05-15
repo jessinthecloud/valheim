@@ -5,12 +5,12 @@
         <em class="block mt-1">{{ $item->itemType() }}</em>
     </p>
     @if($item->recipe)
-            <p class="mt-4">
-                <a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
-                    href="{{ route('recipes.show', $item->recipe->slug) }}"
-                >
-                    Recipe
-                </a>
-            </p> 
-        @endif
+        <p class="mt-4">
+            <a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
+                href="{{ route('recipes.show', $item->recipe->slug) }}"
+            >
+                Recipe
+            </a>
+        </p> 
+    @endif
 </section>

@@ -14,7 +14,12 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->orderBy('name', 'asc')->get();
+        $recipes = Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->orderBy('name', 'asc')->get()->map(function ($recipe) {
+            $recipe->name = ucwords($recipe->name);
+            $recipe->requirements = $recipe->requirements->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC)->all();
+        });
+
+
 
         return view('recipes.index', compact('recipes'));
     }
@@ -50,6 +55,9 @@ class RecipeController extends Controller
     {
         $recipe = Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->findOrFail($id);
 
+        $recipe->name = ucwords($recipe->name);
+        $recipe->requirements = $recipe->requirements->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC)->all();
+
         return view('recipes.show', compact('recipe'));
     }
 
@@ -62,6 +70,9 @@ class RecipeController extends Controller
     public function showSlug($slug)
     {
         $recipe = Recipe::where('slug', $slug)->firstOrFail();
+
+        $recipe->name = ucwords($recipe->name);
+        $recipe->requirements = $recipe->requirements->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC)->all();
 
         return view('recipes.show', compact('recipe'));
     }
