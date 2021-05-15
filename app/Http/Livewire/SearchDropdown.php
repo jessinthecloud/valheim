@@ -24,7 +24,7 @@ class SearchDropdown extends Component
         $this->search = $search;
     }
 
-    public function render()
+    public function updatedSearch()
     {
         // don't make a request until we have 3 or more letters typed
         if (strlen($this->search) >= 3) {
@@ -63,7 +63,10 @@ class SearchDropdown extends Component
         } else {
             $this->search_results = [];
         }
+    }
 
+    public function render()
+    {
         return view('livewire.search-dropdown', [
             'search'=> $this->search,
             'search_results'=> $this->search_results,

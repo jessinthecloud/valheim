@@ -27,7 +27,7 @@
     </div>
 
     <!-- tailwind spinner was deprecated, need replacement -->
-    {{-- <svg wire:loading class="animate-spin h-5 w-5 mr-3 top-0 right-0 absolute mr-4 mt-3" viewBox="0 0 24 24"></svg> --}}
+    <div wire:loading class="animate-spin absolute h-5 w-5 mr-3 top-0 right-0 mr-4 mt-3" viewBox="0 0 24 24"></div>
  
     <!-- dynamic drop down -->
     @if(strlen($search) >= 3)
