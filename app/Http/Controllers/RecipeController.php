@@ -14,9 +14,15 @@ class RecipeController extends Controller
      */
     public function index()
     {
-        $recipes = Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->orderBy('name', 'asc')->get()->map(function ($recipe) {
+        $recipes = Recipe::with([
+            'item',
+            'craftingStation',
+            'requirements' => function ($query) {
+                $query->orderByDesc('amount', SORT_NUMERIC)->orderByDesc('name', SORT_NATURAL|SORT_FLAG_CASE);
+            },
+            'requirements.item.sharedData',
+        ])->orderBy('name', 'asc')->get()->map(function ($recipe) {
             $recipe->name = ucwords($recipe->name);
-            $recipe->requirements = $recipe->requirements->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC)->all();
         });
 
 
@@ -53,10 +59,16 @@ class RecipeController extends Controller
      */
     public function show($id)
     {
-        $recipe = Recipe::with('requirements')->with('craftingStation')->with('item')->with('item.sharedData')->findOrFail($id);
+        $recipe = Recipe::with([
+            'item',
+            'craftingStation',
+            'requirements' => function ($query) {
+                $query->orderByDesc('amount', SORT_NUMERIC)->orderByDesc('name', SORT_NATURAL|SORT_FLAG_CASE);
+            },
+            'requirements.item.sharedData',
+        ])->findOrFail($id);
 
         $recipe->name = ucwords($recipe->name);
-        $recipe->requirements = $recipe->requirements->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC)->all();
 
         return view('recipes.show', compact('recipe'));
     }
@@ -69,10 +81,24 @@ class RecipeController extends Controller
      */
     public function showSlug($slug)
     {
-        $recipe = Recipe::where('slug', $slug)->firstOrFail();
+        $recipe = Recipe::with([
+            'item',
+            'craftingStation',
+            'requirements' => function ($query) {
+                $query->orderByDesc('amount', SORT_NUMERIC)->orderByDesc('name', SORT_NATURAL|SORT_FLAG_CASE);
+            },
+            'requirements.item.sharedData',
+        ])->where('slug', $slug)->firstOrFail();
 
         $recipe->name = ucwords($recipe->name);
-        $recipe->requirements = $recipe->requirements->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC)->all();
+
+        $upgrades = [];
+        /*$recipe->requirements->map(function ($req) use ($upgrades) {
+            $req = collect($req)->
+            return $req->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC);
+        });*/
+
+        dump($recipe);
 
         return view('recipes.show', compact('recipe'));
     }
