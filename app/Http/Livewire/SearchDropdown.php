@@ -18,9 +18,14 @@ class SearchDropdown extends Component
         'search' => 'required|string|min:3'
     ];
 
+    // use mount() instead of a class constructor
+    public function mount($search='')
+    {
+        $this->search = $search;
+    }
+
     public function render()
     {
-
         // don't make a request until we have 3 or more letters typed
         if (strlen($this->search) >= 3) {
             $this->validate();
@@ -52,11 +57,15 @@ class SearchDropdown extends Component
                 } else {
                     $this->search_results = $raw_search_results->toArray();
                 }
+            } else {
+                $this->search_results = [];
             } // endif empty search result
+        } else {
+            $this->search_results = [];
         }
 
         return view('livewire.search-dropdown', [
-            // 'search'=> $this->search,
+            'search'=> $this->search,
             'search_results'=> $this->search_results,
         ]);
     } // end render()

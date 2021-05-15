@@ -22,7 +22,7 @@
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-        @livewireStyles
+        <livewire:styles />
         
     </head>
     <body class="bg-gray-900 text-gray-100 flow-root">
@@ -33,7 +33,7 @@
             @yield('content')
         </main>
 
-        @livewireScripts
+        <livewire:scripts />
 
     </body>
 </html>
