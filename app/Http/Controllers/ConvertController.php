@@ -355,13 +355,15 @@ class ConvertController extends Controller
      */
     public function createAllNames(array $info)
     {
-        // if strange case where only true name exists, or if it is a recipe
-        // use true name as raw name
-        // e.g., Recipe_Adze
-        if ((empty($info['raw_name']) && !empty($info['true_name']))
-            || (!empty($info['true_name']) && str_contains(strtolower($info['true_name']), 'recipe'))) {
-            $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
+        // if strange case where only true name exists
+        // OR if it is a recipe alt, use true name as raw name
+        // e.g., Recipe_Adze or Bronze5
+        if (!empty($info['true_name'])) {
+            if (empty($info['raw_name']) || preg_match('/[0-9]/', $info['true_name'])) {
+                $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
+            }
         }
+
         // add spaces to make pretty
         $info['name'] = $this->prettify(trim($info['raw_name']));
         $info['slug'] = Str::slug(trim($info['name']));

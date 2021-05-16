@@ -4,7 +4,7 @@
     </h2>
     @if($recipe->item)
         <p class="my-4">
-            {{ $recipe->item->sharedData->description }}
+            {!! $recipe->item->sharedData->description !!}
         </p>
         @if($recipe->craftingStation)
             <p class="mt-4">
@@ -35,6 +35,15 @@
             @endif
         @endforeach
     </ul>
+    @if(isset($is_listing) && $recipe->max_quality > 1)
+        <p class="mt-4">
+            <a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
+                href="{{ route('recipes.show', $recipe->slug) }}"
+            >
+                View Details
+            </a>
+        </p>
+    @endif 
     @if($recipe->max_quality > 1 && !empty($recipe->upgrades))
         @include('partials._recipe_upgrades', [
             'recipe'    => $recipe

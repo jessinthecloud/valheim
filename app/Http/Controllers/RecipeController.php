@@ -17,8 +17,8 @@ class RecipeController extends Controller
         $recipes = Recipe::with($this->relationsSubQuery())->orderBy('name', 'asc')->get()->map(function ($recipe) {
             return $recipe = $this->formatForView($recipe);
         });
-
-        return view('recipes.index', compact('recipes'));
+        $is_listing = true;
+        return view('recipes.index', compact('recipes', 'is_listing'));
     }
 
     /**
