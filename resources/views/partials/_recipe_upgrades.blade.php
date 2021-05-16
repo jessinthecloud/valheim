@@ -12,7 +12,7 @@
                 <ul class="pl-4">
                     <li>
                         @if(isset($upgrade['station']) && $upgrade['station_level'] > 1) 
-                            <em class="block mb-2">{{ $upgrade['station'] }} Level {{ $upgrade['station_level'] }}</em>  
+                            <em class="block mb-2">Level {{ $upgrade['station_level'] }} {{ $upgrade['station'] }} </em>  
                         @endif
                     </li>
                 @foreach($upgrade['resources'] as $item => $amount)
@@ -28,7 +28,7 @@
     </ul>
     <p class="mt-4">
         <em>
-            Total Resources Needed: 
+            Total resources to max level: 
             {!! $recipe->totals !!}
         </em>
     </p>

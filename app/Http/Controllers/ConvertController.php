@@ -157,13 +157,15 @@ class ConvertController extends Controller
         $file = $this->docspath.'\recipe-list.json';
         $contents = $this->removeInvalidHex(file_get_contents($file));
         $recipes = json_decode($contents, true);
-        // $this->convertJsonList($file, Recipe::class, ['slug'], ['item'?]);
+        // $this->convertJsonList($file, Recipe::class, ['true_name'], ['item'?]);
 
         foreach ($recipes as $recipe_info) {
             $recipe_info = $this->createAllNames($recipe_info);
 
             $recipe = Recipe::updateOrCreate(
-                ['slug'=>$recipe_info['slug']],
+                [
+                    'true_name'=>$recipe_info['true_name']
+                ],
                 $recipe_info
             );
 
@@ -172,7 +174,7 @@ class ConvertController extends Controller
             $item = Item::where('slug', $recipe_info['slug'])->first();
             $existing_item = $recipe->item;
 
-            if (isset($existing_item)) {
+            if (isset($existing_item) && isset($item)) {
                 // item to attach
                 $item = $existing_item->getKey() === $item->getKey() ? null : $item;
             }
@@ -353,9 +355,11 @@ class ConvertController extends Controller
      */
     public function createAllNames(array $info)
     {
-        // if strange case where only true name exists, use that as name
+        // if strange case where only true name exists, or if it is a recipe
+        // use true name as raw name
         // e.g., Recipe_Adze
-        if (empty($info['raw_name']) && !empty($info['true_name'])) {
+        if ((empty($info['raw_name']) && !empty($info['true_name']))
+            || (!empty($info['true_name']) && str_contains(strtolower($info['true_name']), 'recipe'))) {
             $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
         }
         // add spaces to make pretty

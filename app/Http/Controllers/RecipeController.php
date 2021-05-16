@@ -123,6 +123,10 @@ class RecipeController extends Controller
             }
         endforeach;
         $totals = rtrim($totals, ', ');
+        // include max station level in totals
+        if (isset($upgrades[$recipe->max_quality]) && $upgrades[$recipe->max_quality]['station_level'] > 1) {
+            $totals .= ' (<strong>Level ' . $upgrades[$recipe->max_quality]['station_level'].' '.$upgrades[$recipe->max_quality]['station'] . '</strong>)';
+        }
 
         $recipe->upgrades = $upgrades;
         $recipe->totals = $totals;

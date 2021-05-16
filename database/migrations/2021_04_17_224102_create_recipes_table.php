@@ -69,7 +69,7 @@ class CreateRecipesTable extends Migration
             $table->string('raw_name')->unique();
             $table->string('raw_slug')->unique();
             // actual recipe name
-            $table->string('true_name')->nullable(); // kind of secret name
+            $table->string('true_name')->nullable()->unique(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
             $table->string('var_name')->nullable();
             $table->foreignId('crafting_station_id')->nullable()->constrained();
