@@ -71,21 +71,17 @@ class Recipe extends Model
      *
      * @return CraftingStation
      */
-    public function GetRequiredStationLevel(int $quality) : int
+    public function getRequiredStationLevel(int $quality) : int
     {
-        return (max(1, $minStationLevel) + ($quality - 1));
+        return (max(1, $this->min_station_level) + ($quality - 1));
     }
 
-    // I have no idea what this is doing tbh
-    public function GetRequiredStation(int $quality=0) : CraftingStation
+    public function getRequiredStation(int $quality=0) : ?CraftingStation
     {
-        return $this->craftingStation;
-        /*if ((bool)$this->craftingStation) {
-            return $this->craftingStation;
-        }
         if ($quality > 1) {
-            return $this->repairStation;
+            return $this->repairStation ?? $this->craftingStation ?? null;
         }
-        return null;*/
+
+        return $this->craftingStation ?? null;
     }
 }

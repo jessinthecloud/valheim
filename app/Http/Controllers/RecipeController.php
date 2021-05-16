@@ -133,8 +133,12 @@ class RecipeController extends Controller
         $upgrades = [];
         // start at the first upgrade level and determine the required item amounts
         for ($i=2; $i<=$max_quality; $i++) {
+            $upgrades[$i]= [
+                'station' => $recipe->getRequiredStation($i)->name,
+                'station_level' => $recipe->getRequiredStationLevel($i),
+            ];
             foreach ($recipe->requirements as $req) {
-                $upgrades[$i][$req->name]= $req->getAmount($i);
+                $upgrades[$i]['resources'][$req->name]= $req->getAmount($i);
                 $sum = array_sum(array_column($upgrades, $req->name));
 
                 $totals [$req->name]= '<strong>'.($sum+$req->amount).'</strong>';
@@ -142,11 +146,11 @@ class RecipeController extends Controller
         } // end for
 
         $totals = urldecode(str_replace('=', ' ', http_build_query(array_flip($totals), null, ', ')));
-        /*
-                dump($recipe);
-                dump("max level: ".$recipe->item->sharedData->max_quality);
-                dump($upgrades);
-                dump($totals);*/
+
+        // dump($recipe);
+        // dump("max level: ".$recipe->item->sharedData->max_quality);
+        // dump($upgrades);
+        // dump($totals);
 
         return view('recipes.show', compact('recipe', 'upgrades', 'totals'));
     }
