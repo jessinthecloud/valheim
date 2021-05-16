@@ -15,17 +15,12 @@ class RecipeController extends Controller
     public function index()
     {
         $recipes = Recipe::with([
-            'item',
-            'craftingStation',
             'requirements' => function ($query) {
                 $query->orderByDesc('amount', SORT_NUMERIC)->orderByDesc('name', SORT_NATURAL|SORT_FLAG_CASE);
             },
-            'requirements.item.sharedData',
         ])->orderBy('name', 'asc')->get()->map(function ($recipe) {
             $recipe->name = ucwords($recipe->name);
         });
-
-
 
         return view('recipes.index', compact('recipes'));
     }
@@ -60,12 +55,9 @@ class RecipeController extends Controller
     public function show($id)
     {
         $recipe = Recipe::with([
-            'item',
-            'craftingStation',
             'requirements' => function ($query) {
                 $query->orderByDesc('amount', SORT_NUMERIC)->orderByDesc('name', SORT_NATURAL|SORT_FLAG_CASE);
             },
-            'requirements.item.sharedData',
         ])->findOrFail($id);
 
         $recipe->name = ucwords($recipe->name);
@@ -82,25 +74,36 @@ class RecipeController extends Controller
     public function showSlug($slug)
     {
         $recipe = Recipe::with([
-            'item',
-            'craftingStation',
             'requirements' => function ($query) {
                 $query->orderByDesc('amount', SORT_NUMERIC)->orderByDesc('name', SORT_NATURAL|SORT_FLAG_CASE);
             },
-            'requirements.item.sharedData',
         ])->where('slug', $slug)->firstOrFail();
 
         $recipe->name = ucwords($recipe->name);
-
+        $max_quality = $recipe->item->sharedData->max_quality;
+        $recipe->max_quality = $max_quality;
+        $totals = [];
         $upgrades = [];
-        /*$recipe->requirements->map(function ($req) use ($upgrades) {
-            $req = collect($req)->
-            return $req->sortByDesc('name', SORT_NATURAL|SORT_FLAG_CASE)->sortByDesc('amount', SORT_NUMERIC);
-        });*/
+        // start at the first upgrade level and determine the required item amounts
+        for ($i=2; $i<=$max_quality; $i++) {
+            foreach ($recipe->requirements as $req) {
+                $upgrades[$i][$req->name]= $req->getAmount($i);
+                $sum = array_sum(array_column($upgrades, $req->name));
+
+                dump("amount: {$req->amount}, sum: $sum");
+
+                $totals [$req->name]= '<strong>'.($sum+$req->amount).'</strong>';
+            } // end foreach
+        } // end for
+
+        $totals = urldecode(str_replace('=', ' ', http_build_query(array_flip($totals), null, ', ')));
 
         dump($recipe);
+        dump("max level: ".$recipe->item->sharedData->max_quality);
+        dump($upgrades);
+        dump($totals);
 
-        return view('recipes.show', compact('recipe'));
+        return view('recipes.show', compact('recipe', 'upgrades', 'totals'));
     }
 
     /**

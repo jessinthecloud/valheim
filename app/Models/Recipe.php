@@ -24,6 +24,17 @@ class Recipe extends Model
      */
     protected $hidden = [];
 
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [
+        'item',
+        'craftingStation',
+        'requirements',
+    ];
+
     // remove Recipe_ prefix
     public static function name_EN($name)
     {

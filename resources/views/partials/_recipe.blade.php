@@ -25,4 +25,31 @@
             @endif
         @endforeach
     </ul>
+    @if($recipe->amount > 1)
+        <p class="my-4">
+            <strong>Creates:</strong> {{ $recipe->amount }}
+        </p>
+    @endif
+    @if($recipe->max_quality > 1)
+        <div class="bg-gray-900 mt-4 p-4">
+            <p class="mb-2">
+                <strong>Max Quality Level:</strong> {{ $recipe->max_quality }}
+            </p>
+            <ul class="pl-4">
+                @foreach($upgrades as $level => $upgrade)
+                    <li>
+                        <em>Level {{ $level }}</em>:
+                        <ul class="pl-4">
+                        @foreach($upgrade as $item => $amount)
+                            <li><strong>{{ $amount }}</strong> {{ $item }}</li>
+                        @endforeach
+                        </ul>
+                    </li>
+                @endforeach
+            </ul>
+            <p class="my-2">
+                <em>Total Resources Needed: {!! $totals !!}</em>
+            </p>
+        </div>
+    @endif
 </section>

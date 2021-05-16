@@ -14,6 +14,15 @@ class Requirement extends Model
     protected $guarded = ['item'];
 
     /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [
+        'item',
+    ];
+
+    /**
      *
      * @return [type] [description]
      */
@@ -27,11 +36,12 @@ class Requirement extends Model
         return $this->belongsTo(Item::class);
     }
 
-    public function getAmount(int $qualityLevel) : int
+    public function getAmount(int $quality_level) : int
     {
-        if ($qualityLevel <= 1) {
+        // dump("this amount: {$this->amount}, level: $quality_level, amount per lvl: {$this->amount_per_level}");
+        if ($quality_level <= 1) {
             return $this->amount;
         }
-        return ($qualityLevel - 1) * $this->amountPerLevel;
+        return ($quality_level - 1) * $this->amount_per_level;
     }
 }

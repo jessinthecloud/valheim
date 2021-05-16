@@ -22,6 +22,13 @@ class Item extends Model
      */
     protected $hidden = ['created_at'];
 
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['sharedData'];
+
 
     // split string into array on uppercase letter and turn it into string
     public static function name_EN($name)
