@@ -4,13 +4,15 @@
         {!! $item->sharedData->description !!} 
         <em class="block mt-1">{{ $item->itemType() }}</em>
     </p>
-    @if($item->recipe)
-        <p class="mt-4">
-            <a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
-                href="{{ route('recipes.show', $item->recipe->slug) }}"
-            >
-                Recipe
-            </a>
-        </p> 
+    @if($item->recipes)
+        @foreach($item->recipes as $key => $recipe)
+            <p class="mt-4">
+                <a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
+                    href="{{ route('recipes.show', $recipe->slug) }}"
+                >
+                    Recipe @if($key > 0) {{ $key+1 }} @endif
+                </a>
+            </p> 
+        @endforeach
     @endif
 </section>

@@ -14,7 +14,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = Item::with('recipe')->with('sharedData')->orderBy('name', 'asc')->get()->map(function ($item) {
+        $items = Item::with('recipes')->with('sharedData')->orderBy('name', 'asc')->get()->map(function ($item) {
             $item->name = ucwords($item->name);
             return $item;
         });
@@ -51,7 +51,7 @@ class ItemController extends Controller
      */
     public function show($id)
     {
-        $item = Item::with('recipe')->with('sharedData')->findOrFail($id);
+        $item = Item::with('recipes')->with('sharedData')->findOrFail($id);
         $item->name = ucwords($item->name);
 
         return view('items.show', compact('item'));
@@ -65,7 +65,7 @@ class ItemController extends Controller
      */
     public function showSlug($slug)
     {
-        $item = Item::where('slug', $slug)->firstOrFail();
+        $item = Item::with('recipes')->with('sharedData')->where('slug', $slug)->firstOrFail();
         $item->name = ucwords($item->name);
 
         return view('items.show', compact('item'));

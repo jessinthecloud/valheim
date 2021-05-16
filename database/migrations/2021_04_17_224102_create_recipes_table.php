@@ -61,26 +61,6 @@ class CreateRecipesTable extends Migration
             // $table->string('repeat_message_type')->default("TopLeft");
         });
 
-        Schema::create('recipes', function (Blueprint $table) {
-            $table->id();
-            // name of item being created
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
-            // actual recipe name
-            $table->string('true_name')->nullable()->unique(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
-            $table->string('var_name')->nullable();
-            $table->foreignId('crafting_station_id')->nullable()->constrained();
-            $table->foreignId('repair_station_id')->nullable()->references('id')->on('crafting_stations');
-            $table->boolean('enabled')->default(true);
-            // amount of items the recipe creates
-            $table->tinyInteger('amount')->default(1);
-            $table->tinyInteger('min_station_level')->default(1);
-            $table->timestamps();
-        });
-
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -207,7 +187,6 @@ class CreateRecipesTable extends Migration
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
             $table->string('var_name')->nullable();
-            $table->foreignId('recipe_id')->nullable()->constrained()->onUpdate('cascade');
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             $table->timestamps();
             // GameObject
@@ -217,6 +196,29 @@ class CreateRecipesTable extends Migration
             // $table->integer('quality')->default(1);
             // $table->integer('variant')->nullable();
             // $table->float('durability')->default(100);
+        });
+
+        Schema::create('recipes', function (Blueprint $table) {
+            $table->id();
+            // name of item being created
+            $table->string('name');
+            $table->string('slug')->unique();
+            // so we can match the item it creates more easily
+            $table->string('item_slug');
+            $table->string('raw_name')->nullable();
+            $table->string('raw_slug')->nullable();
+            // actual recipe name
+            $table->string('true_name')->unique(); // kind of secret name
+            $table->string('true_slug')->unique();
+            $table->string('var_name')->nullable();
+            $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('crafting_station_id')->nullable()->constrained();
+            $table->foreignId('repair_station_id')->nullable()->references('id')->on('crafting_stations');
+            $table->boolean('enabled')->default(true);
+            // amount of items the recipe creates
+            $table->tinyInteger('amount')->default(1);
+            $table->tinyInteger('min_station_level')->default(1);
+            $table->timestamps();
         });
 
         Schema::create('requirements', function (Blueprint $table) {
@@ -249,10 +251,10 @@ class CreateRecipesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('recipe_requirement');
+        Schema::dropIfExists('requirement');
         Schema::dropIfExists('recipes');
         Schema::dropIfExists('item');
         Schema::dropIfExists('shared_data');
-        Schema::dropIfExists('requirement');
         Schema::dropIfExists('status_effects');
         Schema::dropIfExists('crafting_stations');
     }

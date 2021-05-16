@@ -36,9 +36,15 @@ class Item extends Model
         return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
     }
 
-    public function recipe()
+    /**
+     * items can have multiple recipes for their variants
+     * e.g., Bronze and 5 Bronze bars
+     *
+     * @return Eloquent relationship to Recipes
+     */
+    public function recipes()
     {
-        return $this->belongsTo(Recipe::class);
+        return $this->hasMany(Recipe::class);
     }
 
     public function requirementForRecipes()

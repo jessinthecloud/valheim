@@ -171,7 +171,7 @@ class ConvertController extends Controller
 
             // attach to item
             // make sure we don't already have this item attached
-            $item = Item::where('slug', $recipe_info['slug'])->first();
+            $item = Item::where('slug', $recipe_info['item_slug'])->first();
             $existing_item = $recipe->item;
 
             if (isset($existing_item) && isset($item)) {
@@ -180,8 +180,8 @@ class ConvertController extends Controller
             }
 
             if (isset($item)) {
-                $item->recipe()->associate($recipe);
-                $item->save();
+                $recipe->item()->associate($item);
+                $recipe->save();
             }
 
             // create / attach recipe requirements
@@ -355,12 +355,23 @@ class ConvertController extends Controller
      */
     public function createAllNames(array $info)
     {
-        // if strange case where only true name exists
-        // OR if it is a recipe alt, use true name as raw name
-        // e.g., Recipe_Adze or Bronze5
+        // if strange case where only true name exists, or
+        // e.g., Recipe_Adze
         if (!empty($info['true_name'])) {
-            if (empty($info['raw_name']) || preg_match('/[0-9]/', $info['true_name'])) {
+            if (empty($info['raw_name'])) {
                 $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
+            } elseif (str_contains(strtolower($info['true_name']), 'recipe') && preg_match('/[0-9]/', $info['true_name'])) {
+                // if it is a recipe alt, use true name as unique slug but keep name to match to item created
+                // e.g., Bronze5
+                // add spaces to make pretty
+                $info['name'] = $this->prettify(trim($info['raw_name']));
+                $info['slug'] = Str::slug(trim($this->removeCsPrefix($info['true_name'])));
+                $info['item_slug'] = Str::slug(trim($info['name']));
+                $info['raw_slug'] = Str::slug(trim($info['raw_name']));
+                $info['true_slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : null;
+
+
+                return $info;
             }
         }
 
@@ -369,6 +380,10 @@ class ConvertController extends Controller
         $info['slug'] = Str::slug(trim($info['name']));
         $info['raw_slug'] = Str::slug(trim($info['raw_name']));
         $info['true_slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : null;
+
+        if (!empty($info['true_name']) && str_contains(strtolower($info['true_name']), 'recipe')) {
+            $info['item_slug'] = Str::slug(trim($info['name']));
+        }
 
         return $info;
     }

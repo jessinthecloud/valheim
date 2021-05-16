@@ -60,7 +60,7 @@ class Recipe extends Model
     // item this recipe creates
     public function item()
     {
-        return $this->hasOne(Item::class);
+        return $this->belongsTo(Item::class);
     }
 
     /**
