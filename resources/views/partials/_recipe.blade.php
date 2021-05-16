@@ -30,14 +30,18 @@
         @foreach($recipe->requirements as $requirement)
             @if($requirement->amount > 0)
                 <li>
-                    <strong>{{ $requirement->amount }}</strong> {{ $requirement->name }}
+                    <strong>{{ $requirement->amount }}</strong> 
+                    <a 
+                    class="underline hover:text-amber hover:no-underline transition ease-in-out duration-150" 
+                    href="{{ route('items.show', $requirement->item->slug) }}">{{ $requirement->name }}</a>
                 </li>
             @endif
         @endforeach
     </ul>
     @if(isset($is_listing) && $recipe->max_quality > 1)
         <p class="mt-4">
-            <a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
+            <a 
+                class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duration-150" 
                 href="{{ route('recipes.show', $recipe->slug) }}"
             >
                 View Details
