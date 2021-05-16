@@ -1,6 +1,6 @@
 <section class="max-w-full flex-grow bg-gray-800 mb-4 mr-4 p-6 md:w-5/12">
     <h2 class="relative w-full text-3xl mb-4">
-        {{ $recipe->name }} <span class="absolute top-0 right-0 text-xs">{{ $recipe->id }}</span>
+        {{ $recipe->name }} <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $recipe->id }}</span>
     </h2>
     @if($recipe->item)
         <p class="my-4">

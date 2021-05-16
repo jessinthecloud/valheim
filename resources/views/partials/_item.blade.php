@@ -1,5 +1,5 @@
 <section class="max-w-full flex-grow bg-gray-800 mb-4 mr-4 p-6 md:w-5/12">
-    <h2 class="w-full text-3xl mb-4">{{ $item->name }}</h2>
+    <h2 class="w-full relative text-3xl mb-4">{{ $item->name }} <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $item->id }}</span></h2>
     <p class="block my-4">
         {!! $item->sharedData->description !!} 
         <em class="block mt-1">{{ $item->itemType() }}</em>
