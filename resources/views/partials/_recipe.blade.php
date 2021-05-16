@@ -32,10 +32,11 @@
     @endif
     @if($recipe->max_quality > 1)
         <div class="bg-gray-900 mt-4 p-4">
-            <p class="mb-2">
+            <p class="">
                 <strong>Max Quality Level:</strong> {{ $recipe->max_quality }}
             </p>
-            <ul class="pl-4">
+            @if(!empty($upgrades))
+            <ul class="mt-2 pl-4">
                 @foreach($upgrades as $level => $upgrade)
                     <li>
                         <em>Level {{ $level }}</em>:
@@ -50,6 +51,7 @@
             <p class="my-2">
                 <em>Total Resources Needed: {!! $totals !!}</em>
             </p>
+            @endif
         </div>
     @endif
 </section>

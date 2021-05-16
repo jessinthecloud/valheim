@@ -93,7 +93,7 @@ class ConvertController extends Controller
 
                 if (!empty($existing_items->toArray())) {
                     // items to attach
-                    $item = collect($item)->diff($existing_items)->toArray() ?? null;
+                    $item = collect()->add($item)->diff($existing_items) ?? null;
                     $item = $item[0] ?? null;
                 }
 
@@ -202,7 +202,7 @@ class ConvertController extends Controller
 
                     if (!empty($existing_requirements->toArray())) {
                         // items to attach
-                        $requirement = collect($requirement)->diff($existing_requirements)->toArray() ?? null;
+                        $requirement = collect()->add($requirement)->diff($existing_requirements) ?? null;
                         $requirement = $requirement[0] ?? null;
                     }
 
