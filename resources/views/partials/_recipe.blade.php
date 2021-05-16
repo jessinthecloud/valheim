@@ -1,11 +1,11 @@
 <section class="max-w-full flex-grow bg-gray-800 mb-4 mr-4 p-6 md:w-5/12">
-    <h2 class="w-full text-3xl mb-4">{{ $recipe->name }}</h2>
+    <h2 class="w-full text-3xl mb-4">{{ $recipe->name }} Recipe</h2>
     @if($recipe->item)
         <p class="my-4">
             {{ $recipe->item->sharedData->description }}
         </p>
-        <p class="my-4">
-            @if($recipe->craftingStation)
+        @if($recipe->craftingStation)
+            <p class="mt-4">
                 <strong>Crafting station:</strong> 
                 <em>
                     {{ $recipe->craftingStation->name }} 
@@ -13,9 +13,17 @@
                         Level {{ $recipe->min_station_level }}
                     @endif
                 </em>
-            @endif
-        </p>
+            </p>
+        @endif
+        @if($recipe->amount > 1)
+            <p class="">
+                <strong>Creates:</strong> <em>{{ $recipe->amount }}</em>
+            </p>
+        @endif
     @endif
+    <p class="my-2">
+        <strong>Resources:</strong>
+    </p>
     <ul class="pl-4">
         @foreach($recipe->requirements as $requirement)
             @if($requirement->amount > 0)
@@ -25,11 +33,6 @@
             @endif
         @endforeach
     </ul>
-    @if($recipe->amount > 1)
-        <p class="my-4">
-            <strong>Creates:</strong> {{ $recipe->amount }}
-        </p>
-    @endif
     @if($recipe->max_quality > 1)
         <div class="bg-gray-900 mt-4 p-4">
             <p class="">
