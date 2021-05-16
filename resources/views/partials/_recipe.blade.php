@@ -42,7 +42,9 @@
                         <em>Level {{ $level }}</em>:
                         <ul class="pl-4">
                         @foreach($upgrade as $item => $amount)
-                            <li><strong>{{ $amount }}</strong> {{ $item }}</li>
+                            @if($amount > 0)
+                                <li><strong>{{ $amount }}</strong> {{ $item }}</li>
+                            @endif
                         @endforeach
                         </ul>
                     </li>
