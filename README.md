@@ -1,5 +1,5 @@
 # API
-[Usage](https://github.com/jessinthecloud/valheim/blob/main/docs/API.md) (alpha)
+[Usage](https://github.com/jessinthecloud/valheim/blob/main/docs/API.md) (unreleased)
 
 # Tools & Thanks
 - [Jötunn, the Valheim Library](https://github.com/Valheim-Modding/Jotunn)
