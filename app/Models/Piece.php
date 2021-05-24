@@ -47,7 +47,7 @@ class Item extends Model
      */
     public function pieceTable()
     {
-        return $this->hasMany(PieceTable::class);
+        return $this->belongsTo(PieceTable::class);
     }
 
     public function requirements()

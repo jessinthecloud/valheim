@@ -18,14 +18,14 @@ use App\Models\CraftingStation;
 use App\Models\Item;
 use App\Models\SharedData;
 use App\Models\StatusEffect;
+use App\Models\Piece;
+use App\Models\PieceTable;
 
 class ConvertController extends Controller
 {
     private $docspath = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs';
-    /**
-    *
-    * @return \Illuminate\Http\Response
-    */
+
+
     public function craftingStation()
     {
         echo "CONVERT CRAFTING STATIONS";
@@ -33,6 +33,15 @@ class ConvertController extends Controller
         $crafting_stations_file = $this->docspath.'\crafting-station-list.json';
 
         $this->convertJsonList($crafting_stations_file, CraftingStation::class, ['raw_name']);
+    }
+
+    public function pieceTable()
+    {
+        echo "CONVERT PIECE TABLES";
+
+        $piece_tables_file = $this->docspath.'\piece-table-list.json';
+
+        $this->convertJsonList($piece_tables_file, PieceTable::class, ['raw_name']);
     }
 
     /**
