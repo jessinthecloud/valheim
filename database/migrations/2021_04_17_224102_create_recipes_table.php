@@ -32,6 +32,8 @@ class CreateRecipesTable extends Migration
             $table->float('range_build')->default(10);
             $table->boolean('craft_require_roof')->default(true);
             $table->boolean('craft_require_fire')->default(true);
+            $table->boolean('have_fire')->nullable();
+            $table->boolean('show_basic_recipes')->nullable();
             $table->float('use_distance')->default(2);
             $table->float('use_timer')->default(10);
             $table->timestamps();
@@ -65,7 +67,7 @@ class CreateRecipesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->nullable();
-            $table->string('raw_name');
+            $table->string('raw_name')->nullable();
             $table->string('raw_slug')->nullable();
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('true_slug')->nullable()->unique();
