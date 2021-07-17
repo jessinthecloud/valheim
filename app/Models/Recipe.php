@@ -32,7 +32,7 @@ class Recipe extends Model
     protected $with = [
         'item',
         'craftingStation',
-        'requirements',
+        // 'requirements',
     ];
 
     // remove Recipe_ prefix
@@ -54,7 +54,7 @@ class Recipe extends Model
 
     public function requirements()
     {
-        return $this->belongsToMany(Requirement::class);
+        return $this->belongsToMany(Requirement::class/*, 'recipe_requirement', 'recipe_id', 'requirement_id'*/);
     }
 
     // item this recipe creates

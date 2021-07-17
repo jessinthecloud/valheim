@@ -7,7 +7,7 @@ use App\Enums\ItemType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Item extends Model
+class Piece extends Model
 {
     use HasFactory;
 
@@ -31,7 +31,10 @@ class Item extends Model
      *
      * @var array
      */
-    protected $with = [];
+    protected $with = [
+        'requirements',
+        'pieceTable'
+    ];
 
 
     // split string into array on uppercase letter and turn it into string

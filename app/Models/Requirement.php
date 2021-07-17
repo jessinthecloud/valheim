@@ -21,12 +21,12 @@ class Requirement extends Model
     protected $with = [
         'item',
         'piece',
-        'recipe'
+        'recipes',
     ];
 
-    public function recipe()
+    public function recipes()
     {
-        return $this->belongsToMany(Recipe::class);
+        return $this->belongsToMany(Recipe::class/*, 'recipe_requirement', 'requirement_id', 'recipe_id'*/);
     }
 
     public function item()
@@ -36,7 +36,7 @@ class Requirement extends Model
 
     public function piece()
     {
-        return $this->belongsToMany(Piece::class);
+        return $this->belongsTo(Piece::class);
     }
 
     public function getAmount(int $quality_level) : int

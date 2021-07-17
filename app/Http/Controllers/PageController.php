@@ -19,7 +19,6 @@ class PageController extends Controller
             return $recipe = $this->formatForView($recipe);
         });
         $is_listing = true;
-
         return view('home', compact('recipes', 'is_listing'));
     }
 
