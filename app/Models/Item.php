@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ItemType;
-
+use App\Http\ImageFetcher;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -70,5 +71,10 @@ class Item extends Model
     public function itemType() : string
     {
         return $this->name_EN(ItemType::toString($this->sharedData->item_type));
+    }
+
+    public function image(ImageFetcher $fetcher)
+    {
+        return $fetcher->fetchImageHtmlString(Str::snake($this->name));
     }
 }
