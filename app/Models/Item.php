@@ -73,6 +73,11 @@ class Item extends Model
         return $this->name_EN(ItemType::toString($this->sharedData->item_type));
     }
 
+    public function isWeapon()
+    {
+        return in_array($this->sharedData->item_type, [3,4,9,14,20]);
+    }
+
     public function image(ImageFetcher $fetcher)
     {
         return $fetcher->fetchImageHtmlString(Str::snake($this->name));

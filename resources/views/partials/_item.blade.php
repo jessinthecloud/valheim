@@ -14,11 +14,21 @@
             </a>
         </p>
     @else
+        <section class="">
+            <h3 class="text-lg">Details</h3>
+            {{-- if weapon --}}
+            @if($item->isWeapon())
+            <dl class="">
+                <dt></dt>
+                <dd></dd>
+            </dl>
+            @endif
+        </section>
         {{-- <div class="w-full"> {!! $item->image(new \App\Http\ImageFetcher) !!}</div> --}}
 
         <div class="flex my-4 w-full">
             <div class="w-1/2">Info: </div>
-            <div class="w-1/2"><?php dump($item->sharedData); ?></div>
+            <div class="w-1/2"><?php dump($item->sharedData->getAttributes()); ?></div>
         </div>
     @endif
     @if($item->recipes)
