@@ -14,38 +14,38 @@
             </a>
         </p>
     @else
-        <tr class="">
-            <h3 class="text-lg font-semibold">Details</h3>
-            {{-- if weapon --}}
-            @if($item->isWeapon())
-            <dl class="">
-                <dt></dt>
-                <dd></dd>
-            </dl>
-            @endif
-            {{-- if food --}}
-            @if($item->isFood())
-            <table>
+        
+        <h3 class="text-lg font-semibold">Details</h3>
+        {{-- if weapon --}}
+        @if($item->isWeapon())
+        <dl class="">
+            <dt></dt>
+            <dd></dd>
+        </dl>
+        @endif
+        {{-- if food --}}
+        @if($item->isFood())
+        <table>
+            <tr>
                 <tr>
-                    <tr>
-                        <td class="font-bold px-2 py-1">Health:</td>
-                        <td class="px-2 py-1">{{ $item->health() }}</td>
-                    </tr>
-                    <tr>
-                        <td class="font-bold px-2 py-1">Stamina:</td>
-                        <td class="px-2 py-1">{{ $item->stamina() }}</td>
-                    </tr>
-                    <tr>
-                        <td class="font-bold px-2 py-1">Health Regen:</td>
-                        <td class="px-2 py-1">{{ $item->healthRegen() }}</td>
-                    </tr>
-                    <tr>
-                        <td class="font-bold px-2 py-1">Duration:</td>
-                        <td class="px-2 py-1">{{ $item->duration() }}</td>
-                    </tr>
-                </table>
-            @endif
-        </section>
+                    <td class="font-bold px-2 py-1">Health:</td>
+                    <td class="px-2 py-1">{{ $item->health() }}</td>
+                </tr>
+                <tr>
+                    <td class="font-bold px-2 py-1">Stamina:</td>
+                    <td class="px-2 py-1">{{ $item->stamina() }}</td>
+                </tr>
+                <tr>
+                    <td class="font-bold px-2 py-1">Health Regen:</td>
+                    <td class="px-2 py-1">{{ $item->healthRegen() }}</td>
+                </tr>
+                <tr>
+                    <td class="font-bold px-2 py-1">Duration:</td>
+                    <td class="px-2 py-1">{{ $item->duration() }}</td>
+                </tr>
+            </table>
+        @endif
+    
         {{-- <div class="w-full"> {!! $item->image(new \App\Http\ImageFetcher) !!}</div> --}}
 
         {{--<div class="flex my-4 w-full">
@@ -55,13 +55,15 @@
     @endif
     @if($item->recipes)
         @foreach($item->recipes as $key => $recipe)
-            <p class="mt-4">
-                <a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
+            <section class="mt-4">
+                <h3 class="w-full text-2xl mt-0 mb-0">Recipe @if($key > 0) {{ $key+1 }} @endif</h3>
+                {{--<a class="inline-block my-1 py-3 px-6 bg-amber-900 font-semibold hover:bg-amber-200 hover:text-black transition ease-in-out duartion-150" 
                     href="{{ route('recipes.show', $recipe->slug) }}"
                 >
                     Recipe @if($key > 0) {{ $key+1 }} @endif
-                </a>
-            </p> 
+                </a>--}}
+                @include('partials._recipe')
+            </section> 
         @endforeach
     @endif
 </section>
