@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ItemType;
 use App\Http\ImageFetcher;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -81,5 +82,30 @@ class Item extends Model
     public function image(ImageFetcher $fetcher)
     {
         return $fetcher->fetchImageHtmlString(Str::snake($this->name));
+    }
+
+    public function isFood() : bool
+    {
+        return ((int)$this->sharedData->item_type === 2);
+    }
+
+    public function health()
+    {
+        return ($this->isFood() ? (int)$this->sharedData->food : null);
+    }
+
+    public function stamina()
+    {
+        return ($this->isFood() ? (int)$this->sharedData->food_stamina : null);
+    }
+
+    public function healthRegen()
+    {
+        return ($this->isFood() ? (int)$this->sharedData->food_regen : null);
+    }
+
+    public function duration()
+    {
+        return ($this->isFood() ? ((int)$this->sharedData->food_burn_time/60).' minutes' : null);
     }
 }
