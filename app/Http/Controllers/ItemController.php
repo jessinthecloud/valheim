@@ -14,7 +14,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        $items = Item::with('recipes')->with('sharedData')->orderBy('name', 'asc')->get()->map(function ($item) {
+        $items = Item::with('recipes')->with('sharedData')->orderBy('name', 'asc')->paginate(16)->map(function ($item) {
             $item->name = ucwords($item->name);
             return $item;
         });

@@ -15,7 +15,7 @@ class PageController extends Controller
     public function index()
     {
         // flag as case insensitive
-        $recipes = Recipe::with($this->relationsSubQuery())->orderBy('name', 'asc')->get()->map(function ($recipe) {
+        $recipes = Recipe::with($this->relationsSubQuery())->orderBy('name', 'asc')->take(16)->get()->map(function ($recipe) {
             return $recipe = $this->formatForView($recipe);
         });
         $is_listing = true;

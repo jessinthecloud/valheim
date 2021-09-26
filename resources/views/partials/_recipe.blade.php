@@ -1,20 +1,11 @@
-@if(!in_array(Route::currentRouteName(), ['items.showSlug', 'items.show']))
-    <section class="max-w-full flex-grow bg-gray-800 mb-4 mr-4 p-6 md:w-5/12">
-@else
-    <section class="max-w-full flex-grow bg-gray-800 mb-4 mr-4 px-6 md:w-5/12">
-@endif
-
-    @if(!in_array(Route::currentRouteName(), ['items.showSlug', 'items.show']))
-        <h2 class="relative w-full text-3xl mb-4">
-            {{ $recipe->name }} <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $recipe->id }}</span>
-        </h2>
-    @endif
+<section class="max-w-full flex-grow bg-gray-800 mb-4 mr-4 p-6 md:w-5/12">
+    <h2 class="relative w-full text-3xl mb-4">
+        {{ $recipe->name }} <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $recipe->id }}</span>
+    </h2>
     @if($recipe->item)
-        @if(!in_array(Route::currentRouteName(), ['items.showSlug', 'items.show']))
-            <p class="my-4">
-                {!! $recipe->item->sharedData->description !!}
-            </p>
-        @endif
+        <p class="my-4">
+            {!! $recipe->item->sharedData->description !!}
+        </p>
         @if($recipe->craftingStation)
             <p class="mt-4">
                 <strong>Crafting station:</strong> 

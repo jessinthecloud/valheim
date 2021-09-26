@@ -39,12 +39,17 @@ class Requirement extends Model
         return $this->belongsToMany(Piece::class);
     }
 
-    public function getAmount(int $quality_level) : int
+    public function getAmount(int $quality_level=1) : int
     {
         // dump("this amount: {$this->amount}, level: $quality_level, amount per lvl: {$this->amount_per_level}");
         if ($quality_level <= 1) {
             return $this->amount;
         }
         return ($quality_level - 1) * $this->amount_per_level;
+    }
+
+    public function recoverable() : bool
+    {
+        return (bool)$this->recover;
     }
 }

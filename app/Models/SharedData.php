@@ -19,7 +19,7 @@ class SharedData extends Model
         'damages',
         'damages_per_level',
     ];
-
+    
     public function items()
     {
         return $this->hasMany(Item::class);

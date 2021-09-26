@@ -30,6 +30,12 @@ class Item extends Model
      * @var array
      */
     protected $with = ['sharedData'];
+    
+    // ItemType values that are weapons
+    public const WEAPON_TYPES = [3,4,9,14,20];
+
+    // ItemType values that are armor pieces or items
+    public const ARMOR_TYPES = [5,6,7,11,12,17];
 
 
     // split string into array on uppercase letter and turn it into string
@@ -63,6 +69,8 @@ class Item extends Model
     {
         return $this->belongsTo(SharedData::class);
     }
+    
+////////////////////////////////////////////////////////////////
 
     /**
      * shared_data item_type as string
@@ -74,16 +82,89 @@ class Item extends Model
         return $this->name_EN(ItemType::toString($this->sharedData->item_type));
     }
 
-    public function isWeapon()
+    public function weight()
     {
-        return in_array($this->sharedData->item_type, [3,4,9,14,20]);
+        return $this->sharedData->weight;
+    }
+
+    public function teleportable() : bool
+    {
+        return ((int)$this->sharedData->teleportable === 1);
     }
 
     public function image(ImageFetcher $fetcher)
     {
         return $fetcher->fetchImageHtmlString(Str::snake($this->name));
     }
+    
+/*
+ * WEAPON METHODS
+ */
+    public function isWeapon() : bool
+    {
+        return in_array($this->sharedData->item_type, Item::WEAPON_TYPES);
+    }
 
+    public function attackEffect()
+    {
+        $effect = $this->sharedData->attackStatusEffect;
+        
+        return isset($effect) ? $effect->tooltip : null;
+    }
+
+    public function attack()
+    {
+        return $this->sharedData->attack_force;
+    }
+
+    public function backstab()
+    {
+        return $this->sharedData->backstab_bonus;
+    }
+
+    public function block()
+    {
+        return $this->sharedData->block_power;
+    }
+
+    public function isArmor() : bool
+    {
+        return in_array($this->sharedData->item_type, Item::ARMOR_TYPES);
+    }
+
+    public function armor()
+    {
+        return $this->sharedData->armor;
+    }
+
+    public function armorPerLevel()
+    {
+        return $this->sharedData->armor_per_level;
+    }
+
+    public function deflection()
+    {
+        return $this->sharedData->deflection_force;
+    }
+
+    public function deflectionPerLevel()
+    {
+        return $this->sharedData->deflection_force_per_level;
+    }
+
+    public function movementModifier()
+    {
+        return $this->sharedData->movement_modifier;
+    }
+
+    public function movementEffect()
+    {
+        return abs($this->sharedData->movement_modifier).' '.($this->sharedData->movement_modifier > 1 ? 'Faster' : 'Slower');
+    }
+    
+/*
+ * FOOD METHODS
+ */
     public function isFood() : bool
     {
         return ((int)$this->sharedData->item_type === 2);

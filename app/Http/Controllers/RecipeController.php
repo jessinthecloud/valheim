@@ -12,13 +12,17 @@ class RecipeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $recipes = Recipe::with($this->relationsSubQuery())->orderBy('name', 'asc')->get()->map(function ($recipe) {
+//    dump($request, $request->page);
+        $recipes = Recipe::with($this->relationsSubQuery())->orderBy('name', 'asc')->paginate(16/*, ['*'], 'page', $request->page*/);
+        $is_listing = true;
+//        ddd($recipes);
+        $formatted_recipes = $recipes->map(function ($recipe) {
             return $recipe = $this->formatForView($recipe);
         });
-        $is_listing = true;
-        return view('recipes.index', compact('recipes', 'is_listing'));
+        
+        return view('recipes.index', compact('recipes', 'is_listing', 'formatted_recipes'));
     }
 
     /**
