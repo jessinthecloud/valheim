@@ -46,6 +46,9 @@ class ConvertController extends Controller
 
     public function pieces()
     {
+        ini_set('max_execution_time', 300); //300 seconds = 5 minutes
+        ini_set("memory_limit", "50M");
+        
         echo "CONVERT PIECES";
 
         $pieces_file = $this->docspath.'\piece-list.json';
@@ -293,6 +296,8 @@ class ConvertController extends Controller
         $this->craftingStation();
         $this->statusEffect();
         $this->item();
+        $this->pieceTable();
+        $this->pieces();
         $this->recipe();
     }
 
@@ -359,9 +364,84 @@ class ConvertController extends Controller
         $entities = json_decode($contents, true);
         // dump($entities);
 
+        if($class === Piece::class){
+            // if converting piece, get tables to map to
+            $piece_tables = PieceTable::select(['id', 'true_name'])->get();
+        }
+
         foreach ($entities as $entity_info) {
-            $this->convertEntity($entity_info, $class, $unique_keys, $related_keys);
+            $entity = $this->convertEntity($entity_info, $class, $unique_keys, $related_keys);
+//dump($entity, $entity_info);
+            if($class === Piece::class){
+                // if converting piece, map to table
+                $piece_tables->each(function($piece_table, $key) use ($entity, $entity_info) {
+                    if($entity_info['piece_table_true_name'] === $piece_table->true_name){
+                        $entity->pieceTable()->associate($piece_table);
+                        $entity->save();
+                    }
+                });
+                
+                $this->attachRequirements($entity, $entity_info, 'pieces');
+                
+                // map to matching requirements
+                /*$req = Item::select('id')
+                            ->whereIn('var_name', 
+                                collect($entity_info['requirements'])->pluck('var_name'))
+                            ->whereIn('raw_name', 
+                                collect($entity_info['requirements'])->pluck('raw_name'))
+                            ->get()
+                            ;
+                if(!empty($req)){
+                    $entity->requirements()->attach($req->pluck('id')->all());
+                }*/
+            }
         } // end foreach entity
+    }
+    
+    protected function attachRequirements($entity, $entity_info, $relation)
+    {
+        // create / attach entity requirements
+        if (!empty($entity_info['requirements'])) {
+            foreach ($entity_info['requirements'] as $requirement_info) {
+                $requirement_info = $this->createAllNames($requirement_info);
+
+                $requirement = Requirement::updateOrCreate(
+                    [
+                        'raw_name'=>$requirement_info['raw_name'],
+                        'amount'=>$requirement_info['amount'],
+                        'amount_per_level'=>$requirement_info['amount_per_level'],
+                        'recover'=>$requirement_info['recover'],
+                    ],
+                    $requirement_info
+                );
+
+                // attach requirement to entity
+                $existing_requirements = $entity->requirements ?? null;
+
+                if (!empty($existing_requirements->toArray())) {
+                    // items to attach
+                    $requirement = collect()->add($requirement)->diff($existing_requirements) ?? null;
+                    $requirement = $requirement[0] ?? null;
+                }
+                // we don't want to attach unless it isn't already
+                if (isset($requirement)) {
+                    $requirement->{$relation}()->attach($entity);
+                    $requirement->save();
+
+                    // attach item to requirement
+                    // make sure we don't already have this item attached
+                    $item = Item::where('slug', $requirement->slug)->first();
+                    $existing_item = $requirement->item;
+                    if (isset($existing_item)) {
+                        $item = $existing_item->getKey() === $item->getKey() ? null : $item;
+                    }
+                    if (isset($item)) {
+                        $requirement->item()->associate($item);
+                        $requirement->save();
+                    }
+                }
+            } // end each requirement
+        } // endif requirements
     }
 
     /**
@@ -425,7 +505,7 @@ class ConvertController extends Controller
         foreach ($unique_keys as $keyname) {
             $check_columns [$keyname]= $entity_info[$keyname];
         }
-        $entity = $class::updateOrCreate(
+        return /*$entity =*/ $class::updateOrCreate(
             $check_columns,
             $entity_info
         );

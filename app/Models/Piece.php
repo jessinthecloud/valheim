@@ -55,7 +55,7 @@ class Piece extends Model
 
     public function requirements()
     {
-        return $this->hasMany(Requirement::class);
+        return $this->belongsToMany(Requirement::class);
     }
 
     public function craftingStation()
