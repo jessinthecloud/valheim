@@ -23,6 +23,11 @@ sftp-config.json
 /public/css/fontawesome5/
 .phpintel
 *.phpintel
+/docs/old/*
+*.jpg
+*.png
+*.jpeg
+*.gif
 
 docs/json/item-list - Copy.json
 error.log
