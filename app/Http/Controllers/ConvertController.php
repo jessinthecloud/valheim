@@ -44,6 +44,15 @@ class ConvertController extends Controller
         $this->convertJsonList($piece_tables_file, PieceTable::class, ['raw_name']);
     }
 
+    public function pieces()
+    {
+        echo "CONVERT PIECES";
+
+        $pieces_file = $this->docspath.'\piece-list.json';
+
+        $this->convertJsonList($pieces_file, Piece::class, ['raw_name']);
+    }
+
     /**
     *
     * @return \Illuminate\Http\Response
@@ -219,7 +228,7 @@ class ConvertController extends Controller
 
                     // we don't want to attach unless it isn't already
                     if (isset($requirement)) {
-                        $requirement->recipe()->attach($recipe);
+                        $requirement->recipes()->attach($recipe);
                         $requirement->save();
 
                         // attach item to requirement

@@ -21,12 +21,12 @@ class CreateRecipesTable extends Migration
 
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('name')/*->unique()*/;
+            $table->string('slug')/*->unique()*/;
+            $table->string('raw_name')/*->unique()*/;
+            $table->string('raw_slug')/*->unique()*/;
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
+            $table->string('true_slug')->nullable()/*->unique()*/;
             $table->string('var_name')->nullable();
             $table->float('discover_range')->default(4);
             $table->float('range_build')->default(10);
@@ -42,12 +42,12 @@ class CreateRecipesTable extends Migration
         Schema::create('status_effects', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('name')/*->unique()*/;
+            $table->string('slug')/*->unique()*/;
+            $table->string('raw_name')/*->unique()*/;
+            $table->string('raw_slug')/*->unique()*/;
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
+            $table->string('true_slug')->nullable()/*->unique()*/;
             $table->string('var_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();
@@ -70,7 +70,7 @@ class CreateRecipesTable extends Migration
             $table->string('raw_name')->nullable();
             $table->string('raw_slug')->nullable();
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
+            $table->string('true_slug')->nullable()/*->unique()*/;
             $table->string('var_name')->nullable();
             // -- StatusEffects
             $table->foreignId('attack_status_effect_id')->nullable()->references('id')->on('status_effects');
@@ -182,12 +182,12 @@ class CreateRecipesTable extends Migration
 
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('name')/*->unique()*/;
+            $table->string('slug')/*->unique()*/;
+            $table->string('raw_name')/*->unique()*/;
+            $table->string('raw_slug')/*->unique()*/;
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
+            $table->string('true_slug')->nullable()/*->unique()*/;
             $table->string('var_name')->nullable();
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');
             $table->timestamps();
@@ -204,14 +204,14 @@ class CreateRecipesTable extends Migration
             $table->id();
             // name of item being created
             $table->string('name');
-            $table->string('slug')->unique();
+            $table->string('slug')/*->unique()*/;
             // so we can match the item it creates more easily
             $table->string('item_slug');
             $table->string('raw_name')->nullable();
             $table->string('raw_slug')->nullable();
             // actual recipe name
-            $table->string('true_name')->unique(); // kind of secret name
-            $table->string('true_slug')->unique();
+            $table->string('true_name')/*->unique()*/; // kind of secret name
+            $table->string('true_slug')/*->unique()*/;
             $table->string('var_name')->nullable();
             $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('crafting_station_id')->nullable()->constrained();

@@ -27,6 +27,21 @@ if (env('APP_ENV') === 'local') {
         )->name('index');
 
         Route::get(
+            '/piece-tables/{name?}',
+            [App\Http\Controllers\ConvertController::class, 'pieceTable']
+        )->name('piece-tables');
+
+        Route::get(
+            '/pieces/{name?}',
+            [App\Http\Controllers\ConvertController::class, 'pieces']
+        )->name('pieces');
+
+        Route::get(
+            '/crafting-station/{name?}',
+            [App\Http\Controllers\ConvertController::class, 'craftingStation']
+        )->name('crafting-station');
+
+        Route::get(
             '/status-effects/{name?}',
             [App\Http\Controllers\ConvertController::class, 'statusEffect']
         )->name('status-effects');

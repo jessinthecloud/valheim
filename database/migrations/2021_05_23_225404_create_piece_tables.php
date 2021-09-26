@@ -15,25 +15,25 @@ class CreatePieceTables extends Migration
     {
         Schema::create('piece_tables', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('name')/*->unique()*/;
+            $table->string('slug')/*->unique()*/;
+            $table->string('raw_name')/*->unique()*/;
+            $table->string('raw_slug')/*->unique()*/;
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
+            $table->string('true_slug')->nullable()/*->unique()*/;
             $table->string('var_name')->nullable();
-            $table->tinyInteger('num_pieces')->default(1);
+            $table->integer('num_pieces')->default(1);
             $table->timestamps();
         });
 
         Schema::create('pieces', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('name')/*->unique()*/;
+            $table->string('slug')/*->unique()*/;
+            $table->string('raw_name')/*->unique()*/;
+            $table->string('raw_slug')/*->unique()*/;
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
+            $table->string('true_slug')->nullable()/*->unique()*/;
             $table->string('var_name')->nullable();
             $table->string('prefab_name')->nullable();
             $table->string('description')->nullable();
@@ -70,8 +70,20 @@ class CreatePieceTables extends Migration
         });
 
         if (Schema::hasTable('requirements')) {
-            Schema::table('requirements', function (Blueprint $table) {
+            Schema::create('piece_requirement', function (Blueprint $table) {
+                $table->id();
                 $table->foreignId('piece_id')->nullable()->constrained()->onDelete('cascade');
+                $table->foreignId('requirement_id')->nullable()->constrained()->onDelete('cascade');
+                $table->timestamps();
+            });
+        }
+
+        if (Schema::hasTable('piece_tables')) {
+            Schema::create('piece_piece_table', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('piece_id')->nullable()->constrained()->onDelete('cascade');
+                $table->foreignId('piece_table_id')->nullable()->constrained()->onDelete('cascade');
+                $table->timestamps();
             });
         }
     }
@@ -83,6 +95,8 @@ class CreatePieceTables extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('piece_requirement');
+        Schema::dropIfExists('piece_piece_table');
         Schema::dropIfExists('piece_tables');
         Schema::dropIfExists('pieces');
     }
