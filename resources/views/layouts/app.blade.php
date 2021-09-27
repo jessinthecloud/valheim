@@ -29,7 +29,7 @@
         
         @include('nav')
 
-        <main class="container flex flex-wrap justify-between mx-auto my-12 p-4">
+        <main class="container max-w-6xl flex flex-wrap justify-between mx-auto my-12 p-4">
             @yield('content')
         </main>
 
