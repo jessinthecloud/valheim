@@ -16,7 +16,7 @@
 </p>
 
 <section class="w-full flex flex-wrap mt-8">
-    <x-general.button-link class="lg:max-w-sm" href="{{ route('recipes.index') }}">
+    <x-general.button-link class="lg:max-w-sm mr-6" href="{{ route('recipes.index') }}">
         Recipes listing
     </x-general.button-link>
     <x-general.button-link class="lg:max-w-sm" href="{{ route('items.index') }}">
