@@ -29,7 +29,10 @@
         
         @include('nav')
 
-        <main class="container max-w-6xl flex flex-wrap justify-between mx-auto my-12 p-4">
+        <main class="container max-w-6xl flex flex-wrap justify-between mx-auto my-6 px-4
+            lg:my-12
+            lg:p-0
+        ">
             @yield('content')
         </main>
 

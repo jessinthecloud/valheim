@@ -16,13 +16,13 @@
 </p>
 
 <section class="w-full flex flex-wrap mt-8">
-    <x-general.button-link class="lg:max-w-sm mr-6" href="{{ route('recipes.index') }}">
+    <x-general.button-link class="w-full mt-6 md:w-auto md:mr-6 md:mt-0 lg:max-w-sm" href="{{ route('recipes.index') }}">
         Recipes listing
     </x-general.button-link>
-    <x-general.button-link class="lg:max-w-sm mr-6" href="{{ route('items.index') }}">
+    <x-general.button-link class="w-full mt-6 md:w-auto md:mr-6 md:mt-0 lg:max-w-sm" href="{{ route('items.index') }}">
         Items listing
     </x-general.button-link>
-    <x-general.button-link class="lg:max-w-sm" href="{{ route('pieces.index') }}">
+    <x-general.button-link class="w-full mt-6 md:w-auto md:mt-0 lg:max-w-sm" href="{{ route('pieces.index') }}">
         Pieces listing <em>(Furniture, Building, Crafting)</em>
     </x-general.button-link>
 </section>

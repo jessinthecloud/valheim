@@ -1,26 +1,34 @@
-<div class="relative" x-data="{ isVisible: true}" @click.away="isVisible=false">
+<div class="relative w-11/12 md:w-auto" x-data="{ isVisible: true}" @click.away="isVisible=false">
     {{-- wire model will update the value of the property on the class
     search is public property on the class
     debounce - prevent requests within certain time 
         (to prevent too many as you type) --}}
-    <input wire:model.debounce.300ms="search" 
-    type="text" class="bg-gray-800 text-sm rounded-full px-3 pl-8 py-1 w-64" placeholder="Search"
-    {{-- 
-    below are event listeners that set the var from x-data when fired
-    
-    @focus - bring the dropdown back (x-show on the list below) 
-    @keydown.escape.window - if escape is pressed anywhere, bring dd back
-    @keydown - if any key is pressed inside the input, bring dd back
-    @keydown.shift.tab - if shift and tab are pressed (move focus backwards) then hide the dd
-    --}}
-    @focus="isVisible=true" 
-    @keydown.escape.window="isVisible=false"
-    @keydown="isVisible=true"
-    @keydown.shift.tab="isVisible=false"
-
+    <input 
+        wire:model.debounce.300ms="search" 
+        type="text" 
+        class="
+            w-full bg-gray-800 text-md rounded-full pl-8 py-3
+            lg:pl-8
+            lg:px-3
+            lg:py-1 
+            lg:text-sm
+            lg:w-64
+        " 
+        placeholder="Search"
+        {{-- 
+        below are event listeners that set the var from x-data when fired
+        
+        @focus - bring the dropdown back (x-show on the list below) 
+        @keydown.escape.window - if escape is pressed anywhere, bring dd back
+        @keydown - if any key is pressed inside the input, bring dd back
+        @keydown.shift.tab - if shift and tab are pressed (move focus backwards) then hide the dd
+        --}}
+        @focus="isVisible=true" 
+        @keydown.escape.window="isVisible=false"
+        @keydown="isVisible=true"
+        @keydown.shift.tab="isVisible=false"
     > <!-- end search input tag -->
-{{-- {{ dump("search: ".$search) }}
-<?php dump("results: ", $search_results); ?> --}}
+
     <!-- magnifying glass icon -->
     <div class="absolute top-0 flex items-center h-full ml-2">
         <svg class="fill-current text-gray-400 w-4" viewBox="0 0 24 24"><path class="heroicon-ui" d="M16.32 14.9l5.39 5.4a1 1 0 01-1.42 1.4l-5.38-5.38a8 8 0 111.41-1.41zM10 16a6 6 0 100-12 6 6 0 000 12z"/></svg>

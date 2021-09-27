@@ -4,7 +4,7 @@
 
 @if(!empty($entities))
     {{--paging links--}}
-    <div class="paging-wrapper w-full mb-10">
+    <div class="paging-wrapper w-full mt-4 mb-10 lg:mt-0">
         {{ $paginator->links() }}
     </div>
 

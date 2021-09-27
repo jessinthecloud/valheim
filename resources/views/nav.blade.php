@@ -1,10 +1,20 @@
-<nav class="w-full bg-amber-900 py-4 px-24 mt-0 
+<nav class="w-full justify-center bg-amber-900 py-4 mt-0 
         lg:justify-between
     ">
-    <div class="nav-container max-w-6xl mx-auto flex flex-wrap justify-between items-center ">
-        <ul class="flex items-center mb-2 mr-4 lg:mb-0">
+    <div class="nav-container max-w-6xl mx-auto flex flex-wrap justify-center items-center lg:justify-between">
+        <ul class="flex flex-wrap justify-center items-center w-full mb-2 
+            lg:mb-0
+            lg:mr-4
+            lg:w-auto
+            lg:justify-start
+        ">
             <li>
-                <a href="{{ route('index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
+                <a href="{{ route('index') }}" 
+                    class="
+                        block px-3 py-3 flex items-center transition ease-in-out duration-150
+                        hover:bg-gray-800 hover:text-gray-100
+                    "
+                >
                     Home
                 </a>
             </li>

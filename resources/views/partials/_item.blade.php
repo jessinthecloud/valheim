@@ -1,4 +1,6 @@
-<div class="max-w-full flex flex-wrap flex-grow justify-between bg-gray-800 mb-4 mr-4 p-6 md:w-5/12">
+<div class="max-w-full flex flex-wrap flex-grow justify-between bg-gray-800 mb-4 p-6 
+    md:w-5/12
+">
     <h2 class="w-full relative text-3xl mb-4">
         {{ $item->name }} 
         @if(config('app.env') === 'local') 
@@ -8,10 +10,10 @@
     <div class="item-details flex-grow md:mr-6">
         <p class="block my-4">
             {!! $item->sharedData->description !!} 
-            <em class="block mt-1">{{ $item->itemType() }}</em>
+            <em class="block mt-2">{{ $item->itemType() }}</em>
         </p>
         
-        <h3 class="text-xl font-semibold">Details</h3>
+        <h3 class="text-xl font-semibold mt-6">Details</h3>
         {{-- if weapon --}}
         @if($item->isWeapon())
             <table>
@@ -98,7 +100,7 @@
     
     @if($item->recipes)
         @foreach($item->recipes as $key => $recipe)
-            <section class="w-full bg-gray-900 mt-4 p-4 md:w-1/3">
+            <section class="w-full bg-amber-900 mt-6 p-4 md:w-1/3 md:mt-0">
                 <h3 class="w-full text-xl font-semibold mt-0 mb-0">
                     Recipe @if($key > 0) {{ $key+1 }} @endif
                 </h3>
@@ -121,4 +123,4 @@
     <div class="w-1/2">Info: </div>
     <div class="w-1/2"><?php dump($item->sharedData->getAttributes()); ?></div>
 </div>--}}
-</section>
+</div>

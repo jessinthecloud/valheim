@@ -16,18 +16,23 @@
         </p>
     @endif
 @endif
-<p class="my-2">
-    <strong>Resources:</strong>
-</p>
-<ul class="pl-4">
-    @foreach($recipe->requirements as $requirement)
-        @if($requirement->amount > 0)
-            <li>
-                <strong>{{ $requirement->amount }}</strong>
-                <a
+<div class="bg-gray-900 mt-4 p-4">
+    <p class="mb-2">
+        <strong>Resources:</strong>
+    </p>
+    <ul class="pl-4">
+        @foreach($recipe->requirements as $requirement)
+            @if($requirement->amount > 0)
+                <li>
+                    <strong>{{ $requirement->amount }}</strong>
+                    <a
                         class="underline hover:text-amber hover:no-underline transition ease-in-out duration-150"
-                        href="{{ route('items.show', $requirement->item->slug) }}">{{ $requirement->name }}</a>
-            </li>
-        @endif
-    @endforeach
-</ul>
+                        href="{{ route('items.show', $requirement->item->slug) }}"
+                    >
+                        {{ $requirement->name }}
+                    </a>
+                </li>
+            @endif
+        @endforeach
+    </ul>
+</div>
