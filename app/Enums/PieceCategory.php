@@ -1,7 +1,7 @@
 <?php
 namespace App\Enums;
 
-abstract class PieceCategory
+abstract class PieceCategory  extends Enum
 {
     const Misc = 0;
     const Crafting = 1;

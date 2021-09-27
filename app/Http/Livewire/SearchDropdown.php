@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Piece;
 use App\Models\Recipe;
 use App\Models\Item;
 use Livewire\Component;
@@ -39,6 +40,9 @@ class SearchDropdown extends Component
                 ->orWhere('true_name', 'like', '%'.$term.'%')
                 ->get();
             $item_results = Item::where('name', 'like', '%'.$term.'%')
+                ->orWhere('true_name', 'like', '%'.$term.'%')
+                ->get();
+            $item_results = Piece::where('name', 'like', '%'.$term.'%')
                 ->orWhere('true_name', 'like', '%'.$term.'%')
                 ->get();
 

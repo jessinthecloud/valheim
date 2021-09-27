@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ItemType;
 
+use App\Enums\PieceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,11 +32,7 @@ class Piece extends Model
      *
      * @var array
      */
-    protected $with = [
-        'requirements',
-        'pieceTable'
-    ];
-
+    protected $with = [];
 
     // split string into array on uppercase letter and turn it into string
     public static function name_EN($name)
@@ -61,5 +58,32 @@ class Piece extends Model
     public function craftingStation()
     {
         return $this->belongsTo(CraftingStation::class);
+    }
+    
+/////////////////////////////////////////////////////////////////
+
+    /**
+     * shared_data item_type as string
+     *
+     * @return string   item type
+     */
+    public function type() : string
+    {
+        return $this->name_EN(PieceCategory::toString($this->category));
+    }
+
+    public function isFurniture() : bool
+    {
+        return $this->category === PieceCategory::Furniture;
+    }
+
+    public function isForBuilding() : bool
+    {
+        return $this->category === PieceCategory::Building;
+    }
+
+    public function isForCrafting() : bool
+    {
+        return $this->category === PieceCategory::Crafting;
     }
 }

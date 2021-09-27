@@ -19,8 +19,11 @@
     <x-general.button-link class="lg:max-w-sm mr-6" href="{{ route('recipes.index') }}">
         Recipes listing
     </x-general.button-link>
-    <x-general.button-link class="lg:max-w-sm" href="{{ route('items.index') }}">
+    <x-general.button-link class="lg:max-w-sm mr-6" href="{{ route('items.index') }}">
         Items listing
+    </x-general.button-link>
+    <x-general.button-link class="lg:max-w-sm" href="{{ route('pieces.index') }}">
+        Pieces listing <em>(Furniture, Building, Crafting)</em>
     </x-general.button-link>
 </section>
     

@@ -107,6 +107,15 @@ Route::get('/items/{id}', [App\Http\Controllers\ItemController::class, 'show'])
 Route::get('/items/{slug}', [App\Http\Controllers\ItemController::class, 'showSlug'])
     ->name('items.showSlug');
 
+// PIECES
+Route::get('/pieces', [App\Http\Controllers\PieceController::class, 'index'])
+    ->name('pieces.index');
+Route::get('/pieces/{id}', [App\Http\Controllers\PieceController::class, 'show'])
+    ->name('pieces.show')
+    ->where('id', '[0-9]+');
+Route::get('/pieces/{slug}', [App\Http\Controllers\PieceController::class, 'showSlug'])
+    ->name('pieces.showSlug');
+
 // STATUS EFFECTS
 Route::get('/status-effects', [App\Http\Controllers\StatusEffectController::class, 'index'])
     ->name('status-effects.index');
