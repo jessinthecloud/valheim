@@ -13,7 +13,7 @@
 >
     <h2 class="relative w-full text-xl">
         {{ $entity->name }} 
-        @if(config('env') === 'local')
+        @if(config('app.env') === 'local')
             <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $entity->id }}</span>
         @endif
     </h2>
