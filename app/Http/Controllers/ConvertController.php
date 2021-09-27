@@ -69,12 +69,12 @@ class ConvertController extends Controller
 
     public function pieces(int $chunk)
     {
-        $this->chunkOffset = $chunk;
+//        $this->chunkOffset = $chunk;
         
         ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
         ini_set("memory_limit", "50M");
         
-        echo "CONVERT PIECES IN CHUNKS OF ".$this->chunkAmount;
+        echo "CONVERT PIECES";// IN CHUNKS OF ".$this->chunkAmount;
 
         $pieces_file = $this->docspath.'\piece-list.json';
 
