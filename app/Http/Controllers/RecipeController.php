@@ -4,25 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Models\Recipe;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RecipeController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
-    public function index(Request $request)
-    {
-//    dump($request, $request->page);
-        $recipes = Recipe::with($this->relationsSubQuery())->orderBy('name', 'asc')->paginate(16/*, ['*'], 'page', $request->page*/);
-        $is_listing = true;
-//        ddd($recipes);
-        $formatted_recipes = $recipes->map(function ($recipe) {
-            return $recipe = $this->formatForView($recipe);
-        });
+    public function index()
+    {        
+        $paginator = Recipe::orderBy('name', 'asc')->paginate(32);
+
+        $recipes = collect($paginator->items());
         
-        return view('recipes.index', compact('recipes', 'is_listing', 'formatted_recipes'));
+        return view('recipes.index', 
+            compact(
+            'recipes',
+            'paginator'
+            )
+        );
     }
 
     /**

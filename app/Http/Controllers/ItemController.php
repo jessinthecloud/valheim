@@ -10,16 +10,20 @@ class ItemController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function index()
     {
-        $items = Item::with('recipes')->with('sharedData')->orderBy('name', 'asc')->paginate(16)->map(function ($item) {
-            $item->name = ucwords($item->name);
-            return $item;
-        });
+        $paginator = Item::orderBy('name', 'asc')->paginate(32);
 
-        return view('items.index', compact('items'));
+        $items = collect($paginator->items());
+
+        return view('items.index',
+            compact(
+                'items',
+                'paginator'
+            )
+        );
     }
 
     /**

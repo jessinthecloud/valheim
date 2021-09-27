@@ -1,0 +1,24 @@
+@props(['entities', 'entityName', 'paginator', 'routeName'])
+
+<h1 class="w-full text-4xl mb-4">{{ ucwords(Str::plural($entityName)) }}</h1>
+
+@if(!empty($entities))
+    {{--paging links--}}
+    <div class="paging-wrapper w-full mb-10">
+        {{ $paginator->links() }}
+    </div>
+
+    @foreach($entities as $entity)
+        <x-listings.listing-link
+            :routeName="$routeName"
+            :entity="$entity"
+        ></x-listings.listing-link>
+    @endforeach
+
+    {{--paging links--}}
+    <div class="paging-wrapper w-full mt-8">
+        {{ $paginator->links() }}
+    </div>
+@else
+    No {{ Str::plural($entityName) }} to display.
+@endif

@@ -30,9 +30,9 @@ class Recipe extends Model
      * @var array
      */
     protected $with = [
-        'item',
-        'craftingStation',
-        // 'requirements',
+//        'item',
+//        'craftingStation',
+//        'requirements',
     ];
 
     // remove Recipe_ prefix
