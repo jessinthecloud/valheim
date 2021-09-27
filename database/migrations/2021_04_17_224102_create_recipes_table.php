@@ -230,8 +230,8 @@ class CreateRecipesTable extends Migration
             $table->string('raw_name');
             $table->string('raw_slug')->nullable();
             $table->string('var_name')->nullable();
-            $table->tinyInteger('amount')->default(1);
-            $table->tinyInteger('amount_per_level')->default(1);
+            $table->integer('amount')->default(1);
+            $table->integer('amount_per_level')->default(1);
             $table->boolean('recover')->default(true);
             $table->foreignId('item_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();

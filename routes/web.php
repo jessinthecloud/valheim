@@ -33,8 +33,15 @@ if (env('APP_ENV') === 'local') {
 
         Route::get(
             '/pieces/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'pieces']
+            [App\Http\Controllers\ConvertController::class, 'piece']
         )->name('pieces');
+
+        Route::get(
+            '/pieces/chunk/{offset}',
+            [App\Http\Controllers\ConvertController::class, 'pieces']
+        )
+        ->where('offset', '[0-9]+')
+        ->name('pieces.chunk');
 
         Route::get(
             '/crafting-station/{name?}',

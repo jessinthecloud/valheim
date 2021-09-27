@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 
@@ -24,7 +25,29 @@ use App\Models\PieceTable;
 class ConvertController extends Controller
 {
     private $docspath = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs';
+    
+    // offset number 
+    private $chunkOffset; 
+    // limit number
+    private $chunkAmount = 50;
+    // current set of values (array or collection?)
+    private $chunk; 
 
+    /**
+     * Display a listing of the requirement.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        // convert all
+        $this->craftingStation();
+        $this->statusEffect();
+        $this->item();
+        $this->pieceTable();
+//        $this->pieces();
+        $this->recipe();
+    }
 
     public function craftingStation()
     {
@@ -44,16 +67,18 @@ class ConvertController extends Controller
         $this->convertJsonList($piece_tables_file, PieceTable::class, ['raw_name']);
     }
 
-    public function pieces()
+    public function pieces(int $chunk)
     {
-        ini_set('max_execution_time', 300); //300 seconds = 5 minutes
+        $this->chunkOffset = $chunk;
+        
+        ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
         ini_set("memory_limit", "50M");
         
-        echo "CONVERT PIECES";
+        echo "CONVERT PIECES IN CHUNKS OF ".$this->chunkAmount;
 
         $pieces_file = $this->docspath.'\piece-list.json';
 
-        $this->convertJsonList($pieces_file, Piece::class, ['raw_name']);
+        $this->convertJsonList($pieces_file, Piece::class, ['true_name']);
     }
 
     /**
@@ -284,22 +309,7 @@ class ConvertController extends Controller
             }
         } // end foreach recipe
     }
-
-    /**
-    * Display a listing of the requirement.
-    *
-    * @return \Illuminate\Http\Response
-    */
-    public function index()
-    {
-        // convert all
-        $this->craftingStation();
-        $this->statusEffect();
-        $this->item();
-        $this->pieceTable();
-        $this->pieces();
-        $this->recipe();
-    }
+    
 
     /**
      * decode a JSON file
@@ -362,8 +372,21 @@ class ConvertController extends Controller
     {
         $contents = $this->removeInvalidHex(file_get_contents($json_filepath));
         $entities = json_decode($contents, true);
-        // dump($entities);
+        
+        // save copy of all
+        $all_entities = $entities;
+        
+        if(isset($this->chunkOffset) && $this->chunkOffset <= sizeof($all_entities)){
+            $entities = Collection::make($entities)
+                ->skip($this->chunkOffset)
+                ->take($this->chunkAmount)
+                ->all();
+                
+//            dump($entities);
+            echo "<BR><BR>OFFSET: {$this->chunkOffset} <BR><pre>".print_r(Arr::pluck($entities, 'raw_name'), true)."</pre>";
 
+        }
+        
         if($class === Piece::class){
             // if converting piece, get tables to map to
             $piece_tables = PieceTable::select(['id', 'true_name'])->get();
@@ -380,7 +403,13 @@ class ConvertController extends Controller
                         $entity->save();
                     }
                 });
-                
+                /*if (!empty($entity_info['requirements'])) {
+                    echo "<BR><BR>REQUIREMENTS: <BR><pre>" . print_r( $entity_info['requirements'], true ) . "</pre>";
+                }
+                else{
+                    echo "<BR><BR>NOOOOOO REQUIREMENTS for {$entity->name} <BR>";
+                }*/
+               
                 $this->attachRequirements($entity, $entity_info, 'pieces');
                 
                 // map to matching requirements
@@ -396,22 +425,23 @@ class ConvertController extends Controller
                 }*/
             }
         } // end foreach entity
+
+        /*if(isset($this->chunkOffset) && $this->chunkOffset <= sizeof($all_entities)){
+            $this->chunkOffset = ($this->chunkOffset + $this->chunkAmount);
+            
+            $this->convertJsonList($json_filepath, $class, $unique_keys);
+        }*/
     }
     
     protected function attachRequirements($entity, $entity_info, $relation)
     {
         // create / attach entity requirements
         if (!empty($entity_info['requirements'])) {
+//echo "<BR><BR>REQUIREMENTS: <BR><pre>".print_r($entity_info['requirements'], true)."</pre>";
             foreach ($entity_info['requirements'] as $requirement_info) {
                 $requirement_info = $this->createAllNames($requirement_info);
 
-                $requirement = Requirement::updateOrCreate(
-                    [
-                        'raw_name'=>$requirement_info['raw_name'],
-                        'amount'=>$requirement_info['amount'],
-                        'amount_per_level'=>$requirement_info['amount_per_level'],
-                        'recover'=>$requirement_info['recover'],
-                    ],
+                $requirement = Requirement::create(
                     $requirement_info
                 );
 
@@ -505,6 +535,7 @@ class ConvertController extends Controller
         foreach ($unique_keys as $keyname) {
             $check_columns [$keyname]= $entity_info[$keyname];
         }
+//        dump($entity_info);
         return /*$entity =*/ $class::updateOrCreate(
             $check_columns,
             $entity_info
