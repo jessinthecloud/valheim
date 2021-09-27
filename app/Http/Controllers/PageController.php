@@ -16,4 +16,13 @@ class PageController extends Controller
     {
         return view('home');
     }
+
+    /**
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function about()
+    {
+        return view('about');
+    }
 }

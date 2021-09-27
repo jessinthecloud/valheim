@@ -66,6 +66,8 @@ if (env('APP_ENV') === 'local') {
 // END Convert ------------------------------------------------------------------
 
 Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
+Route::get('/home', [App\Http\Controllers\PageController::class, 'index'])->name('index');
+Route::get('/about', [App\Http\Controllers\PageController::class, 'about'])->name('about');
 
 /*Route::resources(
     [
@@ -80,12 +82,24 @@ Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('in
     ]
 );*/
 
-Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])->name('recipes.index');
-Route::get('/recipes/{id}', [App\Http\Controllers\RecipeController::class, 'show'])->where('id', '[0-9]+')->name('recipes.show');
-Route::get('/recipes/{slug}', [App\Http\Controllers\RecipeController::class, 'showSlug'])->name('recipes.showSlug');
+// RECIPES
+Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])
+    ->name('recipes.index');
+Route::get('/recipes/{id}', [App\Http\Controllers\RecipeController::class, 'show'])
+    ->name('recipes.show')
+    ->where('id', '[0-9]+');
+Route::get('/recipes/{slug}', [App\Http\Controllers\RecipeController::class, 'showSlug'])
+    ->name('recipes.showSlug');
 
-Route::get('/items', [App\Http\Controllers\ItemController::class, 'index'])->name('items.index');
-Route::get('/items/{id}', [App\Http\Controllers\ItemController::class, 'show'])->where('id', '[0-9]+')->name('items.show');
-Route::get('/items/{slug}', [App\Http\Controllers\ItemController::class, 'showSlug'])->name('items.showSlug');
+// ITEMS
+Route::get('/items', [App\Http\Controllers\ItemController::class, 'index'])
+    ->name('items.index');
+Route::get('/items/{id}', [App\Http\Controllers\ItemController::class, 'show'])
+    ->name('items.show')
+    ->where('id', '[0-9]+');
+Route::get('/items/{slug}', [App\Http\Controllers\ItemController::class, 'showSlug'])
+    ->name('items.showSlug');
 
-Route::get('/status-effects', [App\Http\Controllers\StatusEffectController::class, 'index'])->name('status-effects.index');
+// STATUS EFFECTS
+Route::get('/status-effects', [App\Http\Controllers\StatusEffectController::class, 'index'])
+    ->name('status-effects.index');

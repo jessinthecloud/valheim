@@ -6,13 +6,10 @@
 
 @section('content')
 
-<h1 class="w-full text-4xl mb-4">Welcome to Valheim Recipes</h1>
+<h1 class="w-full text-4xl mb-4">Valheim Recipes</h1>
 
 <p class="my-2">
     We're under construction, but you can still use the search box or menu to find the Valheim recipe that you need.
-</p>
-<p class="my-2">
-    This site uses the item and recipe data extracted directly from the game, thanks to a modified version of JotunnDoc, from <x-general.link  rel="noopener nofollow" href="https://github.com/Valheim-Modding/Jotunn">Jötunn, the Valheim Library</x-general.link>, that I created using their excellent mod tools and tutorials. 
 </p>
 <p class="my-2">
     If you find any undocumented problems or have a request, feel free to <x-general.link rel="noopener nofollow" href="https://github.com/jessinthecloud/valheim/issues/new/choose">open an issue</x-general.link> on github
