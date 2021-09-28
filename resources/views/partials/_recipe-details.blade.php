@@ -1,7 +1,7 @@
 @if($recipe->item)
     @if($recipe->craftingStation)
         <p class="mt-4">
-            <strong>Crafting station:</strong>
+            <strong>Crafting Station:</strong>
             <em>
                 {{ $recipe->craftingStation->name }}
                 @if($recipe->min_station_level > 1)

@@ -11,21 +11,26 @@
             @if(null !== $piece->description) {!! $piece->description !!} @endif 
             
             <em class="block mt-1">{{ $piece->type() }}</em>
-            
-            @if($piece->craftingStation)
-                <p class="mt-4">
-                    <strong>Crafting station:</strong>
-                    <em>
-                        {{ $requirement->craftingStation->name }}
-                        @if($requirement->min_station_level > 1)
-                            Level {{ $requirement->min_station_level }}
-                        @endif
-                    </em>
-                </p>
-            @endif
         </p>
         
-        <h3 class="text-xl font-semibold">Details</h3>
+        <h3 class="text-xl font-semibold mb-4">Details</h3>
+
+        <p class="mb-4">
+            <strong>Crafting Tool:</strong>
+            <em>{{ $piece->pieceTable->name }}</em>
+        </p>
+
+        @if($piece->craftingStation)
+            <p class="mb-4">
+                <strong>Crafting station:</strong>
+                <em>
+                    {{ $requirement->craftingStation->name }}
+                    @if($requirement->min_station_level > 1)
+                        Level {{ $requirement->min_station_level }}
+                    @endif
+                </em>
+            </p>
+        @endif
         
         {{-- if weapon --}}
         @if($piece->isFurniture())
