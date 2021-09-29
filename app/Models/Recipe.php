@@ -63,6 +63,19 @@ class Recipe extends Model
         return $this->belongsTo(Item::class);
     }
 
+    public function relatedItems()
+    {
+        return Requirement::whereHas('item', function($query){
+            $query->where('item_id', $this->item->id);
+        })
+        ->orWhereHas('pieces', function($query){
+            $query->whereHas('requirements',  function($query){
+                $query->where('item_id', $this->item->id);
+            });
+        })
+        ->get()->unique('item_id');
+    }
+
     /**
      * calculate the required station level for this item based on its quality
      * and the minimum station level

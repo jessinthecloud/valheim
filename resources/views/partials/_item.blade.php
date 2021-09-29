@@ -115,12 +115,12 @@
                         View Full Recipe
                     </x-general.button-link>
                 @endif
-            </section> 
+            </section>
         @endforeach
     @endif
 
     {{--<div class="flex my-4 w-full">
-    <div class="w-1/2">Info: </div>
-    <div class="w-1/2"><?php dump($item->sharedData->getAttributes()); ?></div>
-</div>--}}
+        <div class="w-1/2">Info: </div>
+        <div class="w-1/2"><?php dump($item->sharedData->getAttributes()); ?></div>
+    </div>--}}
 </div>

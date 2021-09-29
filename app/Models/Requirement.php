@@ -20,8 +20,8 @@ class Requirement extends Model
      */
     protected $with = [
         'item',
-        'pieces',
-        'recipes',
+        /*'pieces',
+        'recipes',*/
     ];
 
     public function recipes()

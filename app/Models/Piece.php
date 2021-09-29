@@ -62,6 +62,19 @@ class Piece extends Model
     
 /////////////////////////////////////////////////////////////////
 
+    public function relatedItems()
+    {
+        return Requirement::whereHas('item', function($query){
+            $query->where('item_id', $this->item->id);
+        })
+        ->orWhereHas('pieces', function($query){
+            $query->whereHas('requirements',  function($query){
+                $query->where('item_id', $this->item->id);
+            });
+        })
+        ->get()->unique('item_id');
+    }
+
     /**
      * shared_data item_type as string
      *
