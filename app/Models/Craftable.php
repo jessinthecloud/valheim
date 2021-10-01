@@ -5,13 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PieceTable extends CraftingDevice
+abstract class Craftable extends Model
 {
     use HasFactory;
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [];
+    protected $guarded = [
+        /*'piece_table_id',
+        'requirement_id',
+        'crafting_station_id',*/
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -26,16 +30,14 @@ class PieceTable extends CraftingDevice
      * @var array
      */
     protected $with = [];
-
-    // remove Recipe_ prefix
+    
+    abstract public function recipeRequirements();
+    
+    abstract public function type();
+    
+    // split string into array on uppercase letter and turn it into string
     public static function name_EN($name)
     {
-        $name = trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
-        return (explode('_', $name)[1]) ?? $name;
-    }
-
-    public function pieces()
-    {
-        return $this->hasMany(Piece::class);
+        return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
     }
 }

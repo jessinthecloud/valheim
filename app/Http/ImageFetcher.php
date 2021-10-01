@@ -11,7 +11,7 @@ class ImageFetcher
     public function fetchImageHtmlString(string $item_name)
     {
         $base_uri = 'https://valheim.fandom.com';
-        // $uri_path = '/wiki/Category:Food/';
+        // $uri_path = '/wiki/Category:Consumable/';
         $uri_path = '/api.php?format=json&action=parse';
         // ?action=parse&page=Lox meat pie&format=json
         // https://valheim.fandom.com/api.php?format=json&action=parse&page=Food

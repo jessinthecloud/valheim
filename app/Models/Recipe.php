@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Recipe extends Model
+abstract class Recipe extends Model
 {
     use HasFactory;
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
     protected $guarded = [
-        'resources',
+        /*'resources',
         'crafting_station_id',
-        'repair_station_id',
+        'repair_station_id',*/
     ];
 
     /**
@@ -29,18 +29,13 @@ class Recipe extends Model
      *
      * @var array
      */
-    protected $with = [
-//        'item',
-//        'craftingStation',
-//        'requirements',
-    ];
+    protected $with = [];
 
-    // remove Recipe_ prefix
-    public static function name_EN($name)
-    {
-        $name = trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
-        return (explode('_', $name)[1]) ?? $name;
-    }
+    // item this recipe creates
+    abstract public function creation();
+    
+    // used to make the recipe; craftin station, piece table tool, etc
+    abstract public function craftingDevice();
 
     public function craftingStation()
     {
@@ -54,16 +49,10 @@ class Recipe extends Model
 
     public function requirements()
     {
-        return $this->belongsToMany(Requirement::class/*, 'recipe_requirement', 'recipe_id', 'requirement_id'*/);
+        return $this->belongsToMany(Requirement::class);
     }
 
-    // item this recipe creates
-    public function item()
-    {
-        return $this->belongsTo(Item::class);
-    }
-
-    public function relatedItems()
+    public function relatedCraftables()
     {
         return Requirement::whereHas('item', function($query){
             $query->where('item_id', $this->item->id);

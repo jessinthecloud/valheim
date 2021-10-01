@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Item extends Model
+class Item extends Craftable
 {
     use HasFactory;
 
@@ -55,19 +55,19 @@ class Item extends Model
         return $this->hasMany(Recipe::class);
     }
 
-    public function requirementForRecipes()
+    public function recipeRequirements()
     {
-        return $this->belongsToManyThrough(Recipe::class, Requirement::class);
-    }
-
-    public function requirements()
-    {
-        return $this->hasMany(Requirement::class);
+        return $this->belongsToManyThrough(ItemRecipe::class, Requirement::class);
     }
 
     public function sharedData()
     {
         return $this->belongsTo(SharedData::class);
+    }
+
+    public function requirementFor()
+    {
+        return $this->belongsToManyThrough(ItemRecipe::class, Requirement::class);
     }
     
 ////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ class Item extends Model
      *
      * @return string   item type
      */
-    public function itemType() : string
+    public function type() : string
     {
         return $this->name_EN(ItemType::toString($this->sharedData->item_type));
     }
@@ -105,62 +105,14 @@ class Item extends Model
         return in_array($this->sharedData->item_type, Item::WEAPON_TYPES);
     }
 
-    public function attackEffect()
-    {
-        $effect = $this->sharedData->attackStatusEffect;
-        
-        return isset($effect) ? $effect->tooltip : null;
-    }
-
-    public function attack()
-    {
-        return $this->sharedData->attack_force;
-    }
-
-    public function backstab()
-    {
-        return $this->sharedData->backstab_bonus;
-    }
-
-    public function block()
-    {
-        return $this->sharedData->block_power;
-    }
+    
 
     public function isArmor() : bool
     {
         return in_array($this->sharedData->item_type, Item::ARMOR_TYPES);
     }
 
-    public function armor()
-    {
-        return $this->sharedData->armor;
-    }
-
-    public function armorPerLevel()
-    {
-        return $this->sharedData->armor_per_level;
-    }
-
-    public function deflection()
-    {
-        return $this->sharedData->deflection_force;
-    }
-
-    public function deflectionPerLevel()
-    {
-        return $this->sharedData->deflection_force_per_level;
-    }
-
-    public function movementModifier()
-    {
-        return $this->sharedData->movement_modifier;
-    }
-
-    public function movementEffect()
-    {
-        return abs($this->sharedData->movement_modifier).' '.($this->sharedData->movement_modifier > 1 ? 'Faster' : 'Slower');
-    }
+    
     
 /*
  * FOOD METHODS
@@ -170,23 +122,5 @@ class Item extends Model
         return ((int)$this->sharedData->item_type === 2);
     }
 
-    public function health()
-    {
-        return ($this->isFood() ? (int)$this->sharedData->food : null);
-    }
-
-    public function stamina()
-    {
-        return ($this->isFood() ? (int)$this->sharedData->food_stamina : null);
-    }
-
-    public function healthRegen()
-    {
-        return ($this->isFood() ? (int)$this->sharedData->food_regen : null);
-    }
-
-    public function duration()
-    {
-        return ($this->isFood() ? ((int)$this->sharedData->food_burn_time/60).' minutes' : null);
-    }
+    
 }
