@@ -24,7 +24,8 @@ use App\Models\PieceTable;
 
 class ConvertController extends Controller
 {
-    private $docspath = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs';
+    private $docspath = 'C:\Users\jess_\Documents\Code\valheim\docs\json';
+//    private $docspath = 'G:\Steam\steamapps\common\Valheim\BepInEx\plugins\ValheimJsonExporter\Docs';
     
     // offset number 
     private $chunkOffset; 
@@ -290,7 +291,7 @@ class ConvertController extends Controller
                     $recipe->save();
                 }
             }
-
+ 
             // attach to repair station
             if (isset($recipe_info['raw_repair_station_name'])) {
                 // make sure we don't already have this station attached
