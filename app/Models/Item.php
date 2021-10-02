@@ -60,14 +60,14 @@ class Item extends Craftable
         return $this->belongsToManyThrough(ItemRecipe::class, Requirement::class);
     }
 
-    public function sharedData()
-    {
-        return $this->belongsTo(SharedData::class);
-    }
-
     public function requirementFor()
     {
         return $this->belongsToManyThrough(ItemRecipe::class, Requirement::class);
+    }
+
+    public function sharedData()
+    {
+        return $this->belongsTo(SharedData::class);
     }
     
 ////////////////////////////////////////////////////////////////

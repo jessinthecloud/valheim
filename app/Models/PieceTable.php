@@ -34,8 +34,8 @@ class PieceTable extends CraftingDevice
         return (explode('_', $name)[1]) ?? $name;
     }
 
-    public function pieces()
+    public function craftables()
     {
-        return $this->hasMany(Piece::class);
+        return $this->hasManyThrough(Piece::class, PieceRecipe::class);
     }
 }

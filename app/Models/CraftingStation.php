@@ -19,13 +19,28 @@ class CraftingStation extends CraftingDevice
      */
     public static $ignore = [];
 
+    public function craftables()
+    {
+        return $this->hasManyThrough(Item::class, ItemRecipe::class);
+    }
+
+    public function pieces()
+    {
+        return $this->hasMany(Piece::class);
+    }
+
     public function slug()
     {
         return Str::slug($this->name);
     }
 
-    public function recipes()
+    public function itemRecipes()
     {
-        return $this->hasMany(Recipe::class);
+        return $this->hasMany(ItemRecipe::class);
+    }
+
+    public function pieceRecipes()
+    {
+        return $this->hasMany(PieceRecipe::class);
     }
 }

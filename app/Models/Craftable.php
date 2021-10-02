@@ -11,11 +11,7 @@ abstract class Craftable extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [
-        /*'piece_table_id',
-        'requirement_id',
-        'crafting_station_id',*/
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -34,6 +30,11 @@ abstract class Craftable extends Model
     abstract public function recipeRequirements();
     
     abstract public function type();
+
+    public function niceName()
+    {
+        
+    }    
     
     // split string into array on uppercase letter and turn it into string
     public static function name_EN($name)

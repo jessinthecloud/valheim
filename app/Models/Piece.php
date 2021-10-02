@@ -17,7 +17,6 @@ class Piece extends Craftable
         return $this->belongsToManyThrough(PieceRecipe::class, Requirement::class);
     }
     
-    
 /////////////////////////////////////////////////////////////////
 
     public function relatedItems()

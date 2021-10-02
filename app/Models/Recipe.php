@@ -73,12 +73,12 @@ abstract class Recipe extends Model
      *
      * @return CraftingStation
      */
-    public function getRequiredStationLevel(int $quality) : int
+    public function requiredStationLevel(int $quality) : int
     {
         return (max(1, $this->min_station_level) + ($quality - 1));
     }
 
-    public function getRequiredStation(int $quality=0) : ?CraftingStation
+    public function requiredStation(int $quality=0) : ?CraftingStation
     {
         if ($quality > 1) {
             return $this->repairStation ?? $this->craftingStation ?? null;
