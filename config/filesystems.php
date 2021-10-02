@@ -68,5 +68,8 @@ return [
     'links' => [
         public_path('storage') => storage_path('app/public'),
     ],
+    
+    // JSON paths for conversion
+    'json_path' => env('JSON_PATH'),
 
 ];
