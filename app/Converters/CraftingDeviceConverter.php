@@ -2,11 +2,29 @@
 
 namespace App\Converters;
 
-class CraftingDeviceConverter extends JsonConverter
-{
+use Illuminate\Support\Str;
 
-    public function convert()
+class CraftingDeviceConverter extends JsonConverter
+{     
+    public function __construct(string $class)
     {
-        // TODO: Implement convert() method.
+        parent::__construct($class);
+        
+        $this->file = $this->filepath.'\\'.Str::kebab(Str::afterLast($this->class, '\\')).'-list.json';
+    }
+    
+    public function create()
+    {
+        // insert into table
+        $this->data = $this->data->map(function($entity){
+            
+            $data = $this->convertNames($entity);
+            
+            $model = $this->class::firstOrCreate(
+                $data
+            );
+            
+            return $data;
+        });
     }
 }

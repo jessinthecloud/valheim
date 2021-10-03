@@ -6,6 +6,8 @@ use Illuminate\Support\Str;
 
 abstract class JsonConverter implements Converter
 {
+    // model data is converted for
+    protected string $class;
     // path to json files
     protected string $filepath;
     // json file to convert
@@ -20,9 +22,20 @@ abstract class JsonConverter implements Converter
     // current set of values (array or collection?)
     private $chunk;
     
-    public function __construct()
+    public function __construct(string $class)
     {
+        $this->class = 'App\Models\\'.$class;
+
         $this->filepath = config('filesystems.json_path');
+    }
+
+    public function convert()
+    {
+        $this->prepareData();
+        $this->create();
+
+        dump($this->data);
+
     }
 
     /**
@@ -50,11 +63,16 @@ abstract class JsonConverter implements Converter
         return json_decode($contents, $associative);
     }
 
+    /**
+     * sanitize and decode file contents
+     */
     protected function prepareData()
     {
         $this->data = $this->decode(
             $this->removeInvalidHex(file_get_contents($this->file)
         ), true);
+        
+        $this->data = collect($this->data)->unique();
     }
 
     /**

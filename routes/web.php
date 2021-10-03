@@ -20,19 +20,22 @@ use App\Models\Recipe;
 
 // Convert ------------------------------------------------------------------
 if (env('APP_ENV') === 'local') {
-    Route::prefix('convert')->name('convert.')->group(function () {
+    Route::prefix('convert')
+        ->name('convert.')
+        ->group(function () {
+        
         Route::get(
             '/',
             [App\Http\Controllers\ConvertController::class, 'index']
         )->name('index');
 
         Route::get(
-            '/piece-tables/{name?}',
+            '/piece-tables',
             [App\Http\Controllers\ConvertController::class, 'pieceTable']
         )->name('piece-tables');
 
         Route::get(
-            '/pieces/{name?}',
+            '/pieces',
             [App\Http\Controllers\ConvertController::class, 'piece']
         )->name('pieces');
 
@@ -44,22 +47,22 @@ if (env('APP_ENV') === 'local') {
         ->name('pieces.chunk');
 
         Route::get(
-            '/crafting-station/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'craftingStation']
+            '/crafting-station',
+            [App\Http\Controllers\CraftingStationController::class, 'convert']
         )->name('crafting-station');
 
         Route::get(
-            '/status-effects/{name?}',
+            '/status-effects',
             [App\Http\Controllers\ConvertController::class, 'statusEffect']
         )->name('status-effects');
 
         Route::get(
-            '/recipes/{name?}',
+            '/recipes',
             [App\Http\Controllers\ConvertController::class, 'recipe']
         )->name('recipes');
 
         Route::get(
-            '/items/{name?}',
+            '/items',
             [App\Http\Controllers\ConvertController::class, 'item']
         )->name('items');
 
