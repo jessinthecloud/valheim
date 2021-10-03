@@ -4,13 +4,14 @@ namespace App\Converters;
 
 use Illuminate\Support\Str;
 
+/**
+ * Manages conversion of CraftingStation, PieceTable, etc
+ */
 class CraftingDeviceConverter extends JsonConverter
 {     
     public function __construct(string $class)
     {
         parent::__construct($class);
-        
-        $this->file = $this->filepath.'\\'.Str::kebab(Str::afterLast($this->class, '\\')).'-list.json';
     }
     
     public function create()

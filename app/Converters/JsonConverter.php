@@ -24,11 +24,29 @@ abstract class JsonConverter implements Converter
     
     public function __construct(string $class)
     {
-        $this->class = 'App\Models\\'.$class;
+        $this->class = $class;
 
         $this->filepath = config('filesystems.json_path');
+        // json file is kebab'd model name
+        $this->file = $this->filepath.'\\'.Str::kebab(Str::afterLast($this->class, '\\')).'-list.json';
+
     }
 
+    /**
+     * Loop data, convert names, insert into table
+     * 
+     * @return mixed
+     */
+    abstract public function create();
+
+    /**
+     * @required by Converter Interface 
+     *          
+     * Decode JSON 
+     * Loop data
+     * Insert into tables
+     * Attach relationships
+     */
     public function convert()
     {
         $this->prepareData();

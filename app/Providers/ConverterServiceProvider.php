@@ -20,7 +20,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(CraftingStationController::class)
             ->needs(CraftingDeviceConverter::class)
             ->give(function(){
-                return new CraftingDeviceConverter('CraftingStation');
+                return new CraftingDeviceConverter(CraftingStation::class);
             });
     }
 
