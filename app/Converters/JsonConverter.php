@@ -33,13 +33,6 @@ abstract class JsonConverter implements Converter
     }
 
     /**
-     * Loop data, convert names, insert into table
-     * 
-     * @return mixed
-     */
-    abstract public function create();
-
-    /**
      * @required by Converter Interface 
      *          
      * Decode JSON 
@@ -54,6 +47,38 @@ abstract class JsonConverter implements Converter
 
         dump($this->data);
 
+    }
+
+    /**
+     * sanitize and decode file contents
+     */
+    protected function prepareData()
+    {
+        $this->data = $this->decode(
+            $this->removeInvalidHex(file_get_contents($this->file)
+            ), true);
+
+        $this->data = collect($this->data)->unique();
+    }
+
+    /**
+     * Loop data, convert names, insert into table
+     *
+     * @return mixed
+     */
+    public function create()
+    {
+        // insert into table
+        $this->data = $this->data->map(function($entity){
+
+            $data = $this->convertNames($entity);
+
+            $model = $this->class::firstOrCreate(
+                $data
+            );
+
+            return $data;
+        });
     }
 
     /**
@@ -79,18 +104,6 @@ abstract class JsonConverter implements Converter
     public function decode(string $contents, $associative=true)
     {
         return json_decode($contents, $associative);
-    }
-
-    /**
-     * sanitize and decode file contents
-     */
-    protected function prepareData()
-    {
-        $this->data = $this->decode(
-            $this->removeInvalidHex(file_get_contents($this->file)
-        ), true);
-        
-        $this->data = collect($this->data)->unique();
     }
 
     /**

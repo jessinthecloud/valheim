@@ -31,20 +31,20 @@ if (env('APP_ENV') === 'local') {
 
         Route::get(
             '/piece-tables',
-            [App\Http\Controllers\ConvertController::class, 'pieceTable']
+            [App\Http\Controllers\PieceTableController::class, 'convert']
         )->name('piece-tables');
 
         Route::get(
             '/pieces',
-            [App\Http\Controllers\ConvertController::class, 'piece']
+            [App\Http\Controllers\PieceController::class, 'convert']
         )->name('pieces');
 
-        Route::get(
+        /*Route::get(
             '/pieces/chunk/{offset}',
             [App\Http\Controllers\ConvertController::class, 'pieces']
         )
         ->where('offset', '[0-9]+')
-        ->name('pieces.chunk');
+        ->name('pieces.chunk');*/
 
         Route::get(
             '/crafting-station',
@@ -53,17 +53,17 @@ if (env('APP_ENV') === 'local') {
 
         Route::get(
             '/status-effects',
-            [App\Http\Controllers\ConvertController::class, 'statusEffect']
+            [App\Http\Controllers\StatusEffectController::class, 'convert']
         )->name('status-effects');
 
         Route::get(
             '/recipes',
-            [App\Http\Controllers\ConvertController::class, 'recipe']
+            [App\Http\Controllers\RecipeController::class, 'convert']
         )->name('recipes');
 
         Route::get(
             '/items',
-            [App\Http\Controllers\ConvertController::class, 'item']
+            [App\Http\Controllers\ItemController::class, 'convert']
         )->name('items');
 
         Route::get(
