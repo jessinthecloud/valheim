@@ -15,12 +15,10 @@ class CreatePiecesTable extends Migration
     {
         Schema::create('pieces', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('raw_name');
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
             $table->string('var_name')->nullable();
             $table->string('prefab_name')->nullable();
             $table->string('description')->nullable();

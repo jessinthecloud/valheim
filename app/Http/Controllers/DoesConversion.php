@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Converters\CraftingDeviceConverter;
+use App\Converters\Converter;
 use Illuminate\Http\Request;
 
-abstract class CraftingDeviceController extends Controller
+trait DoesConversion
 {
-    protected CraftingDeviceConverter $converter;
+    protected Converter $converter;
 
-    public function __construct(CraftingDeviceConverter $converter)
+    public function __construct(Converter $converter)
     {
         $this->converter = $converter;
     }

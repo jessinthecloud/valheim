@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 
 class ItemController extends Controller
 {
+    use DoesConversion;
+    
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
@@ -27,49 +29,14 @@ class ItemController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
-     * @param  \App\Models\r  $r
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $item = Item::with('recipes')->with('sharedData')->findOrFail($id);
-        $item->name = ucwords($item->name);
-
-        return view('items.show', compact('item'));
-    }
-
-    /**
-     * Display the specified resource.
+     * @param  \App\Models\Item $item
      *
-     * @param  \App\Models\r  $r
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View
      */
-    public function showSlug($slug)
+    public function show(Request $request, Item $item)
     {
-        $item = Item::with('recipes')->with('sharedData')->where('slug', $slug)->firstOrFail();
         $item->name = ucwords($item->name);
 
         return view('items.show', compact('item'));
@@ -78,8 +45,8 @@ class ItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\r  $r
-     * @return \Illuminate\Http\Response
+     * @param  \App\Models\Item $item
+     * @return \Illuminate\Contracts\View\View
      */
     public function edit(Item $item)
     {
@@ -90,7 +57,7 @@ class ItemController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\r  $r
+     * @param  \App\Models\Item $item
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Item $item)
@@ -101,7 +68,7 @@ class ItemController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\r  $r
+     * @param  \App\Models\Item $item
      * @return \Illuminate\Http\Response
      */
     public function destroy(Item $item)

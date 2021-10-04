@@ -15,12 +15,10 @@ class CreateCraftingStationsTable extends Migration
     {
         Schema::create('crafting_stations', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('raw_name');
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
             $table->string('var_name')->nullable();
             $table->float('discover_range')->default(4);
             $table->float('range_build')->default(10);

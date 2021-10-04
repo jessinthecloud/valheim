@@ -16,12 +16,10 @@ class CreateStatusEffectsTable extends Migration
         Schema::create('status_effects', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('slug')->unique();
-            $table->string('raw_name')->unique();
-            $table->string('raw_slug')->unique();
+            $table->string('raw_name');
             $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
             $table->string('var_name')->nullable();
             $table->string('category')->nullable();
             $table->string('tooltip')->nullable();

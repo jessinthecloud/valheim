@@ -15,13 +15,6 @@ class CreateSharedDataTable extends Migration
     {
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->nullable();
-            $table->string('raw_name')->nullable();
-            $table->string('raw_slug')->nullable();
-            $table->string('true_name')->nullable(); // kind of secret name
-            $table->string('true_slug')->nullable()->unique();
-            $table->string('var_name')->nullable();
             // -- StatusEffects
             $table->foreignId('attack_status_effect_id')->nullable()->references('id')->on('status_effects');
             $table->foreignId('consume_status_effect_id')->nullable()->references('id')->on('status_effects');
@@ -68,10 +61,6 @@ class CreateSharedDataTable extends Migration
             // enum Skills.SkillType.Swords
             $table->float('skill_type')->default(1);
             $table->tinyInteger('tool_tier')->nullable();
-            // HitData.DamageTypes
-            $table->string('damages')->nullable();
-            // HitData.DamageTypes
-            $table->string('damages_per_level')->nullable();
             $table->float('attack_force')->default(30);
             $table->float('backstab_bonus')->default(4);
             $table->float('dodgeable')->nullable();
@@ -95,6 +84,11 @@ class CreateSharedDataTable extends Migration
             $table->boolean('ai_when_walking')->default(true);
             $table->boolean('ai_when_swiming')->default(true);
             $table->timestamps();
+
+            // HitData.DamageTypes
+//            $table->string('damages')->nullable();
+            // HitData.DamageTypes
+//            $table->string('damages_per_level')->nullable();
 
             // $table->foreignId('damageModifiers')->nullable(); // List<HitData.DamageModPair>
             // $table->foreignId('build_pieces_id')->nullable()->references('id')->on('pieces'); // PieceTable

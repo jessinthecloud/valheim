@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ItemRecipeController;
 use App\Http\Controllers\ItemController;
 use App\Models\Item;
 use App\Models\Recipe;
@@ -58,7 +58,7 @@ if (env('APP_ENV') === 'local') {
 
         Route::get(
             '/recipes',
-            [App\Http\Controllers\RecipeController::class, 'convert']
+            [App\Http\Controllers\ItemRecipeController::class, 'convert']
         )->name('recipes');
 
         Route::get(
@@ -82,7 +82,7 @@ Route::get('/about', [App\Http\Controllers\PageController::class, 'about'])->nam
 /*Route::resources(
     [
         'status-effects' => StatusEffectController::class,
-        'recipes' => RecipeController::class,
+        'recipes' => ItemRecipeController::class,
         'items' => ItemController::class,
     ],
     // options -- ['index', 'show', 'store', 'update', 'destroy'];
@@ -93,22 +93,22 @@ Route::get('/about', [App\Http\Controllers\PageController::class, 'about'])->nam
 );*/
 
 // RECIPES
-Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])
+Route::get('/recipes', [App\Http\Controllers\ItemRecipeController::class, 'index'])
     ->name('recipes.index');
-Route::get('/recipes/{id}', [App\Http\Controllers\RecipeController::class, 'show'])
+Route::get('/recipes/{id}', [App\Http\Controllers\ItemRecipeController::class, 'show'])
     ->name('recipes.show')
     ->where('id', '[0-9]+');
-Route::get('/recipes/{slug}', [App\Http\Controllers\RecipeController::class, 'showSlug'])
+Route::get('/recipes/{slug}', [App\Http\Controllers\ItemRecipeController::class, 'showSlug'])
     ->name('recipes.showSlug');
 
 // ITEMS
 Route::get('/items', [App\Http\Controllers\ItemController::class, 'index'])
     ->name('items.index');
-Route::get('/items/{id}', [App\Http\Controllers\ItemController::class, 'show'])
+Route::get('/items/{item:slug}', [App\Http\Controllers\ItemController::class, 'show'])
     ->name('items.show')
-    ->where('id', '[0-9]+');
-Route::get('/items/{slug}', [App\Http\Controllers\ItemController::class, 'showSlug'])
-    ->name('items.showSlug');
+    ->where('slug', '[a-zA-Z0-9-]+');
+/*Route::get('/items/{slug}', [App\Http\Controllers\ItemController::class, 'showSlug'])
+    ->name('items.showSlug');*/
 
 // PIECES
 Route::get('/pieces', [App\Http\Controllers\PieceController::class, 'index'])

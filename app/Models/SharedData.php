@@ -19,6 +19,12 @@ class SharedData extends Model
         'damages',
         'damages_per_level',
     ];
+
+    // Indices of the converted json array that correspond to
+    // relationships and should not be directly inserted
+    public const RELATION_INDICES = [
+        'status_effects',
+    ];
     
     public function items()
     {

@@ -8,19 +8,7 @@ use Illuminate\Http\Request;
 
 class StatusEffectController extends Controller
 {
-    protected DataConverter $converter;
-
-    public function __construct(DataConverter $converter)
-    {
-        $this->converter = $converter;
-    }
-
-    public function convert(Request $request)
-    {
-        echo "CONVERT STATUS EFFECT";
-
-        $this->converter->convert();
-    }
+    use DoesConversion;
     
     /**
      * Display a listing of the resource.

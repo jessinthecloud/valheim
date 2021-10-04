@@ -2,29 +2,36 @@
 
 namespace App\Converters;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 abstract class JsonConverter implements Converter
 {
     // model data is converted for
     protected string $class;
+    // default DB table for model
+    protected string $class_table;
     // path to json files
     protected string $filepath;
     // json file to convert
     protected string $file;
     // data to be converted
     protected $data;
+    // the objects created during conversion
+    public $models;
     
     // offset number 
-    private int $chunkOffset;
+    protected int $chunkOffset;
     // limit number
-    private int $chunkAmount = 50;
+    protected int $chunkAmount = 50;
     // current set of values (array or collection?)
-    private $chunk;
-    
+    protected $chunk;
+
     public function __construct(string $class)
     {
         $this->class = $class;
+        $this->class_table = Str::snake(Str::pluralStudly(Str::afterLast($this->class, '\\')));
 
         $this->filepath = config('filesystems.json_path');
         // json file is kebab'd model name
@@ -42,43 +49,85 @@ abstract class JsonConverter implements Converter
      */
     public function convert()
     {
+        $this->data = $this->decode($this->file);
         $this->prepareData();
         $this->create();
 
-        dump($this->data);
 
     }
 
     /**
      * sanitize and decode file contents
+     * allow for passing in data and returning as well as
+     * using $this->data
+     *
+     * @param array|null  $data
+     * @param string|null $class
+     *
+     * @return \Illuminate\Support\Collection|void
      */
-    protected function prepareData()
+    protected function prepareData(array $data=null, string $class=null)
     {
-        $this->data = $this->decode(
-            $this->removeInvalidHex(file_get_contents($this->file)
-            ), true);
+        $decoded_data = $data ?? $this->data;
+        $decoded_data = collect($decoded_data)->unique();
+        $table = isset($class) ? Str::snake(Str::pluralStudly(Str::afterLast($class, '\\'))) : $this->class_table;
 
-        $this->data = collect($this->data)->unique();
+        // only convert names if they exist
+        $prepared_data = $decoded_data->map(function($entity) use ($class, $table) {
+            return Schema::hasColumn($table, 'slug') ? $this->convertNames( $entity, $class ) : $entity;
+        });
+        
+        if(isset($data)){
+            // using passed around data, not global to class
+            return $prepared_data;
+        }
+        
+        $this->data = $prepared_data;
     }
 
     /**
      * Loop data, convert names, insert into table
+     * Allow for passing in data and returning as well as
+     * using class data
      *
      * @return mixed
      */
-    public function create()
+    public function create($data=null, string $class=null)
     {
+        $prepared_data = $data ?? $this->data;
+        $model_class = $class ?? $this->class;
+        $table = Str::snake(Str::pluralStudly(Str::afterLast($model_class, '\\')));
+
         // insert into table
-        $this->data = $this->data->map(function($entity){
+        $created_data = $prepared_data->map(function($entity) use ($model_class, $table) {
 
-            $data = $this->convertNames($entity);
-
-            $model = $this->class::firstOrCreate(
-                $data
+            // only try to insert columns that exist
+            $db_values = Arr::only($entity, Schema::getColumnListing($table));
+           
+            if(defined($model_class.'::RELATION_INDICES')) {
+                // from the leftovers, get any that are also relationships that need to be mapped
+                // use intersect to compare by keys and avoid issue with PHP trying to compare multidimensional values
+                $relations = array_intersect_key( $entity, $model_class::RELATION_INDICES );
+            }
+            
+            $model = $model_class::firstOrCreate(
+                // only try to insert columns that exist
+                $db_values
             );
-
-            return $data;
+         
+            if(!empty($relations)){
+                $this->attachDataToModel($relations, $model);
+            }
+            
+            return $model;
         });
+        
+        if(isset($data)){
+            // using passed around data, not global to class
+            return $created_data;
+        }
+        
+        $this->data = $created_data;
     }
 
     /**
@@ -103,50 +152,42 @@ abstract class JsonConverter implements Converter
      */
     public function decode(string $contents, $associative=true)
     {
-        return json_decode($contents, $associative);
+        return json_decode(
+            $this->removeInvalidHex(file_get_contents($contents)), 
+            $associative
+        );
     }
 
     /**
      * populate name and slug data
      *
-     * @param  array  $info
+     * @param array       $info
+     * @param string|null $class
      *
-     * @return [type]       [description]
+     * @return array [type]       [description]
      */
-    protected function convertNames(array $info)
+    protected function convertNames(array $info, string $class=null)
     {
-        // TODO: look at this for refactoring
+        // allow class to be passed in
+        $class = $class ?? $this->class;
 
-        // if strange case where only true name exists, or
-        // e.g., Recipe_Adze
-        if (!empty($info['true_name'])) {
-            if (empty($info['raw_name'])) {
-                $info['raw_name'] = $this->removeCsPrefix($info['true_name']);
-            } elseif (str_contains(strtolower($info['true_name']), 'recipe') && preg_match('/[0-9]/', $info['true_name'])) {
-                // if it is a recipe alt, use true name as unique slug but keep name to match to item created
-                // e.g., Bronze5
-                // add spaces to make pretty
-                $info['name'] = $this->prettify(trim($info['raw_name']));
-                $info['slug'] = Str::slug(trim($this->removeCsPrefix($info['true_name'])));
-                $info['item_slug'] = Str::slug(trim($info['name']));
-                $info['raw_slug'] = Str::slug(trim($info['raw_name']));
-                $info['true_slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : null;
-
-
-                return $info;
-            }
-        }
-
+        // if strange case where only true name exists e.g., Recipe_Adze
+        // or only prefab name exists (e.g., StoneGolem_clubs shared data)
+        $info['raw_name'] = $info['raw_name'] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : $info['prefab_name']);
         // add spaces to make pretty
         $info['name'] = $this->prettify(trim($info['raw_name']));
-        $info['slug'] = Str::slug(trim($info['name']));
-        $info['raw_slug'] = Str::slug(trim($info['raw_name']));
-        $info['true_slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : null;
-
-        if (!empty($info['true_name']) && str_contains(strtolower($info['true_name']), 'recipe')) {
-            $info['item_slug'] = Str::slug(trim($info['name']));
+        // true name as slug since it is unique (i.e., alt recipes like Bronze5, or fart -> block_attack_aoe)
+        $info['slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : Str::slug(trim($info['name']));
+       
+        // check if slug exists
+        // needed where there is no true name, i.e. shared data for block_attack_aoe
+        $slug_count = $class::where('slug', 'like', $info['slug'].'%')->count();
+        if($slug_count > 0){
+            // append to create unique slug 
+            $info['slug'] = $info['slug'].'-'.($slug_count+1);
+            return $info;
         }
-
+        
         return $info;
     }
 
@@ -161,7 +202,7 @@ abstract class JsonConverter implements Converter
      */
     public static function removeCsPrefix(string $name)
     {
-        return (explode('_', $name)[1]) ?? $name;
+        return Str::after($name, '_');
     }
 
     /**

@@ -11,7 +11,7 @@ use App\Enums\ItemType;
 use App\Enums\AnimationState;
 use App\Enums\DamageType;
 use App\Enums\SkillType;
-use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ItemRecipeController;
 use App\Http\Controllers\ItemController;
 use App\Models\Recipe;
 use App\Models\Requirement;
@@ -42,11 +42,11 @@ class ConvertController extends Controller
     public function index()
     {
         // convert all
-        $this->craftingStation();
-        $this->statusEffect();
+//        $this->craftingStation();
+//        $this->statusEffect();
+//        $this->pieceTable();
         $this->item();
-        $this->pieceTable();
-//        $this->pieces();
+        $this->pieces();
         $this->recipe();
     }
 

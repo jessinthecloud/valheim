@@ -6,8 +6,10 @@ use App\Models\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class RecipeController extends Controller
+class ItemRecipeController extends Controller
 {
+    use DoesConversion;
+
     /**
      * Display a listing of the resource.
      *

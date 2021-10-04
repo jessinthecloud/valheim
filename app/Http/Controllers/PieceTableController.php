@@ -2,16 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Converters\CraftingDeviceConverter;
 use Illuminate\Http\Request;
 
-class PieceTableController extends CraftingDeviceController
+class PieceTableController extends Controller
 {
-    public function convert(Request $request)
-    {
-        parent::convert($request);
-        
-        echo "CONVERT PIECE TABLES";
-
-    }
+    use DoesConversion;
 }

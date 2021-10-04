@@ -29,13 +29,22 @@ class Item extends Craftable
      *
      * @var array
      */
-    protected $with = ['sharedData'];
+    protected $with = [
+        'sharedData',
+    ];
     
     // ItemType values that are weapons
     public const WEAPON_TYPES = [3,4,9,14,20];
 
     // ItemType values that are armor pieces or items
     public const ARMOR_TYPES = [5,6,7,11,12,17];
+    
+    // Indices of the converted json array that correspond to
+    // relationships and should not be directly inserted
+    // index_name => relationFunctionName ; to allow array_intersect_key comparison
+    public const RELATION_INDICES = [
+        'shared_data' => 'sharedData',
+    ];
 
 
     // split string into array on uppercase letter and turn it into string
