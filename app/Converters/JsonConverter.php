@@ -103,22 +103,18 @@ abstract class JsonConverter implements Converter
 
             // only try to insert columns that exist
             $db_values = Arr::only($entity, Schema::getColumnListing($table));
-           
+            
+            $model = $model_class::firstOrCreate(
+                $db_values
+            );
+
             if(defined($model_class.'::RELATION_INDICES')) {
                 // from the leftovers, get any that are also relationships that need to be mapped
                 // use intersect to compare by keys and avoid issue with PHP trying to compare multidimensional values
                 $relations = array_intersect_key( $entity, $model_class::RELATION_INDICES );
-            }
-            
-            $model = $model_class::firstOrCreate(
-                // only try to insert columns that exist
-                $db_values
-            );
-         
-            if(!empty($relations)){
                 $this->attachDataToModel($relations, $model);
             }
-            
+         
             return $model;
         });
         
