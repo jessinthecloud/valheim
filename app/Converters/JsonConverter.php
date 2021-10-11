@@ -52,8 +52,31 @@ abstract class JsonConverter implements Converter
         $this->data = $this->decode($this->file);
         $this->prepareData();
         $this->create();
+    }
 
+    /**
+     * Attach relationship data to the inserted entity
+     * (is just sharedData for Item)
+     *
+     * @param $data
+     * @param $model
+     */
+    abstract protected function attachDataToModel($data, $model);
 
+    /**
+     * simple relations only need a few lines of the same code 
+     * 
+     * @param        $data
+     * @param        $model
+     * @param string $relation_method
+     * @param string $relation_class
+     * @param string $relation_column
+     */
+    protected function attachSingleRelation($data, $model, string $relation_method, string $relation_class, string $relation_column)
+    {
+        $related_model = $relation_class::where($relation_column, $data)->first();
+        $model->$relation_method()->associate($related_model);
+        $model->save();
     }
 
     /**
@@ -127,6 +150,21 @@ abstract class JsonConverter implements Converter
     }
 
     /**
+     * convert data that doesn't exist and
+     * needs to be attached via relationship
+     * 
+     * @param array  $related_data
+     * @param string $related_class
+     *
+     * @return mixed
+     */
+    protected function convertRelated(array $related_data, string $related_class)
+    {
+        $related_data = $this->prepareData($related_data, $related_class);
+        return $this->create($related_data, $related_class);
+    }
+
+    /**
      * Remove invalid hex characters from a string
      *
      * @param  string $string string to sanitize
@@ -174,6 +212,8 @@ abstract class JsonConverter implements Converter
         $info['name'] = $this->prettify(trim($info['raw_name']));
         // true name as slug since it is unique (i.e., alt recipes like Bronze5, or fart -> block_attack_aoe)
         $info['slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : Str::slug(trim($info['name']));
+        // for recipe only
+        $info['item_slug'] = Str::slug(trim($info['name']));
        
         // check if slug exists
         // needed where there is no true name, i.e. shared data for block_attack_aoe

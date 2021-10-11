@@ -3,16 +3,11 @@
 namespace App\Converters;
 
 abstract class RecipeConverter extends JsonConverter
-{
-
-    public function convert()
-    {
-        // TODO: Implement convert() method.
-    }
+{    
+    abstract protected function attachCreation($data, $model);
     
-    abstract protected function attachCreation();
+    // allow for crafting or repair station
+    abstract protected function attachCraftingDevice($data, $model, string $device_class);
     
-    abstract protected function attachCraftingDevice();
-    
-    abstract protected function attachRequirements();
+    abstract protected function attachRequirements($data, $model);
 }

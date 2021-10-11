@@ -30,10 +30,26 @@ if (env('APP_ENV') === 'local') {
         )->name('index');
 
         Route::get(
+            '/crafting-station',
+            [App\Http\Controllers\CraftingStationController::class, 'convert']
+        )->name('crafting-station');
+
+        Route::get(
+            '/status-effects',
+            [App\Http\Controllers\StatusEffectController::class, 'convert']
+        )->name('status-effects');
+
+        Route::get(
             '/piece-tables',
             [App\Http\Controllers\PieceTableController::class, 'convert']
         )->name('piece-tables');
 
+        Route::get(
+            '/items',
+            [App\Http\Controllers\ItemController::class, 'convert']
+        )->name('items');
+        
+        // TODO: 
         Route::get(
             '/pieces',
             [App\Http\Controllers\PieceController::class, 'convert']
@@ -45,31 +61,23 @@ if (env('APP_ENV') === 'local') {
         )
         ->where('offset', '[0-9]+')
         ->name('pieces.chunk');*/
-
-        Route::get(
-            '/crafting-station',
-            [App\Http\Controllers\CraftingStationController::class, 'convert']
-        )->name('crafting-station');
-
-        Route::get(
-            '/status-effects',
-            [App\Http\Controllers\StatusEffectController::class, 'convert']
-        )->name('status-effects');
-
+        
+        // TODO: 
         Route::get(
             '/recipes',
             [App\Http\Controllers\ItemRecipeController::class, 'convert']
         )->name('recipes');
 
-        Route::get(
-            '/items',
-            [App\Http\Controllers\ItemController::class, 'convert']
-        )->name('items');
+        // TODO: piece-recipes, or combine with Pieces convert. OR combine with ItemRecipes and use a RecipesController?
+        /*Route::get(
+            '/piece-recipes',
+            [App\Http\Controllers\PieceRecipeController::class, 'convert']
+        )->name('piece-recipes');*/
 
-        Route::get(
+        /*Route::get(
             '/{name}',
             [App\Http\Controllers\ConvertController::class, 'convert']
-        )->name('names');
+        )->name('names');*/
     });
 }
 

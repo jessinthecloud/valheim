@@ -8,13 +8,18 @@ use App\Models\StatusEffect;
 class ItemConverter extends CraftableConverter
 {
     /**
-     * Attach relationship data to the inserted entity 
+     * @required by JsonConverter
+     *           
+     * Attach relationship data to the inserted entity
      * (is just sharedData for Item)
-     * 
+     *
      * @param $data
+     * @param $model
      */
     protected function attachDataToModel($data, $model)
     {
+        // TODO: refactor to remove hardcoding data checks
+        
 //        dump('== attachDataToModel == ',$data, $model);
         if(isset($data['shared_data'])){
             // returns collection of 1
@@ -41,47 +46,6 @@ class ItemConverter extends CraftableConverter
                 $model->{$status_effect_data['type'].'StatusEffect'}()->associate($effect);
                 $model->save();
             } // end foreach status effect
-            
-            /* 
-            "status_effects":[
-                {
-                    "type":"set",
-                    "var_name":"$se_trollseteffect_name",
-                    "raw_name":"Sneaky",
-                    "true_name":"SetEffect_TrollArmor"
-                }
-            ]
-            "status_effects":[
-                {
-                    "type":"consume",
-                    "var_name":"$item_barleywine",
-                    "raw_name":"Fire resistanc
-                    e barley wine","true_name":"Potion_barleywine"
-                }
-            ]
-            "status_effects":[
-                {
-                    "type":"equip",
-                    "var_name":"$item_beltstrength",
-                    "raw_name":"Megingjord",
-                    "true_name":"BeltStrength"
-                }
-            ]
-            "status_effects":[
-                {
-                    "type":"attack",
-                    "var_name":"$se_harpooned_name",
-                    "raw_name":"Harpooned",
-                    "true_name":"Harpooned"
-                }
-            ]
-            */
         }
-    }
-    
-    protected function convertRelated(array $related_data, string $related_class)
-    {
-        $related_data = $this->prepareData($related_data, $related_class);
-        return $this->create($related_data, $related_class);
     }
 }
