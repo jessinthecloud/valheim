@@ -23,13 +23,15 @@ class SharedData extends Model
     // Indices of the converted json array that correspond to
     // relationships and should not be directly inserted
     public const RELATION_INDICES = [
-        'status_effects',
+        'status_effects' => 'statusEffects',
     ];
     
     public function items()
     {
         return $this->hasMany(Item::class);
     }
+    
+    
 
     public function attackStatusEffect()
     {
