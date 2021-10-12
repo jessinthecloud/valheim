@@ -16,7 +16,8 @@ class CreateItemRecipesTable extends Migration
         Schema::create('item_recipes', function (Blueprint $table) {
             $table->id();
             // item being created
-            $table->foreignId('creation_id')->references('id')->on('items')->onDelete('cascade')->onUpdate('cascade');
+            // allow null for initialization during conversion
+            $table->foreignId('creation_id')->nullable()->references('id')->on('items')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('crafting_station_id')->nullable()->constrained();
             $table->foreignId('repair_station_id')->nullable()->references('id')->on('crafting_stations');
             $table->boolean('enabled')->default(true);
