@@ -13,7 +13,7 @@ class ItemRecipe extends Recipe
     // relationships and should not be directly inserted
     // index_name => relationFunctionName ; to allow array_intersect_key comparison
     public const RELATION_INDICES = [
-        'item' => 'creation',
+        'item_slug' => 'creation',
         'requirements' => 'requirements',
         'raw_crafting_station_name' => 'craftingDevice',
         'raw_repair_station_name' => 'repairStation',

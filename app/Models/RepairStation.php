@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 class RepairStation extends CraftingStation
 {
     use HasFactory;
+    
+    // custom db table name
+    protected $table = 'crafting_stations';
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down

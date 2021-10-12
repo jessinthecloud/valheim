@@ -95,17 +95,17 @@ abstract class JsonConverter implements Converter
         $decoded_data = $data ?? $this->data;
         $decoded_data = collect($decoded_data)->unique();
         $table = isset($class) ? Str::snake(Str::pluralStudly(Str::afterLast($class, '\\'))) : $this->class_table;
-if($class === 'App\Models\StatusEffect'){
+/*if($class === 'App\Models\StatusEffect'){
 dump($decoded_data);
-}
-        // only convert names if they exist
-        // also make sure $decoded_data is more than 1 dimensional before looping
+}*/
+        // make sure $decoded_data is more than 1 dimensional before looping
         $prepared_data = ( !is_string($decoded_data->first()) )  ? $decoded_data->map(function($entity) use ($class, $table) {
-if($class === 'App\Models\StatusEffect'){
+/*if($class === 'App\Models\StatusEffect'){
     dump($entity, $class, 'table: '.$table );
-}
-            return Schema::hasColumn($table, 'slug') ? $this->convertNames( $entity, $class ) : $entity;
-        }) : ( Schema::hasColumn($table, 'slug') ? $this->convertNames( $decoded_data->all(), $class ) : $decoded_data);
+}*/
+            return $this->convertNames( $entity, $class, $table );
+        }) : $this->convertNames( $decoded_data->all(), $class, $table );
+dump($decoded_data);
         
         if(isset($data)){
             // using passed around data, not global to class
@@ -132,12 +132,13 @@ if($class === 'App\Models\StatusEffect'){
         // make sure $prepared_data is 2+ dimensional
         $created_data = ( !is_string($prepared_data->first()) ) ? $prepared_data->map(function($entity) use ($model_class, $table) {
         
-if($model_class === 'App\Models\StatusEffect'){
+/*if($model_class === 'App\Models\StatusEffect'){
     dump('in created data map: ', $entity);
-}
+}*/
+//dump($entity, $table, $model_class);
             $this->insertPreparedData($entity, $table, $model_class);
-        }) : $this->insertPreparedData($prepared_data->all(), $table, $model_class);;
-        
+        }) : $this->insertPreparedData($prepared_data->all(), $table, $model_class);
+//ddd($data);        
         if(isset($data)){
             // using passed around data, not global to class
             return $created_data;
@@ -161,7 +162,7 @@ if($model_class === 'App\Models\StatusEffect'){
         $model = $model_class::firstOrCreate(
             $db_values
         );
-
+//dump('firstorcreate: ', $db_values, $entity, $model, $model_class );
         if(defined($model_class.'::RELATION_INDICES')) {
             // from the leftovers, get any that are also relationships that need to be mapped
             // use intersect to compare by keys and avoid issue with PHP trying to compare multidimensional values
@@ -184,9 +185,9 @@ if($model_class === 'App\Models\StatusEffect'){
     protected function  convertRelated(array $related_data, string $related_class)
     {
         $related_data = $this->prepareData($related_data, $related_class);
-if($related_class === 'App\Models\StatusEffect'){
+/*if($related_class === 'App\Models\RepairStation'){
     dump('prepared related data:', $related_data);
-}       
+} */      
         // make sure $related_data is Collection
         if( !is_a($related_data, Collection::class)){
             $related_data = collect($related_data);
@@ -230,7 +231,7 @@ if($related_class === 'App\Models\StatusEffect'){
      *
      * @return array [type]       [description]
      */
-    protected function convertNames(array $info, string $class=null)
+    protected function convertNames(array $info, string $class=null, string $table=null)
     {
         // allow class to be passed in
         $class = $class ?? $this->class;
@@ -238,6 +239,7 @@ if($related_class === 'App\Models\StatusEffect'){
         // if strange case where only true name exists e.g., Recipe_Adze
         // or only prefab name exists (e.g., StoneGolem_clubs shared data)
         $info['raw_name'] = $info['raw_name'] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : $info['prefab_name']);
+        
         // add spaces to make pretty
         $info['name'] = $this->prettify(trim($info['raw_name']));
         // true name as slug since it is unique (i.e., alt recipes like Bronze5, or fart -> block_attack_aoe)
@@ -245,13 +247,16 @@ if($related_class === 'App\Models\StatusEffect'){
         // for recipe only
         $info['item_slug'] = Str::slug(trim($info['name']));
        
-        // check if slug exists
-        // needed where there is no true name, i.e. shared data for block_attack_aoe
-        $slug_count = $class::where('slug', 'like', $info['slug'].'%')->count();
-        if($slug_count > 0){
-            // append to create unique slug 
-            $info['slug'] = $info['slug'].'-'.($slug_count+1);
-            return $info;
+        // check model has slug col
+        if(Schema::hasColumn($table, 'slug')) {
+            // check if slug exists
+            // needed where there is no true name, i.e. shared data for block_attack_aoe
+            $slug_count = $class::where( 'slug', 'like', $info['slug'] . '%' )->count();
+            if ( $slug_count > 0 ) {
+                // append to create unique slug 
+                $info['slug'] = $info['slug'] . '-' . ( $slug_count + 1 );
+                return $info;
+            }
         }
         
         return $info;

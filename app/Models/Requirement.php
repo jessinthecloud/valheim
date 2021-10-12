@@ -26,6 +26,13 @@ class Requirement extends Model
         'recipes',*/
     ];
 
+    // Indices of the converted json array that correspond to
+    // relationships and should not be directly inserted
+    // index_name => relationFunctionName ; to allow array_intersect_key comparison
+    public const RELATION_INDICES = [
+        'var_name' => 'item',
+    ];
+
     public function recipes()
     {
         return $this->belongsToMany(Recipe::class/*, 'recipe_requirement', 'requirement_id', 'recipe_id'*/);

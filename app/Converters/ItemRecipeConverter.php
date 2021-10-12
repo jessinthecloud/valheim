@@ -27,6 +27,7 @@ class ItemRecipeConverter extends RecipeConverter
     
         // attach to item being created
          if(isset($data['item_slug'])) {
+//dump($data);         
             $this->attachCreation( $data['item_slug'], $model );
         }
 
@@ -58,7 +59,7 @@ class ItemRecipeConverter extends RecipeConverter
 
     protected function attachCraftingDevice($data, $model, string $device_class)
     {
-        $this->attachSingleRelation($data, $model, Str::camel($device_class), $device_class, 'raw_name');
+        $this->attachSingleRelation($data, $model, Str::camel(Str::afterLast($device_class, '\\')), $device_class, 'raw_name');
     }
 
     protected function attachRequirements($data, $model)
