@@ -11,7 +11,9 @@ class Requirement extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = ['item'];
+    protected $guarded = [
+//        'item'
+    ];
 
     /**
      * The relationships that should always be loaded.

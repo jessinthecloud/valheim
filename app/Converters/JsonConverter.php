@@ -3,6 +3,7 @@
 namespace App\Converters;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -94,11 +95,17 @@ abstract class JsonConverter implements Converter
         $decoded_data = $data ?? $this->data;
         $decoded_data = collect($decoded_data)->unique();
         $table = isset($class) ? Str::snake(Str::pluralStudly(Str::afterLast($class, '\\'))) : $this->class_table;
-
+if($class === 'App\Models\StatusEffect'){
+dump($decoded_data);
+}
         // only convert names if they exist
-        $prepared_data = $decoded_data->map(function($entity) use ($class, $table) {
+        // also make sure $decoded_data is more than 1 dimensional before looping
+        $prepared_data = ( !is_string($decoded_data->first()) )  ? $decoded_data->map(function($entity) use ($class, $table) {
+if($class === 'App\Models\StatusEffect'){
+    dump($entity, $class, 'table: '.$table );
+}
             return Schema::hasColumn($table, 'slug') ? $this->convertNames( $entity, $class ) : $entity;
-        });
+        }) : ( Schema::hasColumn($table, 'slug') ? $this->convertNames( $decoded_data->all(), $class ) : $decoded_data);
         
         if(isset($data)){
             // using passed around data, not global to class
@@ -115,31 +122,21 @@ abstract class JsonConverter implements Converter
      *
      * @return mixed
      */
-    public function create($data=null, string $class=null)
+    public function create(Collection $data=null, string $class=null)
     {
         $prepared_data = $data ?? $this->data;
         $model_class = $class ?? $this->class;
         $table = Str::snake(Str::pluralStudly(Str::afterLast($model_class, '\\')));
 
         // insert into table
-        $created_data = $prepared_data->map(function($entity) use ($model_class, $table) {
-
-            // only try to insert columns that exist
-            $db_values = Arr::only($entity, Schema::getColumnListing($table));
-            
-            $model = $model_class::firstOrCreate(
-                $db_values
-            );
-
-            if(defined($model_class.'::RELATION_INDICES')) {
-                // from the leftovers, get any that are also relationships that need to be mapped
-                // use intersect to compare by keys and avoid issue with PHP trying to compare multidimensional values
-                $relations = array_intersect_key( $entity, $model_class::RELATION_INDICES );
-                $this->attachDataToModel($relations, $model);
-            }
-         
-            return $model;
-        });
+        // make sure $prepared_data is 2+ dimensional
+        $created_data = ( !is_string($prepared_data->first()) ) ? $prepared_data->map(function($entity) use ($model_class, $table) {
+        
+if($model_class === 'App\Models\StatusEffect'){
+    dump('in created data map: ', $entity);
+}
+            $this->insertPreparedData($entity, $table, $model_class);
+        }) : $this->insertPreparedData($prepared_data->all(), $table, $model_class);;
         
         if(isset($data)){
             // using passed around data, not global to class
@@ -147,6 +144,32 @@ abstract class JsonConverter implements Converter
         }
         
         $this->data = $created_data;
+    }
+
+    /**
+     * @param array  $entity
+     * @param string $table
+     * @param string $model_class
+     *
+     * @return mixed
+     */
+    protected function insertPreparedData(array $entity, string $table, string $model_class)
+    {
+        // only try to insert columns that exist
+        $db_values = Arr::only($entity, Schema::getColumnListing($table));
+
+        $model = $model_class::firstOrCreate(
+            $db_values
+        );
+
+        if(defined($model_class.'::RELATION_INDICES')) {
+            // from the leftovers, get any that are also relationships that need to be mapped
+            // use intersect to compare by keys and avoid issue with PHP trying to compare multidimensional values
+            $relations = array_intersect_key( $entity, $model_class::RELATION_INDICES );
+            $this->attachDataToModel($relations, $model);
+        }
+
+        return $model;
     }
 
     /**
@@ -158,9 +181,16 @@ abstract class JsonConverter implements Converter
      *
      * @return mixed
      */
-    protected function convertRelated(array $related_data, string $related_class)
+    protected function  convertRelated(array $related_data, string $related_class)
     {
         $related_data = $this->prepareData($related_data, $related_class);
+if($related_class === 'App\Models\StatusEffect'){
+    dump('prepared related data:', $related_data);
+}       
+        // make sure $related_data is Collection
+        if( !is_a($related_data, Collection::class)){
+            $related_data = collect($related_data);
+        }
         return $this->create($related_data, $related_class);
     }
 

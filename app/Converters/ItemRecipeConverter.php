@@ -20,11 +20,13 @@ class ItemRecipeConverter extends RecipeConverter
      */
     protected function attachDataToModel( $data, $model )
     {
+//dump('== attachDataToModel == ',$data, $model);
+
         // $data = $relations = keys from $model_class::RELATION_INDICES
         // refactor TODO: loop $data to get the info needed in the functions below, instead of isset() checks
     
         // attach to item being created
-        if(isset($data['item_slug'])) {
+         if(isset($data['item_slug'])) {
             $this->attachCreation( $data['item_slug'], $model );
         }
 
@@ -42,6 +44,11 @@ class ItemRecipeConverter extends RecipeConverter
         if (!empty($data['requirements'])) {
             $this->attachRequirements( $data['requirements'], $model );
         }
+        
+        // requirement has item attached
+        if(isset($data['item'])){
+            $this->attachSingleRelation($data['item'], $model, 'item', Item::class, 'slug');
+        }
     }
 
     protected function attachCreation($data, $model)
@@ -57,10 +64,14 @@ class ItemRecipeConverter extends RecipeConverter
     protected function attachRequirements($data, $model)
     {
         // TODO: loop requirements & create
+        foreach($data as $requirement){
 
-        $requirement = $this->convertRelated($data, Requirement::class);
+            // attach requirement to relevant item (instead of inserting randomly)
+            $requirement = $this->convertRelated($data, Requirement::class);
+            $model->requirements()->attach($requirement);
+            $model->save();
+        }
 
-        // TODO: attach requirement to relevant item (instead of inserting randomly)
 
     }
 
