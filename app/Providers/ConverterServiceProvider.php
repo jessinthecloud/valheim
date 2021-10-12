@@ -14,6 +14,7 @@ use App\Http\Controllers\ItemRecipeController;
 use App\Http\Controllers\StatusEffectController;
 use App\Models\CraftingStation;
 use App\Models\Item;
+use App\Models\ItemRecipe;
 use App\Models\PieceTable;
 use App\Models\Recipe;
 use App\Models\SharedData;
@@ -71,7 +72,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when( ItemRecipeController::class)
             ->needs(Converter::class)
             ->give(function(){
-                return new ItemRecipeConverter(Recipe::class);
+                return new ItemRecipeConverter(ItemRecipe::class);
             });
 
     }
