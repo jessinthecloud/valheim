@@ -15,6 +15,7 @@ class CreateItemRecipesTable extends Migration
     {
         Schema::create('item_recipes', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
             // item being created
             // allow null for initialization during conversion
             $table->foreignId('creation_id')->nullable()->references('id')->on('items')->onDelete('cascade')->onUpdate('cascade');

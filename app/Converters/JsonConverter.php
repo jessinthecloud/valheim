@@ -73,15 +73,21 @@ abstract class JsonConverter implements Converter
      * @param string $relation_class
      * @param string $relation_column
      */
-    protected function attachSingleRelation($data, $model, string $relation_method, string $relation_class, string $relation_column)
+    protected function attachSingleRelation($value, $model, string $relation_method, string $relation_class, string $relation_column, $data)
     {
-        $related_model = $relation_class::where($relation_column, $data)->first();
+dump('attach', $relation_class, 'to', $model, 'via '.$relation_method.'() where '.$relation_column.' == '.$value);
+        // find existing relation model
+        // if not found, init conversion (creation) of new from the relation data
+        $related_model = $relation_class::where($relation_column, $value)->first() ?? $this->convertRelated($data, $relation_class)->first();
+
+dump('related model found: ', $related_model);
+        
         $model->$relation_method()->associate($related_model);
         $model->save();
     }
 
     /**
-     * sanitize and decode file contents
+     * create name info from data
      * allow for passing in data and returning as well as
      * using $this->data
      *
@@ -92,26 +98,32 @@ abstract class JsonConverter implements Converter
      */
     protected function prepareData(array $data=null, string $class=null)
     {
+dump('prepareData()');    
+dump('unprepared data of '.$class.': ', $data);
         $decoded_data = $data ?? $this->data;
-        $decoded_data = collect($decoded_data)->unique();
+        $class = $class ?? $this->class;
         $table = isset($class) ? Str::snake(Str::pluralStudly(Str::afterLast($class, '\\'))) : $this->class_table;
-/*if($class === 'App\Models\StatusEffect'){
-dump($decoded_data);
-}*/
+
+        $decoded_data = collect($decoded_data)->unique();
+        dump('decoded data, unique only: ', $decoded_data);
+        // use passed in class to find table or use converter's known table
+
         // make sure $decoded_data is more than 1 dimensional before looping
-        $prepared_data = ( !is_string($decoded_data->first()) )  ? $decoded_data->map(function($entity) use ($class, $table) {
-/*if($class === 'App\Models\StatusEffect'){
-    dump($entity, $class, 'table: '.$table );
-}*/
+        // otherwise, make $decoded_data an array and convert its names directly 
+        $prepared_data = ( null !== $decoded_data->first() && !is_scalar($decoded_data->first()) )  ? $decoded_data->map(function($entity) use ($class, $table) {
+
+dump('entity stuff: ', $entity, 'class: '.$class, 'table: '.$table );
+
             return $this->convertNames( $entity, $class, $table );
         }) : $this->convertNames( $decoded_data->all(), $class, $table );
-dump($decoded_data);
+        
+//dump($decoded_data);
         
         if(isset($data)){
             // using passed around data, not global to class
             return $prepared_data;
         }
-        
+dump('++++ SET $THIS->DATA ++++');        
         $this->data = $prepared_data;
     }
 
@@ -124,13 +136,14 @@ dump($decoded_data);
      */
     public function create(Collection $data=null, string $class=null)
     {
+dump('create()');
         $prepared_data = $data ?? $this->data;
         $model_class = $class ?? $this->class;
         $table = Str::snake(Str::pluralStudly(Str::afterLast($model_class, '\\')));
 
         // insert into table
         // make sure $prepared_data is 2+ dimensional
-        $created_data = ( !is_string($prepared_data->first()) ) ? $prepared_data->map(function($entity) use ($model_class, $table) {
+        $created_data = ( null !== $prepared_data->first() && !is_scalar($prepared_data->first()) ) ? $prepared_data->map(function($entity) use ($model_class, $table) {
         
 /*if($model_class === 'App\Models\StatusEffect'){
     dump('in created data map: ', $entity);
@@ -138,7 +151,7 @@ dump($decoded_data);
 //dump($entity, $table, $model_class);
             $this->insertPreparedData($entity, $table, $model_class);
         }) : $this->insertPreparedData($prepared_data->all(), $table, $model_class);
-//ddd($data);        
+dump(' CREATED DATA: ', $created_data);        
         if(isset($data)){
             // using passed around data, not global to class
             return $created_data;
@@ -156,18 +169,29 @@ dump($decoded_data);
      */
     protected function insertPreparedData(array $entity, string $table, string $model_class)
     {
+dump('insertPrepared()');
         // only try to insert columns that exist
         $db_values = Arr::only($entity, Schema::getColumnListing($table));
 
         $model = $model_class::firstOrCreate(
             $db_values
         );
+        
 //dump('firstorcreate: ', $db_values, $entity, $model, $model_class );
         if(defined($model_class.'::RELATION_INDICES')) {
             // from the leftovers, get any that are also relationships that need to be mapped
             // use intersect to compare by keys and avoid issue with PHP trying to compare multidimensional values
             $relations = array_intersect_key( $entity, $model_class::RELATION_INDICES );
-            $this->attachDataToModel($relations, $model);
+            
+            // TODO: check if relation is already attached?
+
+            if(!empty($relations)){
+                dump('relations to attach: ', $relations);
+                $this->attachDataToModel($relations, $model);
+            }    
+            else{
+                dump('-- no relations to attach --');
+            }    
         }
 
         return $model;
@@ -184,10 +208,11 @@ dump($decoded_data);
      */
     protected function  convertRelated(array $related_data, string $related_class)
     {
+dump('convertRelated() -- '.$related_class);    
         $related_data = $this->prepareData($related_data, $related_class);
-/*if($related_class === 'App\Models\RepairStation'){
+/*if($related_class === 'App\Models\Item'){
     dump('prepared related data:', $related_data);
-} */      
+}*/
         // make sure $related_data is Collection
         if( !is_a($related_data, Collection::class)){
             $related_data = collect($related_data);
@@ -233,19 +258,18 @@ dump($decoded_data);
      */
     protected function convertNames(array $info, string $class=null, string $table=null)
     {
+dump('convertNames()');
         // allow class to be passed in
         $class = $class ?? $this->class;
 
         // if strange case where only true name exists e.g., Recipe_Adze
         // or only prefab name exists (e.g., StoneGolem_clubs shared data)
-        $info['raw_name'] = $info['raw_name'] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : $info['prefab_name']);
+        $info['raw_name'] = $info['raw_name'] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : ($info['prefab_name'] ?? ''));
         
         // add spaces to make pretty
         $info['name'] = $this->prettify(trim($info['raw_name']));
         // true name as slug since it is unique (i.e., alt recipes like Bronze5, or fart -> block_attack_aoe)
-        $info['slug'] = isset($info['true_name']) ? Str::slug(trim($info['true_name'])) : Str::slug(trim($info['name']));
-        // for recipe only
-        $info['item_slug'] = Str::slug(trim($info['name']));
+        $info['slug'] = isset($info['true_name']) ? Str::slug(trim($this->prettify($info['true_name']))) : Str::slug(trim($info['name']));
        
         // check model has slug col
         if(Schema::hasColumn($table, 'slug')) {
@@ -258,6 +282,9 @@ dump($decoded_data);
                 return $info;
             }
         }
+
+        // for recipe only
+        $info['item_slug'] = Str::after($info['slug'], 'recipe-');
         
         return $info;
     }

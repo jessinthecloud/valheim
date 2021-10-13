@@ -27,18 +27,23 @@ class ItemRecipeConverter extends RecipeConverter
     
         // attach to item being created
          if(isset($data['item_slug'])) {
-//dump($data);         
-            $this->attachCreation( $data['item_slug'], $model );
+            // some items don't exist
+            if(in_array($data['item_slug'], ['recipe-adze'])){
+dump('item '.$data['item_slug'].' doesn\'t exist, skip');            
+                return null;
+            }
+//dump($data); 
+            $this->attachCreation( $data['item_slug'], $model, $data );
         }
 
         // attach to crafting station
         if (isset($data['raw_crafting_station_name'])) {
-            $this->attachCraftingDevice($data['raw_crafting_station_name'], $model, CraftingStation::class);
+            $this->attachCraftingDevice($data['raw_crafting_station_name'], $model, CraftingStation::class, $data);
         }
 
         // attach to repair station
         if (isset($data['raw_repair_station_name'])) {
-            $this->attachCraftingDevice($data['raw_repair_station_name'], $model, RepairStation::class);
+            $this->attachCraftingDevice($data['raw_repair_station_name'], $model, RepairStation::class, $data);
         }
 
         // create / attach recipe requirements
@@ -48,31 +53,38 @@ class ItemRecipeConverter extends RecipeConverter
         
         // requirement has item attached
         if(isset($data['item'])){
-            $this->attachSingleRelation($data['item'], $model, 'item', Item::class, 'slug');
+            $this->attachSingleRelation($data['item'], $model, 'item', Item::class, 'slug', $data);
         }
     }
 
-    protected function attachCreation($data, $model)
+    protected function attachCreation($value, $model, $data)
     {
-        $this->attachSingleRelation($data, $model, 'creation', Item::class, 'slug');
+    dump('attach creation');
+        $this->attachSingleRelation($value, $model, 'creation', Item::class, 'slug', $data);
     }
 
-    protected function attachCraftingDevice($data, $model, string $device_class)
+    protected function attachCraftingDevice($value, $model, string $device_class, $data)
     {
-        $this->attachSingleRelation($data, $model, Str::camel(Str::afterLast($device_class, '\\')), $device_class, 'raw_name');
+        dump('attach crafting device');
+        $this->attachSingleRelation($value, $model, Str::camel(Str::afterLast($device_class, '\\')), $device_class, 'raw_name', $data);
     }
 
     protected function attachRequirements($data, $model)
     {
-        // TODO: loop requirements & create
-        foreach($data as $requirement){
+dump('attach requirements');
+
+        // loop requirements & create
+        foreach($data as $i => $requirement){
+dump('requirement '.$i.' data', $requirement);
 
             // attach requirement to relevant item (instead of inserting randomly)
-            $requirement = $this->convertRelated($data, Requirement::class);
+            $requirement = $this->convertRelated($requirement, Requirement::class);
+dump('attach requirement', $requirement, 'to', $model);            
             $model->requirements()->attach($requirement);
             $model->save();
         }
 
+//ddd('=== after attachments ===', $model);
 
     }
 
