@@ -4,9 +4,10 @@ namespace App\Providers;
 
 use App\Converters\Converter;
 use App\Converters\CraftingDeviceConverter;
-use App\Converters\DataConverter;
+use App\Converters\FileConverter;
 use App\Converters\ItemConverter;
 use App\Converters\ItemRecipeConverter;
+use App\Converters\JsonConverter;
 use App\Http\Controllers\CraftingStationController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PieceTableController;
@@ -16,8 +17,6 @@ use App\Models\CraftingStation;
 use App\Models\Item;
 use App\Models\ItemRecipe;
 use App\Models\PieceTable;
-use App\Models\Recipe;
-use App\Models\SharedData;
 use App\Models\StatusEffect;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
@@ -34,7 +33,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(StatusEffectController::class)
             ->needs(Converter::class)
             ->give(function(){
-                return new DataConverter(StatusEffect::class);
+                return new JsonConverter( StatusEffect::class);
             });
              
         $this->app->when(CraftingStationController::class)
@@ -59,7 +58,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->bindMethod(
             [ItemConverter::class, 'convertSharedData'],
             function($obj, $app){
-                return new DataConverter(SharedData::class);
+                return new JsonConverter(SharedData::class);
             }
         );*/
         
@@ -97,7 +96,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         return [
             CraftingDeviceConverter::class,
             ItemConverter::class,
-            DataConverter::class,
+            FileConverter::class,
             ItemRecipeConverter::class,
         ];
     }

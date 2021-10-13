@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Converters\DataConverter;
 use App\Models\StatusEffect;
 use Illuminate\Http\Request;
 

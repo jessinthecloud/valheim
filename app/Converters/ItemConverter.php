@@ -30,7 +30,6 @@ class ItemConverter extends CraftableConverter
             
             // returns collection of 1 item
             $shared_data = $this->convertRelated([$data['shared_data']], SharedData::class)->first();
-////dump('converted shared data ', $shared_data->first());
             $model->sharedData()->associate($shared_data);
             $model->save();
         }
