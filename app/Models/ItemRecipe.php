@@ -13,10 +13,22 @@ class ItemRecipe extends Recipe
     // relationships and should not be directly inserted
     // index_name => relationFunctionName ; to allow array_intersect_key comparison
     public const RELATION_INDICES = [
-        'item_slug' => 'creation',
-        'requirements' => 'requirements',
-        'raw_crafting_station_name' => 'craftingDevice',
-        'raw_repair_station_name' => 'repairStation',
+        'item_slug' => [
+            'method' => 'creation',
+            'class' => Item::class,
+        ],
+        'requirements' => [
+            'method' => 'requirements',
+            'class' => Requirement::class,
+        ],
+        'raw_crafting_station_name' => [
+            'method' => 'craftingDevice',
+            'class' => CraftingStation::class,
+        ],
+        'raw_repair_station_name' => [
+            'method' => 'repairStation',
+            'class' => CraftingStation::class,
+        ],
     ];
 
     // item this recipe creates

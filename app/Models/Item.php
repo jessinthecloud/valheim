@@ -15,7 +15,7 @@ class Item extends Craftable
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = ['shared_data_id'];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -43,7 +43,10 @@ class Item extends Craftable
     // relationships and should not be directly inserted
     // index_name => relationFunctionName ; to allow array_intersect_key comparison
     public const RELATION_INDICES = [
-        'shared_data' => 'sharedData',
+        'shared_data' => [
+            'method' => 'sharedData',
+            'class' => SharedData::class,
+        ]
     ];
 
 

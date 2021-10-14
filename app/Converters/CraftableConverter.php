@@ -2,6 +2,7 @@
 
 namespace App\Converters;
 
-abstract class CraftableConverter extends JsonConverter
+abstract class CraftableConverter extends ModelConverter
 {    
+    
 }

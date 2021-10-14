@@ -23,7 +23,10 @@ class SharedData extends Model
     // Indices of the converted json array that correspond to
     // relationships and should not be directly inserted
     public const RELATION_INDICES = [
-        'status_effects' => 'statusEffects',
+        'status_effects' => [
+            'method' => 'statusEffects',
+            'class' => StatusEffect::class,
+        ],
     ];
     
     public function items()

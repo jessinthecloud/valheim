@@ -4,10 +4,11 @@ namespace App\Providers;
 
 use App\Converters\Converter;
 use App\Converters\CraftingDeviceConverter;
-use App\Converters\FileConverter;
+use App\Converters\DataParser;
 use App\Converters\ItemConverter;
 use App\Converters\ItemRecipeConverter;
-use App\Converters\JsonConverter;
+use App\Converters\JsonSerializer;
+use App\Converters\ModelConverter;
 use App\Http\Controllers\CraftingStationController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PieceTableController;
@@ -29,14 +30,19 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
      * @return void
      */
     public function register()
-    {
+    {    
         $this->app->when(StatusEffectController::class)
             ->needs(Converter::class)
             ->give(function(){
-                return new JsonConverter( StatusEffect::class);
+                return new ModelConverter( StatusEffect::class );
+            });
+        $this->app->when(StatusEffectController::class)
+            ->needs(Converter::class)
+            ->give(function(){
+                return new ModelConverter( StatusEffect::class );
             });
              
-        $this->app->when(CraftingStationController::class)
+        $this->app->when(CraftingStationController::class )
             ->needs(Converter::class)
             ->give(function(){
                 return new CraftingDeviceConverter(CraftingStation::class);
@@ -94,9 +100,9 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
     public function provides() : array
     {
         return [
+            ModelConverter::class,
             CraftingDeviceConverter::class,
             ItemConverter::class,
-            FileConverter::class,
             ItemRecipeConverter::class,
         ];
     }

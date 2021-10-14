@@ -2,8 +2,9 @@
 
 namespace App\Converters;
 
-abstract class RecipeConverter extends JsonConverter
-{    
+abstract class RecipeConverter extends ModelConverter
+{
+   
     abstract protected function attachCreation($value, $model, $data);
     
     // allow for crafting or repair station

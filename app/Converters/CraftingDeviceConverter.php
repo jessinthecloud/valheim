@@ -5,7 +5,7 @@ namespace App\Converters;
 /**
  * Manages conversion of CraftingStation, PieceTable, etc
  */
-class CraftingDeviceConverter extends JsonConverter
+class CraftingDeviceConverter extends DataParser
 {
 
     protected function attachDataToModel( $data, $model )
