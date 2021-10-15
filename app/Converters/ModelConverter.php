@@ -56,67 +56,58 @@ dump('relation',$relation);
                 
                 // need to send array to the convert function
                 if(!is_array($relation)){
-                
-                    $relation = $this->convert( 
-                        // relation data
-                        $relations,
-                        // relation's class
-                        $relation_class,
-                        // parser object
-                        $parser
-                    );
-
-                    // attach relation to model
-                    // attach relation to model
-                    $this->attachRelated($model, $relation, $relation_method, $attach_function);
+                    
+                    // convert & attach relation to model
+                    return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser);
                 }
-                // make sure to handle 2D+
-                else if( null !== collect( $relation )->first() && !is_scalar( collect($relation)->first()) ) {
-                    $relation = collect( $relation )->map(
+                
+                // handle 2D+ relation array (requirements)
+                if( !is_scalar( collect($relation)->first()) ) {
+                    return collect( $relation )->map(
                         function ( $entity ) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
-ddd($entity, $relation, collect( $relation )->first());                            
-                            $entity = $this->convert(
-                                // relation data
-                                $entity,
-                                // relation's class
-                                $relation_class,
-                                // parser object
-                                $parser
-                            );
-
-                            // attach relation to model
-                            // attach relation to model
-                            $this->attachRelated($model, $entity, $relation_method, $attach_function);
-
-                            return $entity;
+//ddd($entity, $relation, collect( $relation )->first());
+                            
+                            // convert & attach relation to model
+                            return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser);
                         } 
                     );
                 }
-                else{
-                    
-                    $relation = $this->convert(
-                        // relation data
-                        $relation,
-                        // relation's class
-                        $relation_class,
-                        // parser object
-                        $parser
-                    );
 
-                    // attach relation to model
-                    $this->attachRelated($model, $relation, $relation_method, $attach_function);
-                    
-                } // endif 
-                
-//dump( $relation );
-
-                return $relation;
-                
+                // convert & attach relation to model
+                return $this->convertAndAttachRelation($model, $relation, $relation_class, $relation_method, $attach_function, $parser);
             });
         }
 //ddd('after all', $entity);        
         return $model;
     } // end convert()
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param array                               $relation_data
+     * @param string                              $relation_class class to attach
+     * @param string                              $relation_method model relationship method
+     * @param string                              $attach_function function that attaches
+     *                                                              this kind of relationship to model
+     * @param \App\Converters\DataParser          $parser
+     *
+     * @return mixed
+     */
+    protected function convertAndAttachRelation(Model $model, array $relation_data, string $relation_class, string $relation_method, string $attach_function, DataParser $parser) 
+    {
+        $related = $this->convert(
+            // relation data
+            $relation_data,
+            // relation's class
+            $relation_class,
+            // parser object
+            $parser
+        );
+
+        // attach relation to model
+        $this->attachRelated($model, $related, $relation_method, $attach_function);
+
+        return $related;
+    }
 
     /**
      * Find and save relation to model 
