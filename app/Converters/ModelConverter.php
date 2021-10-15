@@ -86,7 +86,6 @@ class ModelConverter implements Converter
                 return $this->convertAndAttachRelation($model, $relation, $relation_class, $relation_method, $attach_function, $parser);
             });
         }
-//ddd('after all', $entity);        
         return $model;
     } // end convert()
 
@@ -111,9 +110,12 @@ class ModelConverter implements Converter
             // parser object
             $parser
         );
+dump('attach '.$relation_class, $related, ' to '.$model->slug);
 
         // attach relation to model
         $this->attachRelated($model, $related, $relation_method, $attach_function);
+        
+dump('attached?', $model);
 
         return $related;
     }
@@ -139,7 +141,11 @@ class ModelConverter implements Converter
             // some models have multiple methods for a related model class (SharedData -> StatusEffect)
             
             collect($model->$relation_method())->each(function($method) use ($model, $relation, $attach_function) {
-                $model->$method()->$attach_function($relation);
+                // don't use ALL methods to attach,
+                // just the one with matching type (e.g., status effect)
+                if(isset($relation['type']) && Str::startsWith($method, $relation['type'])){
+                    $model->$method()->$attach_function($relation);
+                }
             });
             $model->save();
             

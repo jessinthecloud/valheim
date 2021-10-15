@@ -33,7 +33,7 @@ trait DoesConversion
 
     public function __construct(DataParser $parser, Converter $converter, JsonSerializer $serializer, string $class)
     {
-        $this->path = config('filesystems.json_path');
+        $this->path = storage_path(config('filesystems.json_path'));
         $this->class = $class;
         
         $this->serializer = $serializer;

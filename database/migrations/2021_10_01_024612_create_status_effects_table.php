@@ -18,6 +18,7 @@ class CreateStatusEffectsTable extends Migration
             $table->timestamps();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('type')->nullable();
             $table->string('raw_name');
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('var_name')->nullable();
