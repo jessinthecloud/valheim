@@ -16,7 +16,7 @@ class ModelConverter implements Converter
         $entity = $parser->parse($data);
         $entity['slug'] = isset($entity['slug']) ? $parser->checkAndSetSlug($entity['slug'], $class) : null;
 
-dump('entity',$entity);
+//dump('entity',$entity);
 
         // only try to insert columns that exist
         $table = $parser->parseTable($class);
@@ -32,7 +32,7 @@ dump('entity',$entity);
             $db_column_values
         );
 
-dump('model', $model);
+//dump('model', $model);
 
         if(defined($class.'::RELATION_INDICES')) {
             // get any that are also relationships that need to be mapped
@@ -45,7 +45,7 @@ dump('model', $model);
             // convert relations
             $relations = collect($relations)->map(function($relation, $key) use ($model, $parser, $entity, $class, $relations) {
             
-dump('relation',$relation); 
+//dump('relation',$relation); 
             
                 // $key is the unique array index / DB column            
                 $relation_class = $class::RELATION_INDICES[$key]['class'];
@@ -62,7 +62,7 @@ dump('relation',$relation);
                 }
                 
                 // handle 2D+ relation array (requirements)
-                if( !is_scalar( collect($relation)->first()) ) {
+                if( null !== collect($relation)->first() && !is_scalar( collect($relation)->first() ) ) {
                     return collect( $relation )->map(
                         function ( $entity ) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
 //ddd($entity, $relation, collect( $relation )->first());
