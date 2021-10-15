@@ -10,6 +10,15 @@ use Illuminate\Support\Str;
 
 class ModelConverter implements Converter
 {
+    /**
+     * Parse fields, create model and attach related models 
+     * 
+     * @param array                      $data
+     * @param string                     $class
+     * @param \App\Converters\DataParser $parser
+     *
+     * @return mixed
+     */
     public function convert(array $data, string $class, DataParser $parser)
     {
         // create/convert names
