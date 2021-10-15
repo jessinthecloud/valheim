@@ -12,12 +12,14 @@ use App\Converters\ModelConverter;
 use App\Http\Controllers\CraftingStationController;
 use App\Http\Controllers\DoesConversion;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\PieceController;
 use App\Http\Controllers\PieceTableController;
 use App\Http\Controllers\ItemRecipeController;
 use App\Http\Controllers\StatusEffectController;
 use App\Models\CraftingStation;
 use App\Models\Item;
 use App\Models\ItemRecipe;
+use App\Models\Piece;
 use App\Models\PieceTable;
 use App\Models\StatusEffect;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -58,6 +60,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(PieceTableController::class)
             ->needs('$class')
             ->give(PieceTable::class);
+            
 
         $this->app->when(ItemController::class)
             ->needs(Converter::class)
@@ -78,6 +81,15 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when( ItemRecipeController::class )
             ->needs('$class')
             ->give(ItemRecipe::class);
+
+        $this->app->when(PieceController::class)
+            ->needs(Converter::class)
+            ->give(function(){
+                return new ModelConverter(Piece::class);
+            });
+        $this->app->when(PieceController::class)
+            ->needs('$class')
+            ->give(Piece::class);
         
         /*// inject into method
         $this->app->bindMethod(
@@ -86,12 +98,6 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
                 return new JsonConverter(SharedData::class);
             }
         );*/
-        
-        /*$this->app->when( ItemConverter::class)
-            ->needs(Converter::class)
-            ->give(function(){
-                return new ItemRecipeConverter(Recipe::class);
-            });*/
     }
 
     /**
@@ -116,6 +122,12 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
             CraftingDeviceConverter::class,
             ItemConverter::class,
             ItemRecipeConverter::class,
+            ItemRecipe::class,
+            Item::class,
+            CraftingStation::class,
+            StatusEffect::class,
+            Piece::class,
+            PieceTable::class,
         ];
     }
 }
