@@ -2,7 +2,7 @@
 
 namespace App\Converters;
 
-class PieceConverter extends CraftableConverter
+class PieceConverter extends ModelConverter
 {
 
     protected function attachDataToModel( $data, $model )

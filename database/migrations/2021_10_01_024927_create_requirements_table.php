@@ -15,6 +15,7 @@ class CreateRequirementsTable extends Migration
     {
         Schema::create('requirements', function (Blueprint $table) {
             $table->id();
+            $table->string('slug')->nullable()->unique();
             $table->integer('amount')->default(1);
             $table->integer('amount_per_level')->default(1);
             $table->boolean('recover')->default(true);

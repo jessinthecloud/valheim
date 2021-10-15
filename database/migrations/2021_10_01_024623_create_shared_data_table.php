@@ -15,6 +15,7 @@ class CreateSharedDataTable extends Migration
     {
         Schema::create('shared_data', function (Blueprint $table) {
             $table->id();
+            $table->string('slug')->nullable()->unique();
             // -- StatusEffects
             $table->foreignId('attack_status_effect_id')->nullable()->references('id')->on('status_effects');
             $table->foreignId('consume_status_effect_id')->nullable()->references('id')->on('status_effects');

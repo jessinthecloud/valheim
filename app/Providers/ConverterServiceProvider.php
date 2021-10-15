@@ -10,6 +10,7 @@ use App\Converters\ItemRecipeConverter;
 use App\Converters\JsonSerializer;
 use App\Converters\ModelConverter;
 use App\Http\Controllers\CraftingStationController;
+use App\Http\Controllers\DoesConversion;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PieceTableController;
 use App\Http\Controllers\ItemRecipeController;
@@ -34,31 +35,49 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(StatusEffectController::class)
             ->needs(Converter::class)
             ->give(function(){
-                return new ModelConverter( StatusEffect::class );
+                return new ModelConverter();
             });
         $this->app->when(StatusEffectController::class)
-            ->needs(Converter::class)
-            ->give(function(){
-                return new ModelConverter( StatusEffect::class );
-            });
+            ->needs('$class')
+            ->give(StatusEffect::class);
              
         $this->app->when(CraftingStationController::class )
             ->needs(Converter::class)
             ->give(function(){
                 return new CraftingDeviceConverter(CraftingStation::class);
             });
+        $this->app->when(CraftingStationController::class)
+            ->needs('$class')
+            ->give(CraftingStation::class);
 
         $this->app->when(PieceTableController::class)
             ->needs(Converter::class)
             ->give(function(){
                 return new CraftingDeviceConverter(PieceTable::class);
             });
+        $this->app->when(PieceTableController::class)
+            ->needs('$class')
+            ->give(PieceTable::class);
 
         $this->app->when(ItemController::class)
             ->needs(Converter::class)
             ->give(function(){
                 return new ItemConverter(Item::class);
             });
+
+        $this->app->when( ItemController::class )
+            ->needs('$class')
+            ->give(Item::class);
+
+        $this->app->when( ItemRecipeController::class )
+            ->needs(Converter::class)
+            ->give(function(){
+                return new ItemRecipeConverter();
+            });
+
+        $this->app->when( ItemRecipeController::class )
+            ->needs('$class')
+            ->give(ItemRecipe::class);
         
         /*// inject into method
         $this->app->bindMethod(
@@ -73,13 +92,6 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
             ->give(function(){
                 return new ItemRecipeConverter(Recipe::class);
             });*/
-            
-        $this->app->when( ItemRecipeController::class)
-            ->needs(Converter::class)
-            ->give(function(){
-                return new ItemRecipeConverter(ItemRecipe::class);
-            });
-
     }
 
     /**

@@ -46,6 +46,7 @@ class Item extends Craftable
         'shared_data' => [
             'method' => 'sharedData',
             'class' => SharedData::class,
+            'relation' => 'associate',
         ]
     ];
 

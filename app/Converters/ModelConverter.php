@@ -2,6 +2,7 @@
 
 namespace App\Converters;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
@@ -9,154 +10,143 @@ use Illuminate\Support\Str;
 
 class ModelConverter implements Converter
 {
-
-    // model data is converted for
-    public string $class;
-    // default DB table for model
-    public ?string $table;
-    // data to convert
-    protected $data;
-    
-    public function __construct(string $class, string $table=null)
+    public function convert(array $data, string $class, DataParser $parser)
     {
-        $this->class = $class;
-        $this->table = $table;
-    }
+        // create/convert names
+        $entity = $parser->parse($data);
+        $entity['slug'] = isset($entity['slug']) ? $parser->checkAndSetSlug($entity['slug'], $class) : null;
 
-    public function convert()
-    {
-        // TODO: Implement convert() method.
-    }
+dump('entity',$entity);
 
-    /**
-     * @param mixed $data
-     */
-    public function setData( $data ) : void
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * simple relations only need a few lines of the same code
-     *
-     * @param        $value
-     * @param        $model
-     * @param string $relation_method
-     * @param string $relation_class
-     * @param string $relation_column
-     * @param        $data
-     */
-    protected function attachSingleRelation($value, $model, string $relation_method, string $relation_class, string $relation_column, $data)
-    {
-//dump('attach', $relation_class, 'to', $model, 'via '.$relation_method.'() where '.$relation_column.' == '.$value);
-        // find existing relation model
-        // if not found, init conversion (creation) of new from the relation data
-        $related_model = $relation_class::where($relation_column, $value)->first() ?? $this->convertRelated($data, $relation_class)->first();
-
-//dump('related model found: ', $related_model);
-
-        $model->$relation_method()->associate($related_model);
-        $model->save();
-    }
-
-    /**
-     * Loop data, convert names, insert into table
-     *
-     * @return mixed
-     */
-    public function create()
-    {
-//dump('create()');
-        $prepared_data = $data ?? $this->data;
-        $model_class = $class ?? $this->class;
-        $table = Str::snake(Str::pluralStudly(Str::afterLast($model_class, '\\')));
-
-        // insert into table
-        // make sure $prepared_data is 2+ dimensional
-        $created_data = ( null !== $prepared_data->first() && !is_scalar($prepared_data->first()) ) ? $prepared_data->map(function($entity) use ($model_class, $table) {
-            $this->insertPreparedData($entity, $table, $model_class);
-        }) : $this->insertPreparedData($prepared_data->all(), $table, $model_class);
-//dump(' CREATED DATA: ', $created_data);
-        if(isset($data)){
-            // using passed around data, not global to class
-            return $created_data;
-        }
-
-        $this->data = $created_data;
-    }
-
-    /**
-     * @param array  $entity
-     * @param string $table
-     * @param string $model_class
-     *
-     * @return mixed
-     */
-    protected function insertPreparedData(array $entity, string $table, string $model_class)
-    {
-//dump('insertPrepared()');
         // only try to insert columns that exist
-        $db_values = Arr::only($entity, Schema::getColumnListing($table));
+        $table = $parser->parseTable($class);
+        $db_column_values = Arr::only($entity, Schema::getColumnListing($table));
 
-        $model = $model_class::firstOrCreate(
-            $db_values
+        // create model
+        // check if already exists
+        // find existing or create model from values
+        $model = $class::firstOrCreate(
+        // array of unique key value to check 
+            ['slug' => $entity['slug']],
+            // array of values to use
+            $db_column_values
         );
 
-        if(defined($model_class.'::RELATION_INDICES')) {
-            // from the leftovers, get any that are also relationships that need to be mapped
-            // use intersect to compare by keys and avoid issue with PHP trying to compare multidimensional values
-            $relations = array_intersect_key( $entity, $model_class::RELATION_INDICES );
+dump('model', $model);
 
-            // TODO: check if relation is already attached?
+        if(defined($class.'::RELATION_INDICES')) {
+            // get any that are also relationships that need to be mapped
+            // use intersect to compare by keys and avoid issue with
+            // PHP trying to compare multidimensional values
+            $relations = array_intersect_key( $entity, $class::RELATION_INDICES );
 
-            if(!empty($relations)){
-//dump('relations to attach: ', $relations);
-                $this->attachDataToModel($relations, $model);
-            }
-            else{
-//dump('-- no relations to attach --');
-            }
+//dump('relations', $relations, 'from', $entity, 'indices:',$class::RELATION_INDICES);
+
+            // convert relations
+            $relations = collect($relations)->map(function($relation, $key) use ($model, $parser, $entity, $class, $relations) {
+            
+dump('relation',$relation); 
+            
+                // $key is the unique array index / DB column            
+                $relation_class = $class::RELATION_INDICES[$key]['class'];
+                $relation_method = $class::RELATION_INDICES[$key]['method'];
+                $relation_method = $class::RELATION_INDICES[$key]['method'];
+                // determine relation attach function attach() vs associate()
+                $attach_function = $class::RELATION_INDICES[$key]['relation'];
+                
+                // need to send array to the convert function
+                if(!is_array($relation)){
+                
+                    $relation = $this->convert( 
+                        // relation data
+                        $relations,
+                        // relation's class
+                        $relation_class,
+                        // parser object
+                        $parser
+                    );
+
+                    // attach relation to model
+                    // attach relation to model
+                    $this->attachRelated($model, $relation, $relation_method, $attach_function);
+                }
+                // make sure to handle 2D+
+                else if( null !== collect( $relation )->first() && !is_scalar( collect($relation)->first()) ) {
+                    $relation = collect( $relation )->map(
+                        function ( $entity ) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
+ddd($entity, $relation, collect( $relation )->first());                            
+                            $entity = $this->convert(
+                                // relation data
+                                $entity,
+                                // relation's class
+                                $relation_class,
+                                // parser object
+                                $parser
+                            );
+
+                            // attach relation to model
+                            // attach relation to model
+                            $this->attachRelated($model, $entity, $relation_method, $attach_function);
+
+                            return $entity;
+                        } 
+                    );
+                }
+                else{
+                    
+                    $relation = $this->convert(
+                        // relation data
+                        $relation,
+                        // relation's class
+                        $relation_class,
+                        // parser object
+                        $parser
+                    );
+
+                    // attach relation to model
+                    $this->attachRelated($model, $relation, $relation_method, $attach_function);
+                    
+                } // endif 
+                
+//dump( $relation );
+
+                return $relation;
+                
+            });
         }
-
+//ddd('after all', $entity);        
         return $model;
-    }
+    } // end convert()
 
     /**
-     * convert data that doesn't exist and
-     * needs to be attached via relationship
+     * Find and save relation to model 
+     * 
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Database\Eloquent\Model $relation
+     * @param string                              $relation_method
+     * @param string                              $attach_function
      *
-     * @param array  $related_data
-     * @param string $related_class
-     *
-     * @return mixed
+     * @return void
      */
-    protected function  convertRelated(array $related_data, string $related_class)
+    protected function attachRelated(Model $model, Model $relation, string $relation_method, string $attach_function)
     {
-//dump('convertRelated() -- '.$related_class);
-        $related_data = $this->prepareData($related_data, $related_class);
-
-        // make sure $related_data is Collection
-        if( !is_a($related_data, Collection::class)){
-            $related_data = collect($related_data);
+        if(null === $model->$relation_method()) {
+            // no relation methods
+            return;
         }
-        return $this->create($related_data, $related_class);
-    }
-    
-    protected function checkAndSetSlug(string $slug) : string
-    {
-        // check model has slug col
-        if(Schema::hasColumn($this->class, 'slug')) {
-            // check if slug exists
-            // needed where there is no true name, i.e. shared data for block_attack_aoe
-            $slug_count = $this->class::where( 'slug', 'like', $slug . '%' )->count();
-            if ( $slug_count > 0 ) {
-                // append to create unique slug 
-                $slug .= '-' . ( $slug_count + 1 );
-                return $slug;
-            }
+        
+        if(is_array($model->$relation_method())){
+            // some models have multiple methods for a related model class (SharedData -> StatusEffect)
+            
+            collect($model->$relation_method())->each(function($method) use ($model, $relation, $attach_function) {
+                $model->$method()->$attach_function($relation);
+            });
+            $model->save();
+            
+            return;         
         }
-
-        // for recipe only
-        return Str::after($slug, 'recipe-');
-    }
+        
+        $model->$relation_method()->$attach_function($relation);
+        $model->save();
+    }     
 }

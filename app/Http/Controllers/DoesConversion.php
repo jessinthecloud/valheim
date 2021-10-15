@@ -12,6 +12,9 @@ use Illuminate\Support\Str;
 
 trait DoesConversion
 {
+    /**
+     * @var \App\Converters\Converter 
+     */
     protected Converter $converter;
     
     /**
@@ -24,11 +27,15 @@ trait DoesConversion
      */
     protected DataParser $parser;
     
+    protected string $class;
+
     private string $path;
 
-    public function __construct(DataParser $parser, Converter $converter, JsonSerializer $serializer)
+    public function __construct(DataParser $parser, Converter $converter, JsonSerializer $serializer, string $class)
     {
         $this->path = config('filesystems.json_path');
+        $this->class = $class;
+        
         $this->serializer = $serializer;
         $this->parser = $parser;
         $this->converter = $converter;
@@ -40,37 +47,10 @@ trait DoesConversion
         $contents = file_get_contents($this->path.'/'.$filename) ?? '';
         $data = $this->serializer->decode($contents);
         
-        // directly change the collection's items
-        $data = collect($data)->map(function($entity, $key){
-            $entity = $this->parser->parse($entity);
-            $entity['slug'] = isset($entity['slug']) ? $this->converter->checkAndSetSlug($entity['slug']) : null;
-
-            // only try to insert columns that exist
-            $existing_values = Arr::only($entity, Schema::getColumnListing($this->converter->table));
-            // initialize model object with values 
-            $model = new $this->converter->class($existing_values);
-            
-            if(defined($this->converter->class.'::RELATION_INDICES')) {
-                // get any that are also relationships that need to be mapped
-                // use intersect to compare by keys and avoid issue with
-                // PHP trying to compare multidimensional values
-                $relations = array_intersect_key( $entity, $this->converter->class::RELATION_INDICES );
-
-                $relations = $this->parser->parse($relations); 
-                
-                // how best to continue recursively?
-                
-                // TODO: convert relations
-                // need to know convert class to use for specific relation model
-                
-                                
-                $entity = array_merge($entity, $relations->all());
-                
-                // TODO: check if relation is already attached?
-            }
-//ddd($entity);
-
-            return $entity;
+        // change the collection's items
+        $data = collect($data)->map(function($entity){
+            //ddd($entity);
+            return $this->converter->convert( $entity, $this->class, $this->parser);
         });
         
         ddd($data);

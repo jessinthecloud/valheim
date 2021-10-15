@@ -2,17 +2,11 @@
 
 namespace App\Converters;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class DataParser
 {
-    // data parsed
-    protected $data;
-
-    public function __construct()
-    {
-    }
-
     /**
      * create name info from data
      *
@@ -20,21 +14,19 @@ class DataParser
     public function parse($data)
     {
 //dump('parse()');
-        $this->data = $data;
         
-        $this->data = collect($this->data)->unique();
+        $data = collect($data)->unique();
 
-        // make sure $this->data is more than 1 dimensional before looping
-        // otherwise, make $this->data an array and convert its names directly 
-        $this->data = ( null !== $this->data->first() && !is_scalar($this->data->first()) )  ? $this->data->map(function($entity) {
-
-
+        // make sure $data is more than 1 dimensional before looping
+        // otherwise, make $data an array and convert its names directly 
+        $data = ( null !== $data->first() && !is_scalar($data->first()) )  ? $data->map(function($entity) {
+            
             return $this->convertNames( $entity );
 
-        }) : $this->convertNames( $this->data->all() );
-//ddd('convert names for: ', $this->data );   
+        })->all() : $this->convertNames( $data->all() );
+//dump('converted names for: ', $data );   
 
-        return $this->data;
+        return $data;
     } // end parse()
 
     /**
@@ -46,7 +38,7 @@ class DataParser
      */
     protected function convertNames(array $info) : array
     {
-//dump('convertNames()');
+//dump('convertNames()', $info);
 
         // if strange case where only true name exists e.g., Recipe_Adze
         // or only prefab name exists (e.g., StoneGolem_clubs shared data)
@@ -58,20 +50,6 @@ class DataParser
         $info['slug'] = isset($info['true_name']) ? Str::slug(trim($this->prettify($info['true_name']))) : Str::slug(trim($info['name']));
 
         return $info;
-    }
-
-    /**
-     * convert class name from C# (remove prefix)
-     * e.g., Recipe_ArmorBronzeChest -> ArmorBronzeChest
-     * Then this name can be used to find the item
-     *
-     * @param  string $name
-     *
-     * @return string       the trimmed name
-     */
-    public static function removeCsPrefix(string $name) : string
-    {
-        return Str::after($name, '_');
     }
 
     /**
@@ -91,5 +69,57 @@ class DataParser
         $name = Str::of(trim($name))->replace('_', ' ');
         $name = Str::of($name)->split('/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/')->toArray();
         return implode(' ', $name) ?? $name;
+    }
+
+    /**
+     * convert class name from C# (remove prefix)
+     * e.g., Recipe_ArmorBronzeChest -> ArmorBronzeChest
+     * Then this name can be used to find the item
+     *
+     * @param  string $name
+     *
+     * @return string       the trimmed name
+     */
+    public static function removeCsPrefix(string $name) : string
+    {
+        return Str::after($name, '_');
+    }
+
+    /**
+     * Determine table name from model name
+     * 
+     * @param string $model_class
+     *
+     * @return string table name based on class
+     */
+    public function parseTable( string $model_class ) : string
+    {
+        return Str::snake(Str::pluralStudly(Str::afterLast($model_class, '\\')));
+    }
+
+    /**
+     * Make sure slug is unique
+     *
+     * @param string $slug
+     * @param string $class
+     *
+     * @return string
+     */
+    public function checkAndSetSlug(string $slug, string $class) : string
+    {
+        // check model has slug col
+        if(Schema::hasColumn($class, 'slug')) {
+            // check if slug exists
+            // needed where there is no true name, i.e. shared data for block_attack_aoe
+            $slug_count = $class::where( 'slug', 'like', $slug . '%' )->count();
+            if ( $slug_count > 0 ) {
+                // append to create unique slug 
+                $slug .= '-' . ( $slug_count + 1 );
+                return $slug;
+            }
+        }
+
+        // for recipe only
+        return Str::after($slug, 'recipe-');
     }
 }

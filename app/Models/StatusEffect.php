@@ -15,7 +15,6 @@ class StatusEffect extends Model
 
     ];
 
-
     public function sharedData()
     {
         return $this->hasMany(SharedData::class);

@@ -16,18 +16,22 @@ class ItemRecipe extends Recipe
         'item_slug' => [
             'method' => 'creation',
             'class' => Item::class,
+            'relation' => 'associate',
         ],
         'requirements' => [
             'method' => 'requirements',
             'class' => Requirement::class,
+            'relation' => 'attach',
         ],
         'raw_crafting_station_name' => [
             'method' => 'craftingDevice',
             'class' => CraftingStation::class,
+            'relation' => 'associate',
         ],
         'raw_repair_station_name' => [
             'method' => 'repairStation',
             'class' => CraftingStation::class,
+            'relation' => 'associate',
         ],
     ];
 

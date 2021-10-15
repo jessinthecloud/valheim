@@ -2,7 +2,7 @@
 
 namespace App\Converters;
 
-class PieceRecipeConverter extends RecipeConverter
+class PieceRecipeConverter extends ModelConverter
 {
 
 }

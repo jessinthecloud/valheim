@@ -12,12 +12,12 @@ class SharedData extends Model
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
     protected $guarded = [
-        'attack_status_effect_id',
+        /*'attack_status_effect_id',
         'consume_status_effect_id',
         'equip_status_effect_id',
         'set_status_effect_id',
         'damages',
-        'damages_per_level',
+        'damages_per_level',*/
     ];
 
     // Indices of the converted json array that correspond to
@@ -26,6 +26,7 @@ class SharedData extends Model
         'status_effects' => [
             'method' => 'statusEffects',
             'class' => StatusEffect::class,
+            'relation' => 'associate',
         ],
     ];
     
@@ -34,7 +35,16 @@ class SharedData extends Model
         return $this->hasMany(Item::class);
     }
     
-    
+    // return all relations
+    public function statusEffects()
+    {
+        return [
+            'attackStatusEffect',
+            'consumeStatusEffect',
+            'setStatusEffect',
+            'equipStatusEffect',
+        ];
+    }
 
     public function attackStatusEffect()
     {

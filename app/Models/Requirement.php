@@ -30,7 +30,11 @@ class Requirement extends Model
     // relationships and should not be directly inserted
     // index_name => relationFunctionName ; to allow array_intersect_key comparison
     public const RELATION_INDICES = [
-        'var_name' => 'item',
+        'raw_name' => [
+            'method' => 'item',
+            'class' => Item::class,
+            'relation' => 'associate',
+        ],
     ];
 
     public function recipes()
