@@ -44,7 +44,7 @@ trait DoesConversion
     public function convert(Request $request)
     {
         $filename = Str::singular(Str::afterLast($request->getPathInfo(), '/')).'-list.json';
-        $contents = file_get_contents($this->path.'/'.$filename) ?? '';
+        $contents = file_get_contents($this->path.$filename) ?? '';
         $data = $this->serializer->decode($contents);
         
         // change the collection's items

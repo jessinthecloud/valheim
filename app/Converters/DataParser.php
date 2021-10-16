@@ -10,8 +10,12 @@ class DataParser
     /**
      * create name info from data
      *
+     * @param        $data
+     * @param string $class
+     *
+     * @return array
      */
-    public function parse($data)
+    public function parse($data, string $class) : array
     {
 //dump('parse()');
         
@@ -19,11 +23,13 @@ class DataParser
 
         // make sure $data is more than 1 dimensional before looping
         // otherwise, make $data an array and convert its names directly 
-        $data = ( null !== $data->first() && !is_scalar($data->first()) )  ? $data->map(function($entity) {
-            
-            return $this->convertNames( $entity );
-
-        })->all() : $this->convertNames( $data->all() );
+        $data = ( null !== $data->first() && !is_scalar($data->first()) )  ? 
+            $data->map(function($entity) use ($class) {
+                
+                return $this->convertNames( $entity, $class );
+    
+            })->all() : 
+            $this->convertNames( $data->all(), $class );
 //dump('converted names for: ', $data );   
 
         return $data;
@@ -32,24 +38,53 @@ class DataParser
     /**
      * populate name and slug data
      *
-     * @param array       $info
+     * @param array  $info
+     * @param string $class
      *
      * @return array [type]       [description]
      */
-    protected function convertNames(array $info) : array
+    protected function convertNames(array $info, string $class) : array
     {
-//dump('convertNames()', $info);
-
+        // some models have longer raw_names (i.e., raw_crafting_station_name)
+        $raw_name_index = (array_key_exists('raw_name', $info)) ? 
+            'raw_name' : $this->parseRawName($info, $class);
         // if strange case where only true name exists e.g., Recipe_Adze
         // or only prefab name exists (e.g., StoneGolem_clubs shared data)
-        $info['raw_name'] = $info['raw_name'] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : ($info['prefab_name'] ?? ''));
+        $info['raw_name'] = $info[$raw_name_index] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : ($info['prefab_name'] ?? ''));
 
         // add spaces to make pretty
         $info['name'] = $this->prettify(trim($info['raw_name']));
         // true name as slug since it is unique (i.e., alt recipes like Bronze5, or fart -> block_attack_aoe)
         $info['slug'] = isset($info['true_name']) ? Str::slug(trim($this->prettify($info['true_name']))) : Str::slug(trim($info['name']));
 
+//dump('convertNames()', $info);
+
         return $info;
+    }
+
+    /**
+     * Determine raw name index if it's special
+     * 
+     * @param array  $info
+     * @param string $class
+     *
+     * @return mixed
+     */
+    private function parseRawName(array $info, string $class)
+    {
+        $keys = array_keys($info);
+        // get first part of class name
+        $class_prefix = Str::snake(Str::afterLast($class, '\\'));
+
+        return collect($keys)->filter(function($index_name) use($class_prefix) {
+
+            $index_class = Str::lower(Str::between($index_name, 'raw_', '_'));
+
+//dump('$index_class: '.$index_class.', class prefix: '.$index_class, Str::contains($index_name, ['raw', 'name']), Str::startsWith($index_name, 'raw_'.$index_class));
+       
+            return (Str::contains($index_name, ['raw', 'name']) 
+                && Str::startsWith($index_class, $class_prefix));
+        })->first();
     }
 
     /**

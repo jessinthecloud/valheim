@@ -39,7 +39,7 @@ class Requirement extends Model
 
     public function recipes()
     {
-        return $this->belongsToMany(Recipe::class/*, 'recipe_requirement', 'requirement_id', 'recipe_id'*/);
+        return $this->belongsToMany(ItemRecipe::class);
     }
 
     public function item()

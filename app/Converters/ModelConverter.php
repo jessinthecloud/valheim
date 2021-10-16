@@ -22,10 +22,15 @@ class ModelConverter implements Converter
     public function convert(array $data, string $class, DataParser $parser)
     {
         // create/convert names
-        $entity = $parser->parse($data);
-        $entity['slug'] = isset($entity['slug']) ? $parser->checkAndSetSlug($entity['slug'], $class) : null;
-
-//dump('entity',$entity);
+        $entity = $parser->parse($data, $class);
+        $entity['slug'] = isset($entity['slug']) ? 
+            $parser->checkAndSetSlug($entity['slug'], $class) : 
+            null;
+        
+        if( empty($entity['slug']) ){
+            // if no slug, don't bother
+            return null;
+        }
 
         // only try to insert columns that exist
         $table = $parser->parseTable($class);
@@ -41,20 +46,16 @@ class ModelConverter implements Converter
             $db_column_values
         );
 
-//dump('model', $model);
-
         if(defined($class.'::RELATION_INDICES')) {
             // get any that are also relationships that need to be mapped
             // use intersect to compare by keys and avoid issue with
             // PHP trying to compare multidimensional values
             $relations = array_intersect_key( $entity, $class::RELATION_INDICES );
 
-//dump('relations', $relations, 'from', $entity, 'indices:',$class::RELATION_INDICES);
+//dump('relations', $relations, 'from', $entity, 'indices:',$class::RELATION_INDICES, '--');
 
             // convert relations
             $relations = collect($relations)->map(function($relation, $key) use ($model, $parser, $entity, $class, $relations) {
-            
-//dump('relation',$relation); 
             
                 // $key is the unique array index / DB column            
                 $relation_class = $class::RELATION_INDICES[$key]['class'];
@@ -74,7 +75,6 @@ class ModelConverter implements Converter
                 if( null !== collect($relation)->first() && !is_scalar( collect($relation)->first() ) ) {
                     return collect( $relation )->map(
                         function ( $entity ) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
-//ddd($entity, $relation, collect( $relation )->first());
                             
                             // convert & attach relation to model
                             return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser);
@@ -102,6 +102,8 @@ class ModelConverter implements Converter
      */
     protected function convertAndAttachRelation(Model $model, array $relation_data, string $relation_class, string $relation_method, string $attach_function, DataParser $parser) 
     {
+//dump('convert related '.$relation_class.': ', $relation_data);
+    
         $related = $this->convert(
             // relation data
             $relation_data,
@@ -110,12 +112,20 @@ class ModelConverter implements Converter
             // parser object
             $parser
         );
-dump('attach '.$relation_class, $related, ' to '.$model->slug);
+        
+//dump('attach '.$relation_class.' to '.get_class($model).' ('.$model->slug.') with '.get_class($model).'->'.$relation_method.'()->'.$attach_function.'()', $related);
+
+        // if null, quit
+        if(empty($related)){
+            return null;
+        }
 
         // attach relation to model
         $this->attachRelated($model, $related, $relation_method, $attach_function);
         
-dump('attached?', $model);
+//dump($relation_method.'() attached?', $model, ($relation_method !== 'statusEffects' ? $model->$relation_method : ''));
+
+//dump('================');
 
         return $related;
     }
@@ -133,6 +143,7 @@ dump('attached?', $model);
     protected function attachRelated(Model $model, Model $relation, string $relation_method, string $attach_function)
     {
         if(null === $model->$relation_method()) {
+//dump('NO RELATION METHODS: '.$relation_method);        
             // no relation methods
             return;
         }
@@ -147,12 +158,19 @@ dump('attached?', $model);
                     $model->$method()->$attach_function($relation);
                 }
             });
-            $model->save();
+
+            // attach saves by default
+            if($attach_function !== 'attach'){
+                $model->save();
+            }
             
             return;         
         }
         
         $model->$relation_method()->$attach_function($relation);
-        $model->save();
+        // attach saves by default
+        if($attach_function !== 'attach'){
+            $model->save();
+        }
     }     
 }

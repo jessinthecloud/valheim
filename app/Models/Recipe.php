@@ -34,8 +34,12 @@ abstract class Recipe extends Model
     // item this recipe creates
     abstract public function creation();
     
-    // used to make the recipe; craftin station, piece table tool, etc
+    // used to make the recipe; crafting station, piece table tool, etc
     abstract public function craftingDevice();
+
+    // requirements for the recipe
+    abstract public function requirements();
+
 
     public function craftingStation()
     {
@@ -44,14 +48,9 @@ abstract class Recipe extends Model
 
     public function repairStation()
     {
-        return $this->belongsTo(CraftingStation::class, 'repair_station_id');
+        return $this->belongsTo(RepairStation::class);
     }
-
-    public function requirements()
-    {
-        return $this->belongsToMany(Requirement::class);
-    }
-
+    
     public function relatedCraftables()
     {
         return Requirement::whereHas('item', function($query){

@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ItemRecipe extends Recipe
 {
     use HasFactory;
+    
+    protected $table = 'item_recipes';
 
     // Indices of the converted json array that correspond to
     // relationships and should not be directly inserted
@@ -30,7 +32,7 @@ class ItemRecipe extends Recipe
         ],
         'raw_repair_station_name' => [
             'method' => 'repairStation',
-            'class' => CraftingStation::class,
+            'class' => RepairStation::class,
             'relation' => 'associate',
         ],
     ];
@@ -39,6 +41,11 @@ class ItemRecipe extends Recipe
     public function creation()
     {
         return $this->belongsTo(Item::class, 'creation_id');
+    }
+
+    public function requirements()
+    {
+        return $this->belongsToMany(Requirement::class);
     }
 
     /**
