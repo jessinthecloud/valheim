@@ -47,7 +47,7 @@ class Item extends Craftable
             'method' => 'sharedData',
             'class' => SharedData::class,
             'relation' => 'associate',
-        ]
+        ],
     ];
 
 
@@ -61,11 +61,11 @@ class Item extends Craftable
      * items can have multiple recipes for their variants
      * e.g., Bronze and 5 Bronze bars
      *
-     * @return Eloquent relationship to Recipes
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany 
      */
     public function recipes()
     {
-        return $this->hasMany(Recipe::class);
+        return $this->hasMany(ItemRecipe::class);
     }
 
     public function recipeRequirements()

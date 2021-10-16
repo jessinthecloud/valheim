@@ -24,4 +24,9 @@ class PieceRecipe extends Recipe
     {
         return $this->belongsTo(PieceTable::class);
     }
+
+    public function requirements()
+    {
+        // TODO: Implement requirements() method.
+    }
 }

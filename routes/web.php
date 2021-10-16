@@ -35,12 +35,12 @@ if (env('APP_ENV') === 'local') {
         )->name('crafting-station');
 
         Route::get(
-            '/status-effects',
+            '/status-effect',
             [App\Http\Controllers\StatusEffectController::class, 'convert']
         )->name('status-effects');
 
         Route::get(
-            '/piece-tables',
+            '/piece-table',
             [App\Http\Controllers\PieceTableController::class, 'convert']
         )->name('piece-tables');
 
@@ -51,7 +51,7 @@ if (env('APP_ENV') === 'local') {
         
         // TODO: 
         Route::get(
-            '/pieces',
+            '/piece',
             [App\Http\Controllers\PieceController::class, 'convert']
         )->name('pieces');
 

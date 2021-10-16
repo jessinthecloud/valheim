@@ -23,16 +23,23 @@ class DataParser
 
         // make sure $data is more than 1 dimensional before looping
         // otherwise, make $data an array and convert its names directly 
-        $data = ( null !== $data->first() && !is_scalar($data->first()) )  ? 
-            $data->map(function($entity) use ($class) {
-                
-                return $this->convertNames( $entity, $class );
-    
-            })->all() : 
-            $this->convertNames( $data->all(), $class );
-//dump('converted names for: ', $data );   
+        // check all, not just first
+        $flat_data = $data->filter(function($entity){
+            return !is_array($entity);
+        });
 
-        return $data;
+        $multi_data = $data->diffAssoc($flat_data);
+        
+        $multi_data = $multi_data->map(function($entity) use ($class) {
+            // check all, not just first item
+            return $this->convertNames( $entity, $class );
+        });
+
+        $flat_data = $this->convertNames( $flat_data->all(), $class );
+
+        //dump('converted names for: ', $data );   
+
+        return $multi_data->merge($flat_data)->all();
     } // end parse()
 
     /**
