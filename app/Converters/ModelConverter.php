@@ -105,13 +105,31 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
                                             
                         // find existing item b/c only item_slug/piece_slug exists
                         // when trying to find related
-                        $related = (isset($relations['item_slug']) ? $relation_class::where('slug', $relations['item_slug'])->first() : null) ?? (isset($relations['piece_slug']) 
+                        $related = (isset($relations['item_slug']) 
+                            ? $relation_class::where('slug', $relations['item_slug'])->first() 
+                            : null) 
+                        ?? (isset($relations['piece_slug']) 
                             ? $relation_class::where('slug', $relations['piece_slug'])->first() 
                             // sometimes recipes don't have item slug that matches 
-                            : ((isset($relations['item_slug']) 
-                                ? $relation_class::where('name', Str::replace('-', ' ', $relations['item_slug']))->first() 
-                                : null)));
-//dump('piece slug: '.($relations['piece_slug'] ?? '').', item slug: '.($relations['item_slug'] ?? '').', name: '.($relations['name'] ?? ''), $relations, $related);
+                            : null) 
+                        ?? (isset($relations['item_slug']) 
+                            ? $relation_class::where(
+                                    'name', 
+                                    Str::replace('-', ' ', $relations['item_slug'])
+                                )->first() 
+                            : null) 
+                        ?? ((null !== $model->name)
+                            ? $relation_class::where(
+                                    'name',
+                                    $model->name
+                                )->first()
+                            : null);
+/*if(isset($relations['item_slug']) && $relations['item_slug'] === 'onionsoup'){
+    dump($relation_class::where(
+        'name',
+        $model->name
+    )->first(), 'model name: '.$model->name.', item slug: '.($relations['item_slug'] ?? '').', name: '.($relations['name'] ?? ''), $relations, 'found: ', $related, 'model: ', $model, 'entity: ', $entity);
+}*/                        
                         // attach relation to model
                         isset($related) ? 
                             $this->attachRelated($model, $related, $relation_method, $attach_function) : 
