@@ -34,10 +34,23 @@ class Item extends Craftable
     ];
     
     // ItemType values that are weapons
-    public const WEAPON_TYPES = [3,4,9,14,20];
+    public const WEAPON_TYPES = [
+        ItemType::OneHandedWeapon,
+        ItemType::Bow,
+        ItemType::Ammo,
+        ItemType::TwoHandedWeapon,
+        ItemType::Attach_atgeir
+    ];
 
     // ItemType values that are armor pieces or items
-    public const ARMOR_TYPES = [5,6,7,11,12,17];
+    public const ARMOR_TYPES = [
+        ItemType::Shield,
+        ItemType::Helmet,
+        ItemType::Chest,
+        ItemType::Legs,
+        ItemType::Hands,
+        ItemType::Shoulder,
+    ];
     
     // Indices of the converted json array that correspond to
     // relationships and should not be directly inserted
