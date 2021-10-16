@@ -24,22 +24,9 @@ class ItemController extends Controller
         $page = $request->page ?? 1;
         $per_page = 32;
 
-        $weapons = Weapon::orderBy('name', 'asc')->get();
-        $armors = Armor::orderBy('name', 'asc')->get();
-        $consumables = Consumable::orderBy('name', 'asc')->get();
-
-        $all_items = collect()
-            ->concat($weapons)
-            ->concat($armors)
-            ->concat($consumables)
-            ->sortBy('name')
-            ;
-            
-        $items = $all_items->skip((($page-1) * $per_page))->take($per_page);
-
-        $paginator = new LengthAwarePaginator($items, $all_items->count(), $per_page, $page, ['path'=>$request->getPathInfo()]);
-    
-    
+        $paginator = Item::orderBy('name', 'asc')->paginate($per_page);
+        $items = $paginator->items();
+        
         return view('items.index',
             compact(
                 'items',

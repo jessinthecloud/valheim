@@ -26,6 +26,8 @@ class Armor extends Item
         });
     }
 
+// -- MISC -----------------------------------------------------
+
     public function armor()
     {
         return $this->sharedData->armor;

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ItemType;
 use App\Http\ImageFetcher;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,6 +61,23 @@ class Item extends Craftable
             'relation' => 'associate',
         ],
     ];
+
+// -- GLOBAL SCOPES -----------------------------------------------------
+
+    /**
+     * Apply this scope to every query
+     * made by this model
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope('enabled', function (Builder $builder) {
+            return $builder->whereHas( 'recipes', function($query){
+                $query->where('enabled', 1);
+            } );
+        });
+    }
 
 // -- RELATIONSHIPS -----------------------------------------------
 
