@@ -23,7 +23,7 @@ class Piece extends Craftable
      */
     public function requirementFor()
     {
-        return $this->belongsToManyThrough( PieceRecipe::class, Requirement::class );
+        return $this->hasManyThrough( PieceRecipe::class, Requirement::class );
     }
 
     public function recipe()

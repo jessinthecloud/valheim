@@ -37,14 +37,14 @@ class Requirement extends Model
         ],
     ];
 
+    public function item()
+    {
+        return $this->belongsTo(Item::class, 'item_id');
+    }
+
     public function itemRecipes()
     {
         return $this->belongsToMany(ItemRecipe::class);
-    }
-
-    public function item()
-    {
-        return $this->belongsTo(Item::class);
     }
 
     public function pieceRecipes()
@@ -54,7 +54,7 @@ class Requirement extends Model
 
     public function pieces()
     {
-        return $this->belongsToManyThrough(Piece::class, PieceRecipe::class);
+        return $this->hasManyThrough(Piece::class, PieceRecipe::class);
     }
 
     public function getAmount(int $quality_level=1) : int

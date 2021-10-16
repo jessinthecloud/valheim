@@ -96,6 +96,7 @@
             </table>
         @endif
     </div> {{-- end item-details --}}
+    
     {{-- <div class="w-full"> {!! $item->image(new \App\Http\ImageFetcher) !!}</div> --}}
     
     @if($item->recipes)

@@ -67,6 +67,8 @@ class Item extends Craftable
     /**
      * Apply this scope to every query
      * made by this model
+     * 
+     * Get only enabled recipe items (or items with no recipe)
      *
      * @return void
      */
@@ -75,7 +77,9 @@ class Item extends Craftable
         static::addGlobalScope('enabled', function (Builder $builder) {
             return $builder->whereHas( 'recipes', function($query){
                 $query->where('enabled', 1);
-            } );
+            })
+            ->orDoesntHave('recipes')
+            ;
         });
     }
 
@@ -92,6 +96,11 @@ class Item extends Craftable
         return $this->hasMany( ItemRecipe::class, 'creation_id' );
     }
 
+    public function requirements()
+    {
+        return $this->hasMany(Requirement::class, 'item_id');
+    }
+
     /**
      * @required by Craftable
      *
@@ -99,7 +108,7 @@ class Item extends Craftable
      */
     public function requirementFor()
     {
-        return $this->belongsToManyThrough( ItemRecipe::class, Requirement::class );
+        return $this->hasManyThrough( ItemRecipe::class, Requirement::class, 'item_id',  'creation_id');
     }
 
     public function sharedData()
