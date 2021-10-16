@@ -36,8 +36,6 @@ class DataParser
 
         $flat_data = $this->convertNames( $flat_data->all(), $class );
 
-        //dump('converted names for: ', $data );   
-
         return $multi_data->merge($flat_data)->all();
     } // end parse()
 
@@ -54,7 +52,7 @@ class DataParser
         // some models have longer raw_names (i.e., raw_crafting_station_name)
         $raw_name_index = (array_key_exists('raw_name', $info)) ? 
             'raw_name' : $this->parseRawName($info, $class);
-//dump($info, 'raw name index for '.$class.': '.$raw_name_index);            
+          
         // if strange case where only true name exists e.g., Recipe_Adze
         // or only prefab name exists (e.g., StoneGolem_clubs shared data)
         $info['raw_name'] = $info[$raw_name_index] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : ($info['prefab_name'] ?? ''));
@@ -63,8 +61,6 @@ class DataParser
         $info['name'] = $this->prettify(trim($info['raw_name']));
         // true name as slug since it is unique (i.e., alt recipes like Bronze5, or fart -> block_attack_aoe)
         $info['slug'] = isset($info['true_name']) ? Str::slug(trim($this->prettify($info['true_name']))) : Str::slug(trim($info['name']));
-
-//dump('convertNames()', $info);
 
         return $info;
     }
@@ -87,8 +83,6 @@ class DataParser
 
             $index_class = Str::lower(Str::between($index_name, 'raw_', '_'));
 
-//dump('$index_class: '.$index_class.', class prefix: '.$index_class, Str::contains($index_name, ['raw', 'name']), Str::startsWith($index_name, 'raw_'.$index_class));
-       
             return (Str::contains($index_name, ['raw', 'name']) 
                 && Str::startsWith($index_class, $class_prefix));
         })->first();
@@ -150,9 +144,6 @@ class DataParser
      */
     public function checkAndSetSlug(string $slug, string $class) : string
     {
-/*if(Str::contains($class, 'Requirement') && Str::contains($slug, 'turnip')){
-    dump(' SLUGS: '.$slug_count = $class::where( 'slug', 'like', $slug . '%' )->count(), $slug, 'has slug col: '.Schema::hasColumn($class, 'slug'));
-}*/
         // check model has slug col
         if(Schema::hasColumn($this->parseTable($class), 'slug')) {
             // check if slug exists
@@ -163,9 +154,7 @@ class DataParser
                 $slug .= '-' . ( $slug_count + 1 );
             }
         }
-/*if(Str::contains($class, 'Requirement') && Str::contains($slug, 'turnip')){
-    dump(' SLUGS: '.$slug_count.' -- has slug col '.(Schema::hasColumn($this->parseTable($class), 'slug')). ' -- need new slug: '. ( $slug_count > 0 ).' +++ new slug: '.$slug);
-}*/
+
         // for recipe only
         return Str::after($slug, 'recipe-');
     }

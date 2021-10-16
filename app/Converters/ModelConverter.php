@@ -31,10 +31,8 @@ class ModelConverter implements Converter
         $entity['slug'] = $entity['item_slug'] = $entity['piece_slug'] =isset($entity['slug']) ? 
             $parser->checkAndSetSlug($entity['slug'], $class) : 
             null;
-//dump(' ---- convert() '.$class.' :::>> '.($data['raw_name'] ?? $data['true_name'] ?? $data['var_name'] ?? '').' ---- ', $data);
 
         if( empty($entity['slug']) ){
-//dump(' == SLUG NULL SKIP == ');        
             // if no slug, don't bother
             return null;
         }        
@@ -56,20 +54,6 @@ class ModelConverter implements Converter
             // array of values to use
             $db_column_values
         );
-        
-/*if(Str::contains($class, ["Requirement"])) {
-    dump(
-        $class.' -- '.$parser->parseTable($class),
-        'columns: ',
-        Schema::getColumnListing($table),
-        'column vals: ',
-        $db_column_values,
-        'entity',
-        $entity,
-        'model',
-        $model
-    );
-}*/
 
         if(defined($class.'::RELATION_INDICES')) {
             // get any that are also relationships that need to be mapped
@@ -85,25 +69,10 @@ class ModelConverter implements Converter
                 $relation_method = $class::RELATION_INDICES[$key]['method'];
                 // determine relation attach function attach() vs associate()
                 $attach_function = $class::RELATION_INDICES[$key]['relation'];
-                
-//if(Str::contains(get_class($model), 'Piece')) {
-/* 
-if(Str::contains(Str::lower($model->name), 'cauldron')) {
-    dump(
-        $class::RELATION_INDICES,
-        $entity,
-        $relation,' --- ',
-        $relations,
-        'related class: ' . $relation_class . ' relationship method: ' . $relation_method . '() -- save function: ' . $attach_function
-    );
-}  
-*/     
 
                 // need to send array to the convert function
                 if(!is_array($relation)){
-//dump('relation not array');                   
-                    
-                    
+
                     // convert & attach relation to model
                     return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser, $entity);
                 }
@@ -118,7 +87,7 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
                 $multi_relation_data = collect($relation)->diffAssoc($flat_relation_data);
                 
                 $multi_relation_data = $multi_relation_data->map(function($entity) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
-//dump('multi-d relation', $entity);
+
                     // convert & attach relation to model
                     return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser, $entity);
                 });
@@ -141,21 +110,21 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
      * @param string                              $attach_function  function that attaches
      *                                                              this kind of relationship to model
      * @param \App\Converters\DataParser          $parser
+     * @param array                               $entity
      *
      * @return mixed
-     * @throws \Exception
      */
     protected function convertAndAttachRelation(Model $model, array $relation_data, string $relation_class, string $relation_method, string $attach_function, DataParser $parser, array $entity) 
     {
-//dump('convertAndAttach() '.$relation_class);
 
         // requirements should not convert their relation (item), only find existing and attach
         if($relation_method === 'item'){
             $related = Item::firstWhere('slug', $entity['slug']);
-//    ddd($slug, $model, $relation_data, $related);
+
             if(isset($related)){
                 $this->attachRelated($model, $related, $relation_method, $attach_function);
             }
+            
             return $related;
         }
 
@@ -183,12 +152,7 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
                         $model->name
                     )->first()
                     : null);
-            /*if(isset($relations['item_slug']) && $relations['item_slug'] === 'onionsoup'){
-                dump($relation_class::where(
-                    'name',
-                    $model->name
-                )->first(), 'model name: '.$model->name.', item slug: '.($relations['item_slug'] ?? '').', name: '.($relations['name'] ?? ''), $relations, 'found: ', $related, 'model: ', $model, 'entity: ', $entity);
-            }*/
+            
             // attach relation to model
             isset($related) ?
                 $this->attachRelated($model, $related, $relation_method, $attach_function) :
@@ -196,16 +160,6 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
 
             return $related;
         } // end creation() or piece_slug
-
-/* 
-if($relation_method === 'craftingStation'
-|| $relation_method === 'craftingDevice'
-|| $relation_method === 'repairStation'){
-    $related = ( isset($entity['raw_crafting_station_name']) ? CraftingStation::firstWhere('raw_name', $entity['raw_crafting_station_name']) : null ) ?? ( isset($entity['raw_crafting_station_name']) ? RepairStation::firstWhere('raw_name', $entity['raw_repair_station_name']) : null) ?? PieceTable::firstWhere('true_name', $entity['piece_table_true_name'])
-    ?? null;
-
-dump($entity, $model, $relation_data, 'found: ', $related, 'relation class: '.$relation_class.' relation method: '.$relation_method);
-}*/
         
         // piece recipe should not convert crafting station or piece table, only find existing and attach
         if($relation_method === 'craftingStation' 
@@ -221,8 +175,6 @@ dump($entity, $model, $relation_data, 'found: ', $related, 'relation class: '.$r
                 ?? (isset($entity['raw_repair_station_name']) && Str::contains($relation_class, 'RepairStation') ? RepairStation::firstWhere('raw_name', $entity['raw_repair_station_name']) : null )
                 ?? (isset($entity['piece_table_true_name']) && Str::contains($relation_class, 'PieceTable') ? PieceTable::firstWhere('true_name', $entity['piece_table_true_name']) : null) 
                 ?? null;
-
-//dump($entity, $model, $relation_data, $related);
 
             if(isset($related)){
                 $this->attachRelated($model, $related, $relation_method, $attach_function);
@@ -244,33 +196,8 @@ dump($entity, $model, $relation_data, 'found: ', $related, 'relation class: '.$r
             return null;
         }
         
-/* 
-if(Str::contains(get_class($model), 'Piece')) {
-    dump(
-        'attach ' . $relation_class . ' ('.(isset($related) ? $related->slug : 'NO SLUG').') to ' . get_class( $model ) . ' (' . $model->slug . ') with ' . get_class(
-            $model
-        ) . '->' . $relation_method . '()->' . $attach_function . '('.(isset($related) ? get_class($related) : '').')'
-//        $model,
-//        $related
-    );
-} 
-*/
-        
         // attach relation to model
         $this->attachRelated($model, $related, $relation_method, $attach_function);
-
-/* 
-if(Str::contains(Str::lower($model->name), 'cauldron') || Str::contains(Str::lower($related->name), 'cauldron')) {
-    dump(
-        $relation_method.'() attached?', 
-        $model->$relation_method, 
-        'related', $related, 
-        'model', $model
-    );
-dump('================');
-}
-*/
-
 
         return $related;
     }
@@ -287,18 +214,14 @@ dump('================');
      */
     protected function attachRelated(Model $model, Model $relation, string $relation_method, string $attach_function)
     {
-//dump('attachRelated() '.get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')', $model, $relation);
     
         if(null === $model->$relation_method()) {
-//dump('NO RELATION METHODS: '.$relation_method);        
             // no relation methods
             return;
         }
         
         if(is_array($model->$relation_method())){
             // some models have multiple methods for a related model class (SharedData -> StatusEffect)
-/*dump('RELATION METHOD RETURNS ARRAY');
-dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');*/
 
             collect($model->$relation_method())->each(function($method) use ($model, $relation, $attach_function) {
                 // don't use ALL methods to attach,
@@ -315,7 +238,6 @@ dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_cla
             
             return;         
         }
-//dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');  
       
         $model->$relation_method()->$attach_function($relation);
         // attach saves by default
