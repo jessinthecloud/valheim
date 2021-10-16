@@ -10,12 +10,12 @@
     <div class="item-details flex-grow md:mr-6">
         <p class="block my-4">
             {!! $item->sharedData->description !!} 
-            <em class="block mt-2">{{ $item->itemType() }}</em>
+            <em class="block mt-2">{{ $item->type() }}</em>
         </p>
         
         <h3 class="text-xl font-semibold mt-6">Details</h3>
         {{-- if weapon --}}
-        @if($item->isWeapon())
+        @if(is_a($item, App\Models\Weapon::class))
             <table>
                 <tr>
                     <td class="font-bold px-2 py-1">Attack Force:</td>
@@ -38,7 +38,7 @@
             </table>
         @endif
         {{-- if armor --}}
-        @if($item->isArmor())
+        @if(is_a($item, App\Models\Armor::class))
             <table>
                 <tr>
                     <td class="font-bold px-2 py-1">Armor:</td>
@@ -75,7 +75,7 @@
             </table>
         @endif
         {{-- if food --}}
-        @if($item->isFood())
+        @if(is_a($item, App\Models\Consumable::class))
             <table>
                 <tr>
                     <td class="font-bold px-2 py-1">Health:</td>

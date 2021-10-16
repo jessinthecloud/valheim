@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Armor;
+use App\Models\Consumable;
 use App\Models\Item;
+use App\Models\Weapon;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Pagination\Paginator;
 
 class ItemController extends Controller
 {
@@ -14,12 +19,27 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $paginator = Item::orderBy('name', 'asc')->paginate(32);
+        $page = $request->page ?? 1;
+        $per_page = 32;
 
-        $items = collect($paginator->items());
+        $weapons = Weapon::orderBy('name', 'asc')->get();
+        $armors = Armor::orderBy('name', 'asc')->get();
+        $consumables = Consumable::orderBy('name', 'asc')->get();
 
+        $all_items = collect()
+            ->concat($weapons)
+            ->concat($armors)
+            ->concat($consumables)
+            ->sortBy('name')
+            ;
+            
+        $items = $all_items->skip((($page-1) * $per_page))->take($per_page);
+
+        $paginator = new LengthAwarePaginator($items, $all_items->count(), $per_page, $page, ['path'=>$request->getPathInfo()]);
+    
+    
         return view('items.index',
             compact(
                 'items',
@@ -38,6 +58,8 @@ class ItemController extends Controller
     public function show(Request $request, Item $item)
     {
         $item->name = ucwords($item->name);
+        // lazy eager load recipe
+        $item->load('recipes', 'recipes.requirements', 'recipes.requirements.item');
 
         return view('items.show', compact('item'));
     }

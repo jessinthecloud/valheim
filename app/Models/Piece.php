@@ -11,37 +11,39 @@ use Illuminate\Database\Eloquent\Model;
 class Piece extends Craftable
 {
     use HasFactory;
-    
+
     protected $table = 'pieces';
 
-    public function recipeRequirements()
-    {
-        return $this->belongsToManyThrough(PieceRecipe::class, Requirement::class);
-    }
-    
-/////////////////////////////////////////////////////////////////
-
-    public function relatedItems()
-    {
-        return Requirement::whereHas('item', function($query){
-            $query->where('item_id', $this->item->id);
-        })
-        ->orWhereHas('pieces', function($query){
-            $query->whereHas('requirements',  function($query){
-                $query->where('item_id', $this->item->id);
-            });
-        })
-        ->get()->unique('item_id');
-    }
+// -- RELATIONSHIPS -----------------------------------------------
 
     /**
-     * shared_data item_type as string
+     * @required by Craftable
+     *
+     * @return mixed
+     */
+    public function requirementFor()
+    {
+        return $this->belongsToManyThrough( PieceRecipe::class, Requirement::class );
+    }
+
+    public function recipe()
+    {
+        return $this->belongsTo(PieceRecipe::class, 'creation_id');
+    }
+
+// -- SCOPES -----------------------------------------------------
+
+
+// -- MISC -----------------------------------------------
+
+    /**
+     * piece category as string
      *
      * @return string   item type
      */
     public function type() : string
     {
-        return $this->name_EN(PieceCategory::toString($this->category));
+        return $this->niceName( PieceCategory::toString( $this->category ) );
     }
 
     public function isFurniture() : bool
@@ -57,5 +59,18 @@ class Piece extends Craftable
     public function isForCrafting() : bool
     {
         return $this->category === PieceCategory::Crafting;
+    }
+
+    public function relatedItems()
+    {
+        return Requirement::whereHas( 'item', function ( $query ) {
+            $query->where( 'item_id', $this->item->id );
+        } )
+            ->orWhereHas( 'pieces', function ( $query ) {
+                $query->whereHas( 'requirements', function ( $query ) {
+                    $query->where( 'item_id', $this->item->id );
+                } );
+            } )
+            ->get()->unique( 'item_id' );
     }
 }

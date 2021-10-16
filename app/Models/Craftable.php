@@ -26,19 +26,14 @@ abstract class Craftable extends Model
      * @var array
      */
     protected $with = [];
-    
-    abstract public function recipeRequirements();
-    
-    abstract public function type();
 
-    public function niceName()
-    {
-        
-    }    
+    abstract public function requirementFor();
+
+    abstract public function type();
     
     // split string into array on uppercase letter and turn it into string
-    public static function name_EN($name)
+    public static function niceName( $name )
     {
-        return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
+        return trim( implode( ' ', preg_split( '/(?=[A-Z])/', $name ) ) ) ?? $name;
     }
 }

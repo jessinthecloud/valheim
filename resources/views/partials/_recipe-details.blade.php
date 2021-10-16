@@ -29,7 +29,7 @@
                         class="underline hover:text-amber hover:no-underline transition ease-in-out duration-150"
                         href="{{ route('items.show', $requirement->item->slug) }}"
                     >
-                        {{ $requirement->name }}
+                        {{ $requirement->item->name }}
                     </a>
                 </li>
             @endif

@@ -13,9 +13,7 @@ class Item extends Craftable
 {
     use HasFactory;
 
-    // more useful: only lockdown specific fields from being mass-assigned
-    // empty array means nothing is locked down
-    protected $guarded = [];
+    protected $table = 'items';
 
     /**
      * The attributes that should be hidden for arrays.
@@ -32,14 +30,14 @@ class Item extends Craftable
     protected $with = [
         'sharedData',
     ];
-    
+
     // ItemType values that are weapons
     public const WEAPON_TYPES = [
         ItemType::OneHandedWeapon,
         ItemType::Bow,
         ItemType::Ammo,
         ItemType::TwoHandedWeapon,
-        ItemType::Attach_atgeir
+        ItemType::Attach_atgeir,
     ];
 
     // ItemType values that are armor pieces or items
@@ -51,7 +49,7 @@ class Item extends Craftable
         ItemType::Hands,
         ItemType::Shoulder,
     ];
-    
+
     // Indices of the converted json array that correspond to
     // relationships and should not be directly inserted
     // index_name => relationFunctionName ; to allow array_intersect_key comparison
@@ -63,49 +61,69 @@ class Item extends Craftable
         ],
     ];
 
-
-    // split string into array on uppercase letter and turn it into string
-    public static function name_EN($name)
-    {
-        return trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
-    }
+// -- RELATIONSHIPS -----------------------------------------------
 
     /**
      * items can have multiple recipes for their variants
      * e.g., Bronze and 5 Bronze bars
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function recipes()
     {
-        return $this->hasMany(ItemRecipe::class);
+        return $this->hasMany( ItemRecipe::class, 'creation_id' );
     }
 
-    public function recipeRequirements()
-    {
-        return $this->belongsToManyThrough(ItemRecipe::class, Requirement::class);
-    }
-
+    /**
+     * @required by Craftable
+     *
+     * @return mixed
+     */
     public function requirementFor()
     {
-        return $this->belongsToManyThrough(ItemRecipe::class, Requirement::class);
+        return $this->belongsToManyThrough( ItemRecipe::class, Requirement::class );
     }
 
     public function sharedData()
     {
-        return $this->belongsTo(SharedData::class);
+        return $this->belongsTo( SharedData::class );
     }
-    
-////////////////////////////////////////////////////////////////
+
+// -- SCOPES -----------------------------------------------------
+
+    public function scopeWeapon($query)
+    {
+        return $query->whereHas( 'sharedData', function($query){
+            $query->whereIn('item_type', Item::WEAPON_TYPES);
+        } );
+    }
+
+    public function scopeArmor($query)
+    {
+        return $query->whereHas( 'sharedData', function($query){
+            $query->whereIn('item_type', Item::ARMOR_TYPES);
+        } );
+    }
+
+    public function scopeConsumable($query)
+    {
+        return $query->whereHas( 'sharedData', function($query){
+            $query->where('item_type', ItemType::Consumable);
+        } );
+    }
+
+// -- MISC -----------------------------------------------
 
     /**
+     * @required by Craftable
+     *
      * shared_data item_type as string
      *
      * @return string   item type
      */
     public function type() : string
     {
-        return $this->name_EN(ItemType::toString($this->sharedData->item_type));
+        return $this->niceName( ItemType::toString( $this->sharedData->item_type ) );
     }
 
     public function weight()
@@ -115,38 +133,37 @@ class Item extends Craftable
 
     public function teleportable() : bool
     {
-        return ((int)$this->sharedData->teleportable === 1);
+        return ( (int)$this->sharedData->teleportable === 1 );
     }
 
-    public function image(ImageFetcher $fetcher)
+    public function image( ImageFetcher $fetcher )
     {
-        return $fetcher->fetchImageHtmlString(Str::snake($this->name));
+        return $fetcher->fetchImageHtmlString( Str::snake( $this->name ) );
     }
-    
-/*
- * WEAPON METHODS
- */
+
+    /*************************************
+     * WEAPON METHODS
+     */
     public function isWeapon() : bool
     {
-        return in_array($this->sharedData->item_type, Item::WEAPON_TYPES);
+        return in_array( $this->sharedData->item_type, Item::WEAPON_TYPES );
     }
 
-    
-
+    /*************************************
+     * ARMOR METHODS
+     */
     public function isArmor() : bool
     {
-        return in_array($this->sharedData->item_type, Item::ARMOR_TYPES);
+        return in_array( $this->sharedData->item_type, Item::ARMOR_TYPES );
     }
 
-    
-    
-/*
- * FOOD METHODS
- */
+    /*************************************
+     * FOOD METHODS
+     */
     public function isFood() : bool
     {
-        return ((int)$this->sharedData->item_type === 2);
+        return ( (int)$this->sharedData->item_type === ItemType::Consumable );
     }
 
-    
+
 }
