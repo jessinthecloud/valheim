@@ -2,7 +2,9 @@
 
 namespace App\Converters;
 
+use App\Models\CraftingStation;
 use App\Models\Item;
+use App\Models\RepairStation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -22,15 +24,16 @@ class ModelConverter implements Converter
      */
     public function convert(array $data, string $class, DataParser $parser)
     {
-    
         // create/convert names
         $entity = $parser->parse($data, $class);
         // make sure slug is set and unique
         $entity['slug'] = $entity['item_slug'] = $entity['piece_slug'] =isset($entity['slug']) ? 
             $parser->checkAndSetSlug($entity['slug'], $class) : 
             null;
-       
+//dump(' ---- convert() '.$class.' :::>> '.($data['raw_name'] ?? $data['true_name'] ?? $data['var_name'] ?? '').' ---- ', $data);
+
         if( empty($entity['slug']) ){
+//dump(' == SLUG NULL SKIP == ');        
             // if no slug, don't bother
             return null;
         }        
@@ -97,12 +100,18 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
 
                 // need to send array to the convert function
                 if(!is_array($relation)){
-                   
-                    if($relation_method === 'creation' || isset($relations['piece_slug'])){
+//dump('relation not array');                   
+                    if($relation_method === 'creation'/* || isset($relations['piece_slug'])*/){
                                             
                         // find existing item b/c only item_slug/piece_slug exists
                         // when trying to find related
-                        $related = (isset($relations['item_slug']) ? $relation_class::where('slug', $relations['item_slug'])->first() : null) ?? (isset($relations['piece_slug']) ? $relation_class::where('slug', $relations['piece_slug'])->first() : null);
+                        $related = (isset($relations['item_slug']) ? $relation_class::where('slug', $relations['item_slug'])->first() : null) ?? (isset($relations['piece_slug']) 
+                            ? $relation_class::where('slug', $relations['piece_slug'])->first() 
+                            // sometimes recipes don't have item slug that matches 
+                            : ((isset($relations['item_slug']) 
+                                ? $relation_class::where('name', Str::replace('-', ' ', $relations['item_slug']))->first() 
+                                : null)));
+//dump('piece slug: '.($relations['piece_slug'] ?? '').', item slug: '.($relations['item_slug'] ?? '').', name: '.($relations['name'] ?? ''), $relations, $related);
                         // attach relation to model
                         isset($related) ? 
                             $this->attachRelated($model, $related, $relation_method, $attach_function) : 
@@ -112,7 +121,7 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
                     } // end creation() or piece_slug
                     
                     // convert & attach relation to model
-                    return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser, $entity['slug'] ?? null);
+                    return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser, $entity);
                 }
                 
                 // make sure $data is more than 1 dimensional before looping
@@ -125,12 +134,12 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
                 $multi_relation_data = collect($relation)->diffAssoc($flat_relation_data);
                 
                 $multi_relation_data = $multi_relation_data->map(function($entity) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
-
+//dump('multi-d relation', $entity);
                     // convert & attach relation to model
-                    return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser, $entity['slug'] ?? null);
+                    return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser, $entity);
                 });
 
-                $flat_relation_data = $this->convertAndAttachRelation($model, $relation, $relation_class, $relation_method, $attach_function, $parser, $entity['slug'] ?? null);
+                $flat_relation_data = $this->convertAndAttachRelation($model, $relation, $relation_class, $relation_method, $attach_function, $parser, $entity);
 
                 return $multi_relation_data->merge($flat_relation_data)->all();
             });
@@ -152,14 +161,31 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
      * @return mixed
      * @throws \Exception
      */
-    protected function convertAndAttachRelation(Model $model, array $relation_data, string $relation_class, string $relation_method, string $attach_function, DataParser $parser, string $slug=null) 
+    protected function convertAndAttachRelation(Model $model, array $relation_data, string $relation_class, string $relation_method, string $attach_function, DataParser $parser, array $entity) 
     {
-//dump('convert related '.$relation_class.': ', $relation_data);
+//dump('convertAndAttach() '.$relation_class);
 
         // requirements should not convert their relation (item), only find existing and attach
         if($relation_method === 'item'){
-            $related = Item::firstWhere('slug', $slug);
+            $related = Item::firstWhere('slug', $entity['slug']);
 //    ddd($slug, $model, $relation_data, $related);
+            if(isset($related)){
+                $this->attachRelated($model, $related, $relation_method, $attach_function);
+            }
+            return $related;
+        }
+        // piece recipe should not convert crafting station, only find existing and attach
+        if($relation_method === 'craftingStation' 
+            || ($relation_method === 'craftingDevice' 
+                && Str::contains($relation_class, 'CraftingStation')) 
+            || ($relation_method === 'repairStation' 
+                && Str::contains($relation_class, 'RepairStation'))
+        ){
+        
+            $related = CraftingStation::firstWhere('raw_name', $entity['raw_crafting_station_name']) ?? RepairStation::firstWhere('raw_name', $entity['raw_repair_station_name']) ?? null;
+
+//dump($entity, $model, $relation_data, $related);
+
             if(isset($related)){
                 $this->attachRelated($model, $related, $relation_method, $attach_function);
             }
@@ -223,6 +249,8 @@ dump('================');
      */
     protected function attachRelated(Model $model, Model $relation, string $relation_method, string $attach_function)
     {
+//dump('attachRelated() '.get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')', $model, $relation);
+    
         if(null === $model->$relation_method()) {
 //dump('NO RELATION METHODS: '.$relation_method);        
             // no relation methods
@@ -231,7 +259,9 @@ dump('================');
         
         if(is_array($model->$relation_method())){
             // some models have multiple methods for a related model class (SharedData -> StatusEffect)
-            
+/*dump('RELATION METHOD RETURNS ARRAY');
+dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');*/
+
             collect($model->$relation_method())->each(function($method) use ($model, $relation, $attach_function) {
                 // don't use ALL methods to attach,
                 // just the one with matching type (e.g., status effect)
@@ -247,7 +277,7 @@ dump('================');
             
             return;         
         }
-/*dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');        */
+//dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');        
         $model->$relation_method()->$attach_function($relation);
         // attach saves by default
         if($attach_function !== 'attach'){
