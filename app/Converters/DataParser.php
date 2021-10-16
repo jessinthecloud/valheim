@@ -110,6 +110,7 @@ class DataParser
     {
         $name = Str::of(trim($name))->replace('_', ' ');
         $name = Str::of($name)->split('/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/')->toArray();
+        
         return implode(' ', $name) ?? $name;
     }
 
@@ -149,18 +150,22 @@ class DataParser
      */
     public function checkAndSetSlug(string $slug, string $class) : string
     {
+/*if(Str::contains($class, 'Requirement') && Str::contains($slug, 'turnip')){
+    dump(' SLUGS: '.$slug_count = $class::where( 'slug', 'like', $slug . '%' )->count(), $slug, 'has slug col: '.Schema::hasColumn($class, 'slug'));
+}*/
         // check model has slug col
-        if(Schema::hasColumn($class, 'slug')) {
+        if(Schema::hasColumn($this->parseTable($class), 'slug')) {
             // check if slug exists
             // needed where there is no true name, i.e. shared data for block_attack_aoe
             $slug_count = $class::where( 'slug', 'like', $slug . '%' )->count();
             if ( $slug_count > 0 ) {
                 // append to create unique slug 
                 $slug .= '-' . ( $slug_count + 1 );
-                return $slug;
             }
         }
-
+/*if(Str::contains($class, 'Requirement') && Str::contains($slug, 'turnip')){
+    dump(' SLUGS: '.$slug_count.' -- has slug col '.(Schema::hasColumn($this->parseTable($class), 'slug')). ' -- need new slug: '. ( $slug_count > 0 ).' +++ new slug: '.$slug);
+}*/
         // for recipe only
         return Str::after($slug, 'recipe-');
     }

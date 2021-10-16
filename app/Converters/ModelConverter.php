@@ -2,6 +2,7 @@
 
 namespace App\Converters;
 
+use App\Models\Item;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -32,25 +33,39 @@ class ModelConverter implements Converter
         if( empty($entity['slug']) ){
             // if no slug, don't bother
             return null;
-        }
+        }        
 
         // only try to insert columns that exist
         $table = $parser->parseTable($class);
         $db_column_values = Arr::only($entity, Schema::getColumnListing($table));
-
-/*if(Str::contains($class, 'Piece')) {
-dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_values, 'entity', $entity);
-}*/
-
+        
+        // requirements also need to check amount and per level 
+        // because slug is not unique to Requirement
+        $unique_fields = (Str::contains($class, ["Requirement"])) ? $db_column_values : ['slug' => $entity['slug']];
+        
         // create model
         // check if already exists
         // find existing or create model from values
         $model = $class::firstOrCreate(
         // array of unique key value to check 
-            ['slug' => $entity['slug']],
+            $unique_fields,
             // array of values to use
             $db_column_values
         );
+        
+/*if(Str::contains($class, ["Requirement"])) {
+    dump(
+        $class.' -- '.$parser->parseTable($class),
+        'columns: ',
+        Schema::getColumnListing($table),
+        'column vals: ',
+        $db_column_values,
+        'entity',
+        $entity,
+        'model',
+        $model
+    );
+}*/
 
         if(defined($class.'::RELATION_INDICES')) {
             // get any that are also relationships that need to be mapped
@@ -66,15 +81,19 @@ dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_va
                 $relation_method = $class::RELATION_INDICES[$key]['method'];
                 // determine relation attach function attach() vs associate()
                 $attach_function = $class::RELATION_INDICES[$key]['relation'];
-/*if(Str::contains(get_class($model), 'Piece')) {
+                
+//if(Str::contains(get_class($model), 'Piece')) {
+/* 
+if(Str::contains(Str::lower($model->name), 'cauldron')) {
     dump(
         $class::RELATION_INDICES,
         $entity,
-        $relation,
+        $relation,' --- ',
         $relations,
         'related class: ' . $relation_class . ' relationship method: ' . $relation_method . '() -- save function: ' . $attach_function
     );
-} */      
+}  
+*/     
 
                 // need to send array to the convert function
                 if(!is_array($relation)){
@@ -93,7 +112,7 @@ dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_va
                     } // end creation() or piece_slug
                     
                     // convert & attach relation to model
-                    return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser);
+                    return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser, $entity['slug'] ?? null);
                 }
                 
                 // make sure $data is more than 1 dimensional before looping
@@ -108,10 +127,10 @@ dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_va
                 $multi_relation_data = $multi_relation_data->map(function($entity) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
 
                     // convert & attach relation to model
-                    return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser);
+                    return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser, $entity['slug'] ?? null);
                 });
 
-                $flat_relation_data = $this->convertAndAttachRelation($model, $relation, $relation_class, $relation_method, $attach_function, $parser);
+                $flat_relation_data = $this->convertAndAttachRelation($model, $relation, $relation_class, $relation_method, $attach_function, $parser, $entity['slug'] ?? null);
 
                 return $multi_relation_data->merge($flat_relation_data)->all();
             });
@@ -133,9 +152,19 @@ dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_va
      * @return mixed
      * @throws \Exception
      */
-    protected function convertAndAttachRelation(Model $model, array $relation_data, string $relation_class, string $relation_method, string $attach_function, DataParser $parser) 
+    protected function convertAndAttachRelation(Model $model, array $relation_data, string $relation_class, string $relation_method, string $attach_function, DataParser $parser, string $slug=null) 
     {
 //dump('convert related '.$relation_class.': ', $relation_data);
+
+        // requirements should not convert their relation (item), only find existing and attach
+        if($relation_method === 'item'){
+            $related = Item::firstWhere('slug', $slug);
+//    ddd($slug, $model, $relation_data, $related);
+            if(isset($related)){
+                $this->attachRelated($model, $related, $relation_method, $attach_function);
+            }
+            return $related;
+        }
     
         $related = $this->convert(
             // relation data
@@ -151,7 +180,8 @@ dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_va
             return null;
         }
         
-/*if(Str::contains(get_class($model), 'Piece')) {
+/* 
+if(Str::contains(get_class($model), 'Piece')) {
     dump(
         'attach ' . $relation_class . ' ('.(isset($related) ? $related->slug : 'NO SLUG').') to ' . get_class( $model ) . ' (' . $model->slug . ') with ' . get_class(
             $model
@@ -159,15 +189,23 @@ dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_va
 //        $model,
 //        $related
     );
-}*/
+} 
+*/
         
         // attach relation to model
         $this->attachRelated($model, $related, $relation_method, $attach_function);
-        
-/*if(Str::contains(get_class($model), 'Piece')){
-    dump($relation_method.'() attached?', $model->$relation_method, $related, $model);
+
+/* 
+if(Str::contains(Str::lower($model->name), 'cauldron') || Str::contains(Str::lower($related->name), 'cauldron')) {
+    dump(
+        $relation_method.'() attached?', 
+        $model->$relation_method, 
+        'related', $related, 
+        'model', $model
+    );
 dump('================');
-}*/
+}
+*/
 
 
         return $related;
