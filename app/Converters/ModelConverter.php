@@ -102,42 +102,7 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
                 // need to send array to the convert function
                 if(!is_array($relation)){
 //dump('relation not array');                   
-                    if($relation_method === 'creation'/* || isset($relations['piece_slug'])*/){
-                                            
-                        // find existing item b/c only item_slug/piece_slug exists
-                        // when trying to find related
-                        $related = (isset($relations['item_slug']) 
-                            ? $relation_class::where('slug', $relations['item_slug'])->first() 
-                            : null) 
-                        ?? (isset($relations['piece_slug']) 
-                            ? $relation_class::where('slug', $relations['piece_slug'])->first() 
-                            // sometimes recipes don't have item slug that matches 
-                            : null) 
-                        ?? (isset($relations['item_slug']) 
-                            ? $relation_class::where(
-                                    'name', 
-                                    Str::replace('-', ' ', $relations['item_slug'])
-                                )->first() 
-                            : null) 
-                        ?? ((null !== $model->name)
-                            ? $relation_class::where(
-                                    'name',
-                                    $model->name
-                                )->first()
-                            : null);
-/*if(isset($relations['item_slug']) && $relations['item_slug'] === 'onionsoup'){
-    dump($relation_class::where(
-        'name',
-        $model->name
-    )->first(), 'model name: '.$model->name.', item slug: '.($relations['item_slug'] ?? '').', name: '.($relations['name'] ?? ''), $relations, 'found: ', $related, 'model: ', $model, 'entity: ', $entity);
-}*/                        
-                        // attach relation to model
-                        isset($related) ? 
-                            $this->attachRelated($model, $related, $relation_method, $attach_function) : 
-                            $related = null;
-                        
-                        return $related;
-                    } // end creation() or piece_slug
+                    
                     
                     // convert & attach relation to model
                     return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser, $entity);
@@ -193,6 +158,44 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
             }
             return $related;
         }
+
+        // recipes should not convert their relation (item), only find existing and attach
+        if($relation_method === 'creation'/* || isset($relations['piece_slug'])*/){
+
+            // find existing item b/c only item_slug/piece_slug exists
+            // when trying to find related
+            $related = (isset($relations['item_slug'])
+                    ? $relation_class::where('slug', $relations['item_slug'])->first()
+                    : null)
+                ?? (isset($relations['piece_slug'])
+                    ? $relation_class::where('slug', $relations['piece_slug'])->first()
+                    // sometimes recipes don't have item slug that matches 
+                    : null)
+                ?? (isset($relations['item_slug'])
+                    ? $relation_class::where(
+                        'name',
+                        Str::replace('-', ' ', $relations['item_slug'])
+                    )->first()
+                    : null)
+                ?? ((null !== $model->name)
+                    ? $relation_class::where(
+                        'name',
+                        $model->name
+                    )->first()
+                    : null);
+            /*if(isset($relations['item_slug']) && $relations['item_slug'] === 'onionsoup'){
+                dump($relation_class::where(
+                    'name',
+                    $model->name
+                )->first(), 'model name: '.$model->name.', item slug: '.($relations['item_slug'] ?? '').', name: '.($relations['name'] ?? ''), $relations, 'found: ', $related, 'model: ', $model, 'entity: ', $entity);
+            }*/
+            // attach relation to model
+            isset($related) ?
+                $this->attachRelated($model, $related, $relation_method, $attach_function) :
+                $related = null;
+
+            return $related;
+        } // end creation() or piece_slug
 
 /* 
 if($relation_method === 'craftingStation'
