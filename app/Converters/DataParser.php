@@ -17,9 +17,8 @@ class DataParser
      */
     public function parse($data, string $class) : array
     {
-//dump('parse()');
         
-        $data = collect($data)->unique();
+        $data = collect($data);
 
         // make sure $data is more than 1 dimensional before looping
         // otherwise, make $data an array and convert its names directly 
@@ -55,6 +54,7 @@ class DataParser
         // some models have longer raw_names (i.e., raw_crafting_station_name)
         $raw_name_index = (array_key_exists('raw_name', $info)) ? 
             'raw_name' : $this->parseRawName($info, $class);
+//dump($info, 'raw name index for '.$class.': '.$raw_name_index);            
         // if strange case where only true name exists e.g., Recipe_Adze
         // or only prefab name exists (e.g., StoneGolem_clubs shared data)
         $info['raw_name'] = $info[$raw_name_index] ?? (isset($info['true_name']) ? $this->removeCsPrefix($info['true_name']) : ($info['prefab_name'] ?? ''));

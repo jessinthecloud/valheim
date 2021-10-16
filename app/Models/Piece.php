@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
 class Piece extends Craftable
 {
     use HasFactory;
+    
+    protected $table = 'pieces';
 
     public function recipeRequirements()
     {

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class PieceController extends Controller
 {
+    use DoesConversion;
+    
     /**
      * Display a listing of the resource.
      *

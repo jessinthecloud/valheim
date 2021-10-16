@@ -21,9 +21,11 @@ class ModelConverter implements Converter
      */
     public function convert(array $data, string $class, DataParser $parser)
     {
+    
         // create/convert names
         $entity = $parser->parse($data, $class);
-        $entity['slug'] = $entity['item_slug'] = isset($entity['slug']) ? 
+        // make sure slug is set and unique
+        $entity['slug'] = $entity['item_slug'] = $entity['piece_slug'] =isset($entity['slug']) ? 
             $parser->checkAndSetSlug($entity['slug'], $class) : 
             null;
        
@@ -35,6 +37,10 @@ class ModelConverter implements Converter
         // only try to insert columns that exist
         $table = $parser->parseTable($class);
         $db_column_values = Arr::only($entity, Schema::getColumnListing($table));
+
+/*if(Str::contains($class, 'Piece')) {
+dump('columns: ',Schema::getColumnListing($table), 'column vals: ',$db_column_values, 'entity', $entity);
+}*/
 
         // create model
         // check if already exists
@@ -60,51 +66,36 @@ class ModelConverter implements Converter
                 $relation_method = $class::RELATION_INDICES[$key]['method'];
                 // determine relation attach function attach() vs associate()
                 $attach_function = $class::RELATION_INDICES[$key]['relation'];
-            
+/*if(Str::contains(get_class($model), 'Piece')) {
+    dump(
+        $class::RELATION_INDICES,
+        $entity,
+        $relation,
+        $relations,
+        'related class: ' . $relation_class . ' relationship method: ' . $relation_method . '() -- save function: ' . $attach_function
+    );
+} */      
+
                 // need to send array to the convert function
                 if(!is_array($relation)){
                    
-                    if($relation_method === 'creation'){
-
-/*if(Str::contains($class, 'Recipe') && $relation_method === 'creation'){
-//$model->refresh();
-    dump($model::RELATION_INDICES, $model, $relation, $relations, 'related class: '.$relation_class.' relationship method: '.$relation_method.'() -- save function: '.$attach_function);
-}*/
-                    
-                        // find existing item b/c only item_slug exists
-                        $related = $relation_class::where('slug', $relations['item_slug'])->first();
+                    if($relation_method === 'creation' || isset($relations['piece_slug'])){
+                                            
+                        // find existing item b/c only item_slug/piece_slug exists
+                        // when trying to find related
+                        $related = (isset($relations['item_slug']) ? $relation_class::where('slug', $relations['item_slug'])->first() : null) ?? (isset($relations['piece_slug']) ? $relation_class::where('slug', $relations['piece_slug'])->first() : null);
                         // attach relation to model
                         isset($related) ? 
                             $this->attachRelated($model, $related, $relation_method, $attach_function) : 
                             $related = null;
                         
                         return $related;
-/*if(isset($related)){
-    dump($model::RELATION_INDICES, $model, $relation, $relations, 'related class: '.$relation_class.' relationship method: '.$relation_method.'() -- save function: '.$attach_function);
-    ddd($relation_class::where('slug', $relations['item_slug'])->first()->toArray(), '===============--------===================');
-}*/                  
-                    } // end creation()
+                    } // end creation() or piece_slug
                     
                     // convert & attach relation to model
                     return $this->convertAndAttachRelation($model, $relations, $relation_class, $relation_method, $attach_function, $parser);
                 }
                 
-                /*
-                // handle 2D+ relation array (requirements)
-                if( null !== collect($relation)->first() && !is_scalar( collect($relation)->first() ) ) {
-                    return collect( $relation )->map(
-                        function ( $entity ) use ( $relation, $relation_class, $relation_method, $parser, $model, $attach_function ) {
-                            
-                            // convert & attach relation to model
-                            return $this->convertAndAttachRelation($model, $entity, $relation_class, $relation_method, $attach_function, $parser);
-                        } 
-                    );
-                }
-
-                // convert & attach relation to model
-                return $this->convertAndAttachRelation($model, $relation, $relation_class, $relation_method, $attach_function, $parser); 
-                */
-//----------------------------------------------------------------
                 // make sure $data is more than 1 dimensional before looping
                 // otherwise, make $data an array and convert its names directly 
                 // check all, not just first
@@ -125,13 +116,9 @@ class ModelConverter implements Converter
                 return $multi_relation_data->merge($flat_relation_data)->all();
             });
         }
-/*if(Str::contains($class, 'Recipe')){
-    dump($model, $model->creation, '--------');
-}*/
-        /*if( Str::contains($class, 'Recipe') && (defined($class.'::RELATION_INDICES') && in_array('item_slug', array_keys($class::RELATION_INDICES)))){
-            dump($entity, $class::RELATION_INDICES);
-        }*/
+        
         return $model;
+        
     } // end convert()
 
     /**
@@ -158,22 +145,30 @@ class ModelConverter implements Converter
             // parser object
             $parser
         );
-        
-//dump('attach '.$relation_class.' to '.get_class($model).' ('.$model->slug.') with '.get_class($model).'->'.$relation_method.'()->'.$attach_function.'()', $related);
 
         // if null, quit
         if(empty($related)){
             return null;
         }
-
+        
+/*if(Str::contains(get_class($model), 'Piece')) {
+    dump(
+        'attach ' . $relation_class . ' ('.(isset($related) ? $related->slug : 'NO SLUG').') to ' . get_class( $model ) . ' (' . $model->slug . ') with ' . get_class(
+            $model
+        ) . '->' . $relation_method . '()->' . $attach_function . '('.(isset($related) ? get_class($related) : '').')'
+//        $model,
+//        $related
+    );
+}*/
+        
         // attach relation to model
         $this->attachRelated($model, $related, $relation_method, $attach_function);
         
-/*if($relation_method === 'creation'){
-    ddd($relation_method.'() attached?', $model, ($relation_method !== 'statusEffects' ? $model->$relation_method : ''));
-}*/        
+/*if(Str::contains(get_class($model), 'Piece')){
+    dump($relation_method.'() attached?', $model->$relation_method, $related, $model);
+dump('================');
+}*/
 
-//dump('================');
 
         return $related;
     }
@@ -214,7 +209,7 @@ class ModelConverter implements Converter
             
             return;         
         }
-        
+/*dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');        */
         $model->$relation_method()->$attach_function($relation);
         // attach saves by default
         if($attach_function !== 'attach'){

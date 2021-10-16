@@ -13,6 +13,7 @@ use App\Http\Controllers\CraftingStationController;
 use App\Http\Controllers\DoesConversion;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\PieceController;
+use App\Http\Controllers\PieceRecipeController;
 use App\Http\Controllers\PieceTableController;
 use App\Http\Controllers\ItemRecipeController;
 use App\Http\Controllers\StatusEffectController;
@@ -20,6 +21,7 @@ use App\Models\CraftingStation;
 use App\Models\Item;
 use App\Models\ItemRecipe;
 use App\Models\Piece;
+use App\Models\PieceRecipe;
 use App\Models\PieceTable;
 use App\Models\StatusEffect;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -90,6 +92,15 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(PieceController::class)
             ->needs('$class')
             ->give(Piece::class);
+
+        $this->app->when(PieceRecipeController::class)
+            ->needs(Converter::class)
+            ->give(function(){
+                return new ModelConverter(Piece::class);
+            });
+        $this->app->when(PieceRecipeController::class)
+            ->needs('$class')
+            ->give(PieceRecipe::class);
         
         /*// inject into method
         $this->app->bindMethod(
@@ -128,6 +139,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
             StatusEffect::class,
             Piece::class,
             PieceTable::class,
+            PieceRecipe::class,
         ];
     }
 }

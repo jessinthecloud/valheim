@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class CraftingStation extends CraftingDevice
 {
     use HasFactory;
+    
+    protected $table = 'crafting_stations';
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down

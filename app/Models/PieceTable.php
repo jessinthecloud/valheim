@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class PieceTable extends CraftingDevice
 {
     use HasFactory;
+    
+    protected $table = 'piece_tables';
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
@@ -32,6 +34,11 @@ class PieceTable extends CraftingDevice
     {
         $name = trim(implode(' ', preg_split('/(?=[A-Z])/', $name))) ?? $name;
         return (explode('_', $name)[1]) ?? $name;
+    }
+
+    public function recipes()
+    {
+        return $this->hasMany(PieceRecipe::class, 'piece_recipe_id');
     }
 
     public function craftables()

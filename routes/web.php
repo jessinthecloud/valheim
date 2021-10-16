@@ -25,10 +25,10 @@ if (config('app.env') === 'local') {
         ->name('convert.')
         ->group(function () {
         
-        Route::get(
+        /*Route::get(
             '/',
             [App\Http\Controllers\ConvertController::class, 'index']
-        )->name('index');
+        )->name('index');*/
 
         Route::get(
             '/crafting-station',
@@ -70,10 +70,10 @@ if (config('app.env') === 'local') {
         )->name('recipes');
 
         // TODO: piece-recipes, or combine with Pieces convert. OR combine with ItemRecipes and use a RecipesController?
-        /*Route::get(
-            '/piece-recipes',
+        Route::get(
+            '/piece-recipe',
             [App\Http\Controllers\PieceRecipeController::class, 'convert']
-        )->name('piece-recipes');*/
+        )->name('piece-recipes');
 
         /*Route::get(
             '/{name}',
