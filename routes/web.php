@@ -19,7 +19,8 @@ use App\Models\Recipe;
 */
 
 // Convert ------------------------------------------------------------------
-if (env('APP_ENV') === 'local') {
+if (config('app.env') === 'local') {
+
     Route::prefix('convert')
         ->name('convert.')
         ->group(function () {
