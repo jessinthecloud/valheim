@@ -15,6 +15,8 @@ class CreatePieceRecipesTable extends Migration
     {
         Schema::create('piece_recipes', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->string('slug')->nullable()->unique();
             $table->foreignId('creation_id')->references('id')->on('items')->onDelete('cascade')->onUpdate('cascade');
             // amount of items the recipe creates
             $table->foreignId('piece_table_id')->nullable()->constrained();
