@@ -4,6 +4,7 @@ namespace App\Converters;
 
 use App\Models\CraftingStation;
 use App\Models\Item;
+use App\Models\PieceTable;
 use App\Models\RepairStation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -192,15 +193,31 @@ if(Str::contains(Str::lower($model->name), 'cauldron')) {
             }
             return $related;
         }
-        // piece recipe should not convert crafting station, only find existing and attach
+
+/* 
+if($relation_method === 'craftingStation'
+|| $relation_method === 'craftingDevice'
+|| $relation_method === 'repairStation'){
+    $related = ( isset($entity['raw_crafting_station_name']) ? CraftingStation::firstWhere('raw_name', $entity['raw_crafting_station_name']) : null ) ?? ( isset($entity['raw_crafting_station_name']) ? RepairStation::firstWhere('raw_name', $entity['raw_repair_station_name']) : null) ?? PieceTable::firstWhere('true_name', $entity['piece_table_true_name'])
+    ?? null;
+
+dump($entity, $model, $relation_data, 'found: ', $related, 'relation class: '.$relation_class.' relation method: '.$relation_method);
+}*/
+        
+        // piece recipe should not convert crafting station or piece table, only find existing and attach
         if($relation_method === 'craftingStation' 
             || ($relation_method === 'craftingDevice' 
                 && Str::contains($relation_class, 'CraftingStation')) 
             || ($relation_method === 'repairStation' 
                 && Str::contains($relation_class, 'RepairStation'))
+            || ($relation_method === 'craftingDevice'
+                && Str::contains($relation_class, 'PieceTable'))
         ){
         
-            $related = CraftingStation::firstWhere('raw_name', $entity['raw_crafting_station_name']) ?? RepairStation::firstWhere('raw_name', $entity['raw_repair_station_name']) ?? null;
+            $related = (isset($entity['raw_crafting_station_name']) && Str::contains($relation_class, 'CraftingStation') ? CraftingStation::firstWhere('raw_name', $entity['raw_crafting_station_name']) : null)
+                ?? (isset($entity['raw_repair_station_name']) && Str::contains($relation_class, 'RepairStation') ? RepairStation::firstWhere('raw_name', $entity['raw_repair_station_name']) : null )
+                ?? (isset($entity['piece_table_true_name']) && Str::contains($relation_class, 'PieceTable') ? PieceTable::firstWhere('true_name', $entity['piece_table_true_name']) : null) 
+                ?? null;
 
 //dump($entity, $model, $relation_data, $related);
 
@@ -295,7 +312,8 @@ dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_cla
             
             return;         
         }
-//dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');        
+//dump(get_class($model).'->'.$relation_method.'()->'.$attach_function.'('.get_class($relation).')');  
+      
         $model->$relation_method()->$attach_function($relation);
         // attach saves by default
         if($attach_function !== 'attach'){

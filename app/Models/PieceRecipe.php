@@ -50,17 +50,17 @@ class PieceRecipe extends Recipe
      */
     public function craftingDevice()
     {
-        return $this->belongsTo(PieceTable::class);
+        return $this->belongsTo(PieceTable::class, 'piece_table_id');
     }
 
     /**
      * tool required nearby to make the piece
      *
-     * @return Eloquent Relationship or Collection of CraftingStation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo Relationship or Collection of CraftingStation
      */
     public function craftingStation()
     {
-        return $this->craftingStation();
+        return $this->belongsTo(CraftingStation::class, 'crafting_station_id');
     }
 
     public function requirements()
