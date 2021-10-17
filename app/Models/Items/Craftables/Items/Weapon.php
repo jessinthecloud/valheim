@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\Craftables\Items;
+namespace App\Models\Items\Craftables\Items;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Weapon extends Item
+class Weapon extends CraftableItem
 {
     use HasFactory;
 

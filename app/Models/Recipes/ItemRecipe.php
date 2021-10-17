@@ -2,7 +2,7 @@
 
 namespace App\Models\Recipes;
 
-use App\Models\Craftables\Items\Item;
+use App\Models\Items\Craftables\Items\CraftableItem;
 use App\Models\Tools\CraftingStation;
 use App\Models\Tools\RepairStation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +19,7 @@ class ItemRecipe extends Recipe
     public const RELATION_INDICES = [
         'item_slug' => [
             'method' => 'creation',
-            'class' => Item::class,
+            'class' => CraftableItem::class,
             'relation' => 'associate',
         ],
         'requirements' => [
@@ -42,7 +42,7 @@ class ItemRecipe extends Recipe
     // item this recipe creates
     public function creation()
     {
-        return $this->belongsTo(Item::class, 'creation_id');
+        return $this->belongsTo(CraftableItem::class, 'creation_id');
     }
 
     public function requirements()

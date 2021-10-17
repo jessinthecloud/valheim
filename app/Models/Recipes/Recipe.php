@@ -13,25 +13,21 @@ abstract class Recipe extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [
-        /*'resources',
-        'crafting_station_id',
-        'repair_station_id',*/
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = [];
+//    protected $hidden = [];
 
     /**
      * The relationships that should always be loaded.
      *
      * @var array
      */
-    protected $with = [];
+//    protected $with = [];
 
     // item this recipe creates
     abstract public function creation();
@@ -72,13 +68,18 @@ abstract class Recipe extends Model
      *
      * @param int $quality quality level of item
      *
-     * @return CraftingStation
+     * @return int
      */
     public function requiredStationLevel(int $quality) : int
     {
         return (max(1, $this->min_station_level) + ($quality - 1));
     }
 
+    /**
+     * @param int $quality
+     *
+     * @return \App\Models\Tools\CraftingStation|null
+     */
     public function requiredStation(int $quality=0) : ?CraftingStation
     {
         if ($quality > 1) {

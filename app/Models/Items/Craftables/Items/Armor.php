@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Models\Craftables\Items;
+namespace App\Models\Items\Craftables\Items;
 
+use App\Models\Items\Traits\HasSharedData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Armor extends Item
+class Armor extends CraftableItem
 {
     use HasFactory;
 

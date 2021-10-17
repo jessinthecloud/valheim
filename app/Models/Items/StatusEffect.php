@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Craftables\Items;
+namespace App\Models\Items;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
