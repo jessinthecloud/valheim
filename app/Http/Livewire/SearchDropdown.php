@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Piece;
-use App\Models\Recipe;
-use App\Models\Item;
+use App\Models\Craftables\Piece;
+use App\Models\Recipes\Recipe;
+use App\Models\Craftables\Item;
 use Livewire\Component;
 use Illuminate\Support\Str;
 

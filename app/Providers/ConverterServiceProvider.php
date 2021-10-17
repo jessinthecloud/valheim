@@ -3,27 +3,21 @@
 namespace App\Providers;
 
 use App\Converters\Converter;
-use App\Converters\CraftingDeviceConverter;
-use App\Converters\DataParser;
-use App\Converters\ItemConverter;
-use App\Converters\ItemRecipeConverter;
-use App\Converters\JsonSerializer;
 use App\Converters\ModelConverter;
-use App\Http\Controllers\CraftingStationController;
-use App\Http\Controllers\DoesConversion;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\PieceController;
-use App\Http\Controllers\PieceRecipeController;
-use App\Http\Controllers\PieceTableController;
-use App\Http\Controllers\ItemRecipeController;
-use App\Http\Controllers\StatusEffectController;
-use App\Models\CraftingStation;
-use App\Models\Item;
-use App\Models\ItemRecipe;
-use App\Models\Piece;
-use App\Models\PieceRecipe;
-use App\Models\PieceTable;
-use App\Models\StatusEffect;
+use App\Http\Controllers\Conversion\CraftingStationController;
+use App\Http\Controllers\Conversion\ItemController;
+use App\Http\Controllers\Conversion\PieceController;
+use App\Http\Controllers\Conversion\PieceRecipeController;
+use App\Http\Controllers\Conversion\PieceTableController;
+use App\Http\Controllers\Conversion\ItemRecipeController;
+use App\Http\Controllers\Conversion\StatusEffectController;
+use App\Models\Tools\CraftingStation;
+use App\Models\Craftables\Item;
+use App\Models\Recipes\ItemRecipe;
+use App\Models\Craftables\Piece;
+use App\Models\Recipes\PieceRecipe;
+use App\Models\Tools\PieceTable;
+use App\Models\Craftables\StatusEffect;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -48,7 +42,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(CraftingStationController::class )
             ->needs(Converter::class)
             ->give(function(){
-                return new CraftingDeviceConverter(CraftingStation::class);
+                return new ModelConverter();
             });
         $this->app->when(CraftingStationController::class)
             ->needs('$class')
@@ -57,7 +51,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(PieceTableController::class)
             ->needs(Converter::class)
             ->give(function(){
-                return new CraftingDeviceConverter(PieceTable::class);
+                return new ModelConverter(PieceTable::class);
             });
         $this->app->when(PieceTableController::class)
             ->needs('$class')
@@ -67,7 +61,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when(ItemController::class)
             ->needs(Converter::class)
             ->give(function(){
-                return new ItemConverter(Item::class);
+                return new ModelConverter();
             });
 
         $this->app->when( ItemController::class )
@@ -77,7 +71,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when( ItemRecipeController::class )
             ->needs(Converter::class)
             ->give(function(){
-                return new ItemRecipeConverter();
+                return new ModelConverter();
             });
 
         $this->app->when( ItemRecipeController::class )
@@ -129,17 +123,14 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
     public function provides() : array
     {
         return [
-            ModelConverter::class,
-            CraftingDeviceConverter::class,
-            ItemConverter::class,
-            ItemRecipeConverter::class,
-            ItemRecipe::class,
-            Item::class,
-            CraftingStation::class,
             StatusEffect::class,
-            Piece::class,
+            CraftingStation::class,
             PieceTable::class,
+            Item::class,
+            Piece::class,
+            ItemRecipe::class,
             PieceRecipe::class,
+            ModelConverter::class,
         ];
     }
 }
