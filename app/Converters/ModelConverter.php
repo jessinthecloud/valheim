@@ -2,6 +2,8 @@
 
 namespace App\Converters;
 
+use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Item;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Arr;
@@ -9,7 +11,6 @@ use Illuminate\Support\Str;
 use App\Models\Tools\CraftingStation;
 use App\Models\Tools\PieceTable;
 use App\Models\Tools\RepairStation;
-use App\Models\Craftables\Item;
 
 class ModelConverter implements Converter
 {
@@ -226,11 +227,8 @@ class ModelConverter implements Converter
         }
 
         $related = $this->convert(
-        // relation data
             $relation_data,
-            // relation's class
             $relation_class,
-            // parser object
             $parser
         );
 

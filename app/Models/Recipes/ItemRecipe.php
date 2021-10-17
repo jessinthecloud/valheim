@@ -53,7 +53,8 @@ class ItemRecipe extends Recipe
     /**
      * tool that makes the piece
      *
-     * @return Eloquent Relationship or Collection of PieceTable
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * Relationship or Collection of PieceTable
      */
     public function craftingDevice()
     {

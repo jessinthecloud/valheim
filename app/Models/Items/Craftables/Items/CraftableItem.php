@@ -3,18 +3,17 @@
 namespace App\Models\Items\Craftables\Items;
 
 use App\Enums\ItemType;
-use App\Models\Items\AbstractItem;
-use App\Models\Items\Contracts\IsCategorized;
+use App\Models\Items\Item;
+use App\Models\Items\Contracts\IsCategorizable;
 use App\Models\Items\Contracts\IsCraftable;
+use App\Models\Items\Traits\HasRecipe;
 use App\Models\Items\Traits\HasSharedData;
 use App\Models\Recipes\ItemRecipe;
-use App\Models\Recipes\Requirement;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CraftableItem extends AbstractItem implements IsCraftable, IsCategorized
+class CraftableItem extends Item implements IsCraftable, IsCategorizable
 {
-    use HasFactory, HasSharedData;
+    use HasFactory, HasSharedData, HasRecipe;
     
     protected $table = 'items';
 
@@ -56,23 +55,6 @@ class CraftableItem extends AbstractItem implements IsCraftable, IsCategorized
     ];
 
 // -- GLOBAL SCOPES -----------------------------------------------------
-
-    /**
-     * Apply this scope to every query
-     * made by this model
-     *
-     * Get only enabled recipe items (or items with no recipe)
-     *
-     * @return void
-     */
-    protected static function booted()
-    {
-        static::addGlobalScope('enabled', function (Builder $builder) {
-            return $builder->whereHas( 'recipes', function($query){
-                $query->where('enabled', 1);
-            });
-        });
-    }
 
     /**
      * items can have multiple recipes for their variants

@@ -2,8 +2,8 @@
 
 namespace App\Models\Recipes;
 
-use App\Models\Craftables\Items\Item;
-use App\Models\Craftables\Pieces\Piece;
+use App\Models\Items\Craftables\Pieces\Piece;
+use App\Models\Items\Item;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,9 +13,7 @@ class Requirement extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [
-//        'item'
-    ];
+    protected $guarded = [];
 
     /**
      * The relationships that should always be loaded.
@@ -24,8 +22,6 @@ class Requirement extends Model
      */
     protected $with = [
         'item',
-        /*'pieces',
-        'recipes',*/
     ];
 
     // Indices of the converted json array that correspond to

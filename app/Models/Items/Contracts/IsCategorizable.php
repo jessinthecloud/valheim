@@ -2,7 +2,7 @@
 
 namespace App\Models\Items\Contracts;
 
-interface IsCategorized
+interface IsCategorizable
 {
     /**
      * category/type as string

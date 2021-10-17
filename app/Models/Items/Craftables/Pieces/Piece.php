@@ -3,29 +3,20 @@
 namespace App\Models\Items\Craftables\Pieces;
 
 use App\Enums\PieceCategory;
-use App\Models\Items\Contracts\IsCategorized;
+use App\Models\Items\Contracts\IsCategorizable;
 use App\Models\Items\Contracts\IsCraftable;
-use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Traits\HasRecipe;
 use App\Models\Recipes\PieceRecipe;
 use App\Models\Recipes\Requirement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Piece extends CraftableItem implements IsCraftable, IsCategorized
+class Piece implements IsCraftable, IsCategorizable
 {
-    use HasFactory;
+    use HasFactory, HasRecipe;
 
     protected $table = 'pieces';
 
 // -- RELATIONSHIPS -----------------------------------------------
-
-    /**
-     *
-     * @return mixed
-     */
-    public function requirementFor()
-    {
-        return $this->hasManyThrough( PieceRecipe::class, Requirement::class );
-    }
 
     /**
      * items can have multiple recipes for their variants

@@ -2,7 +2,6 @@
 
 namespace App\Models\Items\Craftables\Items;
 
-use App\Models\Items\Traits\HasSharedData;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
