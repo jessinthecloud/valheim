@@ -2,6 +2,8 @@
 
 namespace App\Models\Recipes;
 
+use App\Models\Craftables\Items\Item;
+use App\Models\Craftables\Pieces\Piece;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

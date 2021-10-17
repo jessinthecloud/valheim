@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models\Craftables;
+namespace App\Models\Craftables\Pieces;
 
 use App\Enums\PieceCategory;
+use App\Models\Craftables\Craftable;
 use App\Models\Recipes\PieceRecipe;
 use App\Models\Recipes\Requirement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Conversion;
 
 use App\Http\Controllers\Controller;
-use App\Models\Craftables\Piece;
+use App\Models\Craftables\Pieces\Piece;
 use Illuminate\Http\Request;
 
 class PieceController extends Controller
@@ -29,6 +29,21 @@ class PieceController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param \App\Models\Craftables\Pieces\Piece $piece
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function show(Piece $piece)
+    {
+        $piece->name = ucwords($piece->name);
+        $piece->load('craftingDevice', 'craftingStation', 'requirements');
+
+        return view('pieces.show', compact('piece'));
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -48,35 +63,7 @@ class PieceController extends Controller
     {
         //
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Piece $piece
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $piece = Piece::with('pieceTable')->with('requirements')->findOrFail($id);
-        $piece->name = ucwords($piece->name);
-
-        return view('pieces.show', compact('piece'));
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Piece $piece
-     * @return \Illuminate\Http\Response
-     */
-    public function showSlug($slug)
-    {
-        $piece = Piece::with('pieceTable')->with('requirements')->where('slug', $slug)->firstOrFail();
-        $piece->name = ucwords($piece->name);
-
-        return view('pieces.show', compact('piece'));
-    }
-
+    
     /**
      * Show the form for editing the specified resource.
      *
@@ -91,8 +78,9 @@ class PieceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Piece  $piece
+     * @param \Illuminate\Http\Request            $request
+     * @param \App\Models\Craftables\Pieces\Piece $piece
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Piece $piece)
@@ -103,7 +91,8 @@ class PieceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Piece  $piece
+     * @param \App\Models\Craftables\Pieces\Piece $piece
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(Piece $piece)

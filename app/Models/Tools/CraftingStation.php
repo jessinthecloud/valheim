@@ -2,8 +2,11 @@
 
 namespace App\Models\Tools;
 
+use App\Models\Craftables\Items\Item;
+use App\Models\Craftables\Pieces\Piece;
+use App\Models\Recipes\ItemRecipe;
+use App\Models\Recipes\PieceRecipe;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class CraftingStation extends CraftingDevice
 {

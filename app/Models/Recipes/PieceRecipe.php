@@ -2,8 +2,10 @@
 
 namespace App\Models\Recipes;
 
+use App\Models\Craftables\Pieces\Piece;
+use App\Models\Tools\CraftingStation;
+use App\Models\Tools\PieceTable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class PieceRecipe extends Recipe
 {

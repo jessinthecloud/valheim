@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Craftables\Item;
-use App\Models\Craftables\Piece;
+use App\Models\Craftables\Items\Item;
+use App\Models\Craftables\Pieces\Piece;
 use Illuminate\Http\Request;
 
 class CraftableController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
+     * @param \Illuminate\Http\Request $request
      *
      * @return \Illuminate\Contracts\View\View
      */
@@ -42,8 +44,8 @@ class CraftableController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request    $request
-     * @param \App\Models\Craftables\Item $item
+     * @param \Illuminate\Http\Request          $request
+     * @param \App\Models\Craftables\Items\Item $item
      *
      * @return \Illuminate\Contracts\View\View
      */

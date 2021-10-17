@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models\Craftables;
+namespace App\Models\Craftables\Items;
 
 use App\Enums\ItemType;
 use App\Http\ImageFetcher;
+use App\Models\Craftables\Craftable;
 use App\Models\Recipes\ItemRecipe;
 use App\Models\Recipes\Requirement;
 use Illuminate\Database\Eloquent\Builder;

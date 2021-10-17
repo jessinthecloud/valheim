@@ -2,6 +2,8 @@
 
 namespace App\Models\Recipes;
 
+use App\Models\Tools\CraftingStation;
+use App\Models\Tools\RepairStation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

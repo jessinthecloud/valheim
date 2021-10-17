@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Conversion;
 
 use App\Http\Controllers\Controller;
-use App\Models\Craftables\Piece;
+use App\Models\Craftables\Pieces\Piece;
 use App\Models\Recipes\Recipe;
 use Illuminate\Http\Request;
 
@@ -31,30 +31,10 @@ class PieceRecipeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource (by id)
      *
-     * @param  \App\Models\Recipe  $recipe
+     * @param $id
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -65,22 +45,7 @@ class PieceRecipeController extends Controller
 
         return view('recipes.show', compact('recipe'));
     }
-
-    /**
-     * Display the specified resource (by slug)
-     *
-     * @param  \App\Models\r  $r
-     * @return \Illuminate\Http\Response
-     */
-    public function showSlug($slug)
-    {
-        $recipe = Recipe::with($this->relationsSubQuery())->where('slug', $slug)->firstOrFail();
-
-        $recipe = $this->formatUpgradesForView($this->formatForView($recipe));
-
-        return view('recipes.show', compact('recipe'));
-    }
-
+    
     protected function relationsSubQuery()
     {
         return [
@@ -144,39 +109,5 @@ class PieceRecipeController extends Controller
         unset($totals);
 
         return $recipe;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Recipe  $recipe
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Recipe $recipe)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Recipe  $recipe
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Recipe $recipe)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Recipe  $recipe
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Recipe $recipe)
-    {
-        //
     }
 }
