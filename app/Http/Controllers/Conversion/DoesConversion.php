@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Conversion;
 use App\Converters\Converter;
 use App\Converters\DataParser;
 use App\Converters\JsonSerializer;
+use App\Converters\ModelConverter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -29,7 +30,7 @@ trait DoesConversion
 
     private string $path;
 
-    public function __construct(DataParser $parser, Converter $converter, JsonSerializer $serializer, string $class)
+    public function __construct(DataParser $parser, ModelConverter $converter, JsonSerializer $serializer, string $class)
     {
         $this->path = storage_path(config('filesystems.json_path'));
         $this->class = $class;
