@@ -17,6 +17,10 @@ class Piece extends Model implements IsCraftable, IsCategorizable
 
     protected $table = 'pieces';
 
+    // more useful: only lockdown specific fields from being mass-assigned
+    // empty array means nothing is locked down
+    protected $guarded = [];
+
 // -- RELATIONSHIPS -----------------------------------------------
 
     /**

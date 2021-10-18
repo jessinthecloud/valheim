@@ -15,7 +15,10 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
 {
     use HasFactory, HasSharedData, HasRecipe;
     
-    protected $table = 'items';
+    // converter needs table without instantiating 
+    public const TABLE = 'items';
+
+    protected $table = self::TABLE;
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
@@ -49,7 +52,7 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
         ItemType::Shoulder,
     ];
 
-// -- GLOBAL SCOPES -----------------------------------------------------
+// -- RELATIONSHIPS -----------------------------------------------------
 
     /**
      * items can have multiple recipes for their variants
@@ -59,7 +62,7 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
      */
     public function recipes()
     {
-        return $this->hasMany( ItemRecipe::class, 'creation_id' );
+        return $this->hasMany( ItemRecipe::class, 'creation_id', 'id' );
     }
 
     /*************************************

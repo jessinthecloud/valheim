@@ -8,6 +8,7 @@ use App\Models\Items\SharedData;
 
 trait HasSharedData
 {
+    // constant can't be part of trait
     // Indices of the converted json array that correspond to
     // relationships and should not be directly inserted
     // index_name => relationFunctionName ; to allow array_intersect_key comparison

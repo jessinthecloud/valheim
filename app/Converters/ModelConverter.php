@@ -22,6 +22,7 @@ class ModelConverter implements Converter
      * @param \App\Converters\DataParser $parser
      *
      * @return mixed
+     * @throws \Exception
      */
     public function convert( array $data, string $class, DataParser $parser )
     {
@@ -40,10 +41,11 @@ class ModelConverter implements Converter
         // only try to insert columns that exist
         $table = $parser->parseTable( $class );
         $db_column_values = Arr::only( $entity, Schema::getColumnListing( $table ) );
-
         // requirements also need to check amount and per level 
         // because slug is not unique to Requirement
         $unique_fields = ( Str::contains( $class, ["Requirement"] ) ) ? $db_column_values : ['slug' => $entity['slug']];
+        
+//ddd($db_column_values, $table, $entity, Schema::getColumnListing( $table ), $unique_fields);
 
         // create model
         // check if already exists
@@ -54,21 +56,24 @@ class ModelConverter implements Converter
             // array of values to use
             $db_column_values
         );
-
-        if ( defined( $class . '::RELATION_INDICES' ) ) {
+        
+        if ( defined( $class . '::RELATION_INDICES' ) || isset($class::$relation_indices) ) {
+            // constant can't be part of trait (CraftableItem)    
+            $relation_indices = $class::$relation_indices ?? $class::RELATION_INDICES;
+            
             // get any that are also relationships that need to be mapped
             // use intersect to compare by keys and avoid issue with
             // PHP trying to compare multidimensional values
-            $relations = array_intersect_key( $entity, $class::RELATION_INDICES );
+            $relations = array_intersect_key( $entity, $relation_indices );
 
             // convert relations
             $relations = collect( $relations )->map(
-                function ( $relation, $key ) use ( $model, $parser, $entity, $class, $relations ) {
+                function ( $relation, $key ) use ( $relation_indices, $model, $parser, $entity, $class, $relations ) {
                     // $key is the unique array index / DB column            
-                    $relation_class = $class::RELATION_INDICES[ $key ]['class'];
-                    $relation_method = $class::RELATION_INDICES[ $key ]['method'];
+                    $relation_class = $relation_indices[ $key ]['class'];
+                    $relation_method = $relation_indices[ $key ]['method'];
                     // determine relation attach function attach() vs associate()
-                    $attach_function = $class::RELATION_INDICES[ $key ]['relation'];
+                    $attach_function = $relation_indices[ $key ]['relation'];
 
                     // need to send array to the convert function
                     if ( !is_array( $relation ) ) {

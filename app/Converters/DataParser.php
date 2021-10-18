@@ -131,7 +131,7 @@ class DataParser
      */
     public function parseTable( string $model_class ) : string
     {
-        return Str::snake(Str::pluralStudly(Str::afterLast($model_class, '\\')));
+        return ( defined($model_class.'::TABLE') ? $model_class::TABLE : null) ?? Str::snake(Str::pluralStudly(Str::afterLast($model_class, '\\')));
     }
 
     /**
@@ -148,7 +148,10 @@ class DataParser
         if(Schema::hasColumn($this->parseTable($class), 'slug')) {
             // check if slug exists
             // needed where there is no true name, i.e. shared data for block_attack_aoe
-            $slug_count = $class::where( 'slug', 'like', $slug . '%' )->count();
+            // exclude global scope for class like CraftableItem (wants items even without recipes)
+                // TODO: Use correct class to query
+            $slug_count = $class::where( 'slug', 'like', $slug . '%' )->withoutGlobalScope('enabled')->count();
+            
             if ( $slug_count > 0 ) {
                 // append to create unique slug 
                 $slug .= '-' . ( $slug_count + 1 );
