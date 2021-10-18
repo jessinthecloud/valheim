@@ -11,13 +11,14 @@ use App\Http\Controllers\Conversion\PieceRecipeController;
 use App\Http\Controllers\Conversion\PieceTableController;
 use App\Http\Controllers\Conversion\ItemRecipeController;
 use App\Http\Controllers\Conversion\StatusEffectController;
-use App\Models\Craftables\Pieces\Piece;
+use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Craftables\Pieces\Piece;
+use App\Models\Items\Item;
+use App\Models\Items\StatusEffect;
 use App\Models\Tools\CraftingStation;
-use App\Models\Craftables\Items\Item;
 use App\Models\Recipes\ItemRecipe;
 use App\Models\Recipes\PieceRecipe;
 use App\Models\Tools\PieceTable;
-use App\Models\Craftables\Items\StatusEffect;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,75 +31,68 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
      */
     public function register()
     {
-        // somehow all now returning 
-        // Illuminate\Contracts\Container\BindingResolutionException
-        // Target [App\Converters\Converter] is not instantiable while building [App\Http\Controllers\Conversion\CraftingStationController].
-        
-        /*$this->app->when( StatusEffectController::class )
+        $this->app->when( StatusEffectController::class )
             ->needs( Converter::class )
             ->give( function () {
                 return new ModelConverter();
             } );
-        $this->app->when( CraftingStationController::class )
-            ->needs( Converter::class )
-            ->give( function () {
-                return new ModelConverter();
-            } );
-        $this->app->when( PieceTableController::class )
-            ->needs( Converter::class )
-            ->give( function () {
-                return new ModelConverter( );
-            } );
-        $this->app->when( ItemController::class )
-            ->needs( Converter::class )
-            ->give( function () {
-                return new ModelConverter();
-            } );
-        $this->app->when( ItemRecipeController::class )
-            ->needs( Converter::class )
-            ->give( function () {
-                return new ModelConverter();
-            } );
-
-        $this->app->when( PieceController::class )
-            ->needs( Converter::class )
-            ->give( function () {
-                return new ModelConverter( Piece::class );
-            } );
-        $this->app->when( PieceRecipeController::class )
-            ->needs( Converter::class )
-            ->give( function () {
-                return new ModelConverter( Piece::class );
-            } );*/
-            
         $this->app->when( StatusEffectController::class )
             ->needs( '$class' )
             ->give( StatusEffect::class );
 
         $this->app->when( CraftingStationController::class )
+            ->needs( Converter::class )
+            ->give( function () {
+                return new ModelConverter();
+            } );
+        $this->app->when( CraftingStationController::class )
             ->needs( '$class' )
             ->give( CraftingStation::class );
 
         $this->app->when( PieceTableController::class )
+            ->needs( Converter::class )
+            ->give( function () {
+                return new ModelConverter( );
+            } );
+        $this->app->when( PieceTableController::class )
             ->needs( '$class' )
             ->give( PieceTable::class );
 
+
+        $this->app->when( ItemController::class )
+            ->needs( Converter::class )
+            ->give( function () {
+                return new ModelConverter();
+            } );
+
         $this->app->when( ItemController::class )
             ->needs( '$class' )
-            ->give( Item::class );
+            ->give( CraftableItem::class );
 
-        
+        $this->app->when( ItemRecipeController::class )
+            ->needs( Converter::class )
+            ->give( function () {
+                return new ModelConverter();
+            } );
 
         $this->app->when( ItemRecipeController::class )
             ->needs( '$class' )
             ->give( ItemRecipe::class );
 
-        
+        $this->app->when( PieceController::class )
+            ->needs( Converter::class )
+            ->give( function () {
+                return new ModelConverter(  );
+            } );
         $this->app->when( PieceController::class )
             ->needs( '$class' )
             ->give( Piece::class );
 
-        
+        $this->app->when( PieceRecipeController::class )
+            ->needs( Converter::class )
+            ->give( function () {
+                return new ModelConverter(  );
+            } );
         $this->app->when( PieceRecipeController::class )
             ->needs( '$class' )
             ->give( PieceRecipe::class );

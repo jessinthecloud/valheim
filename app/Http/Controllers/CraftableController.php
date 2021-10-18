@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Craftables\Items\Item;
-use App\Models\Craftables\Pieces\Piece;
+use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Craftables\Pieces\Piece;
+use App\Models\Items\Item;
 use Illuminate\Http\Request;
 
 class CraftableController extends Controller
@@ -20,7 +21,7 @@ class CraftableController extends Controller
         $page = $request->page ?? 1;
         $per_page = 32;
 
-        $paginator = Item::select('id','name','slug', 'url_path')
+        $paginator = CraftableItem::select('id','name','slug', 'url_path')
             ->union(Piece::select('id','name','slug', 'url_path'))
             ->orderBy('name', 'asc')
             ->paginate($per_page);
@@ -44,8 +45,8 @@ class CraftableController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request          $request
-     * @param \App\Models\Craftables\Items\Item $item
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Items\Item   $item
      *
      * @return \Illuminate\Contracts\View\View
      */

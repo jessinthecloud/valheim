@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models\Craftables\Items;
+namespace App\Models\Items;
 
+use App\Models\Items\Craftables\Items\CraftableItem;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -11,14 +12,7 @@ class SharedData extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [
-        /*'attack_status_effect_id',
-        'consume_status_effect_id',
-        'equip_status_effect_id',
-        'set_status_effect_id',
-        'damages',
-        'damages_per_level',*/
-    ];
+    protected $guarded = [];
 
     // Indices of the converted json array that correspond to
     // relationships and should not be directly inserted
@@ -33,6 +27,11 @@ class SharedData extends Model
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function craftableItems()
+    {
+        return $this->hasMany(CraftableItem::class);
     }
     
     // return all relations

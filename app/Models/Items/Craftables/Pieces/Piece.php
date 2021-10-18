@@ -1,34 +1,33 @@
 <?php
 
-namespace App\Models\Craftables\Pieces;
+namespace App\Models\Items\Craftables\Pieces;
 
 use App\Enums\PieceCategory;
-use App\Models\Craftables\Craftable;
+use App\Models\Items\Contracts\IsCategorizable;
+use App\Models\Items\Contracts\IsCraftable; 
+use App\Models\Items\Traits\HasRecipe;
 use App\Models\Recipes\PieceRecipe;
 use App\Models\Recipes\Requirement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Piece extends Craftable
+class Piece extends Model implements IsCraftable, IsCategorizable
 {
-    use HasFactory;
+    use HasFactory, HasRecipe;
 
     protected $table = 'pieces';
 
 // -- RELATIONSHIPS -----------------------------------------------
 
     /**
-     * @required by Craftable
+     * items can have multiple recipes for their variants
+     * e.g., Bronze and 5 Bronze bars
      *
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function requirementFor()
-    {
-        return $this->hasManyThrough( PieceRecipe::class, Requirement::class );
-    }
-
     public function recipes()
     {
-        return $this->belongsTo(PieceRecipe::class, 'creation_id');
+        return $this->hasMany( PieceRecipe::class, 'creation_id' );
     }
 
 // -- SCOPES -----------------------------------------------------
@@ -40,6 +39,7 @@ class Piece extends Craftable
      * piece category as string
      *
      * @return string   item type
+     * @throws \ErrorException
      */
     public function type() : string
     {
