@@ -13,6 +13,7 @@ use App\Http\Controllers\Conversion\ItemRecipeController;
 use App\Http\Controllers\Conversion\StatusEffectController;
 use App\Models\Items\Craftables\Items\CraftableItem;
 use App\Models\Items\Craftables\Pieces\Piece;
+use App\Models\Items\Item;
 use App\Models\Items\StatusEffect;
 use App\Models\Tools\CraftingStation;
 use App\Models\Recipes\ItemRecipe;
@@ -51,7 +52,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when( PieceTableController::class )
             ->needs( Converter::class )
             ->give( function () {
-                return new ModelConverter( PieceTable::class );
+                return new ModelConverter( );
             } );
         $this->app->when( PieceTableController::class )
             ->needs( '$class' )
@@ -81,7 +82,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when( PieceController::class )
             ->needs( Converter::class )
             ->give( function () {
-                return new ModelConverter( Piece::class );
+                return new ModelConverter(  );
             } );
         $this->app->when( PieceController::class )
             ->needs( '$class' )
@@ -90,7 +91,7 @@ class ConverterServiceProvider extends ServiceProvider implements DeferrableProv
         $this->app->when( PieceRecipeController::class )
             ->needs( Converter::class )
             ->give( function () {
-                return new ModelConverter( Piece::class );
+                return new ModelConverter(  );
             } );
         $this->app->when( PieceRecipeController::class )
             ->needs( '$class' )

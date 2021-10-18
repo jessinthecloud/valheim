@@ -22,18 +22,13 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
     protected $guarded = [];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-//    protected $hidden = [];
-
-    /**
      * The relationships that should always be loaded.
      *
      * @var array
      */
-//    protected $with = [];
+    protected $with = [
+        'sharedData',
+    ];
 
     // ItemType values that are weapons
     public const WEAPON_TYPES = [
@@ -72,7 +67,7 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
      */
     public function isWeapon() : bool
     {
-        return in_array( $this->sharedData->item_type, Item::WEAPON_TYPES );
+        return in_array( $this->sharedData->item_type, self::WEAPON_TYPES );
     }
 
     /*************************************
@@ -80,7 +75,7 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
      */
     public function isArmor() : bool
     {
-        return in_array( $this->sharedData->item_type, Item::ARMOR_TYPES );
+        return in_array( $this->sharedData->item_type, self::ARMOR_TYPES );
     }
 
     /*************************************
@@ -94,5 +89,6 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
     public function type() : string
     {
         // TODO: Implement type() method.
+        return '';
     }
 }

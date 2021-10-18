@@ -13,21 +13,14 @@ abstract class Recipe extends Model
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
-    protected $guarded = [];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-//    protected $hidden = [];
+    protected $guarded = []; 
 
     /**
      * The relationships that should always be loaded.
      *
      * @var array
      */
-//    protected $with = [];
+    protected $with = ['requirements'];
 
     // item this recipe creates
     abstract public function creation();

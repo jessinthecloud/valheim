@@ -19,15 +19,6 @@ trait HasSharedData
         ],
     ];
 
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [
-        'sharedData',
-    ];
-
     // -- SCOPES -----------------------------------------------------
 
     public function scopeWeapon($query)

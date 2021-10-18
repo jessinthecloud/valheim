@@ -17,8 +17,8 @@ class CreateItemsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('url_path')->nullable();
-            $table->string('raw_name');
+//            $table->string('url_path')->nullable();
+            $table->string('raw_name'); 
             $table->string('true_name')->nullable(); // kind of secret name
             $table->string('var_name')->nullable();
             $table->foreignId('shared_data_id')->nullable()->constrained('shared_data');

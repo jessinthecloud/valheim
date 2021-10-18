@@ -4,13 +4,14 @@ namespace App\Models\Items\Craftables\Pieces;
 
 use App\Enums\PieceCategory;
 use App\Models\Items\Contracts\IsCategorizable;
-use App\Models\Items\Contracts\IsCraftable;
+use App\Models\Items\Contracts\IsCraftable; 
 use App\Models\Items\Traits\HasRecipe;
 use App\Models\Recipes\PieceRecipe;
 use App\Models\Recipes\Requirement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class Piece implements IsCraftable, IsCategorizable
+class Piece extends Model implements IsCraftable, IsCategorizable
 {
     use HasFactory, HasRecipe;
 
