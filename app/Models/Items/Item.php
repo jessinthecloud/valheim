@@ -18,6 +18,12 @@ class Item extends Model implements CanBeIngredient
 {
     use HasFactory;
 
+    // more useful: only lockdown specific fields from being mass-assigned
+    // empty array means nothing is locked down
+    protected $guarded = [];
+    
+    protected $table = 'items';
+
     /**
      * The relationships that should always be loaded.
      *
