@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 class Requirement extends Model
 {
     use HasFactory;
+    
+    protected $table = 'requirements';
 
     // more useful: only lockdown specific fields from being mass-assigned
     // empty array means nothing is locked down
