@@ -21,8 +21,8 @@ class ItemController extends Controller
         $page = $request->page ?? 1;
         $per_page = 32;
 
-        $paginator = Item::select('id','name','slug')
-            ->unionAll(Piece::select('id','name','slug'))
+        $paginator = CraftableItem::selectRaw('id,name,slug, "items" as url')
+            ->unionAll(Piece::selectRaw('id, name, slug, "pieces" as url'))
             ->orderBy('name', 'asc')
             ->paginate($per_page)
             ;
@@ -51,7 +51,7 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function show(Request $request, Item $item)
+    public function show(Request $request, CraftableItem $item)
     {
         $item->name = ucwords($item->name);
         // lazy eager load recipe
