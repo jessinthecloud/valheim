@@ -12,11 +12,12 @@ use Illuminate\Support\Str;
 use App\Models\Tools\CraftingStation;
 use App\Models\Tools\PieceTable;
 use App\Models\Tools\RepairStation;
+use App\Models\Recipes\Requirement;
 
 class ModelConverter implements Converter
 {
     protected DataParser $parser;
-
+    
     /**
      * Parse fields, create model and attach related models
      *
@@ -30,7 +31,7 @@ class ModelConverter implements Converter
     public function convert( array $data, string $class, DataParser $parser )
     {
         $this->parser = $parser;
-        
+
         // create/convert names
         $entity = $this->parser->parse( $data, $class );
         // make sure slug is set and unique
@@ -46,26 +47,32 @@ class ModelConverter implements Converter
         // only try to insert columns that exist
         $table = $this->parser->parseTable( $class );
         $db_column_values = Arr::only( $entity, Schema::getColumnListing( $table ) );
-        // requirements also need to check amount and per level 
-        // because slug is not unique to Requirement
-        $unique_fields = ( Str::contains( $class, ["Requirement"] ) ) ? $db_column_values : ['slug' => $entity['slug']];
-        
-//ddd($db_column_values, $table, $entity, Schema::getColumnListing( $table ), $unique_fields);
 
-        // create model
-        // check if already exists
-        // find existing or create model from values
-        $model = $class::firstOrCreate(
-        // array of unique key value to check 
-            $unique_fields,
+        // requirements are always unique
+        if( Str::contains( $class, ["Requirement"] ) ){
+            // create model from values
+            $model = new $class(
             // array of values to use
-            $db_column_values
-        );
-        
+                $db_column_values
+            );
+            $model->save();
+        }
+        else{
+            // create model
+            // check if already exists
+            // find existing or create model from values
+            $model = $class::firstOrCreate(
+            // array of unique key value to check 
+                ['slug' => $entity['slug']],
+                // array of values to use
+                $db_column_values
+            );
+        }
+
         if ( defined( $class . '::RELATION_INDICES' ) || isset($class::$relation_indices) ) {
             // constant can't be part of trait (CraftableItem)    
             $relation_indices = $class::$relation_indices ?? $class::RELATION_INDICES;
-            
+
             // get any that are also relationships that need to be mapped
             // use intersect to compare by keys and avoid issue with
             // PHP trying to compare multidimensional values
@@ -111,7 +118,7 @@ class ModelConverter implements Converter
                             $model,
                             $attach_function,
                             $entity
-                        ) {                        
+                        ) {
                             // convert & attach relation to model
                             $related = $this->convertAndAttachRelation(
                                 $model,
@@ -122,10 +129,7 @@ class ModelConverter implements Converter
                                 $this->parser,
                                 $entity
                             );
-
-/*if ( $relation_method === 'statusEffects' && null !== $related ) {
-    ddd($model, $related, $data, $entity);
-}*/ 
+                            
                             return $related;
                         }
                     );
@@ -176,14 +180,13 @@ class ModelConverter implements Converter
             if ( isset( $related ) ) {
                 $this->attachRelated( $model, $related, $relation_method, $attach_function );
             }
-
             return $related;
         }
-        
+
         // sharedData should not convert their status effects, only find existing and attach
         // requirements should not convert their relation (item), only find existing and attach
         if ( $relation_method === 'statusEffects' ) {
-  
+
             // remove empty
             $effects = (isset($entity['status_effects']) ? (isset($entity['status_effects']['slug']) ? collect($entity['status_effects'])->filter()->all() : null) : null);
 
@@ -195,11 +198,11 @@ class ModelConverter implements Converter
             // make sure there is something to attach
             return collect( $model->$relation_method() )->map(
                 function ( $method ) use ( $effects, $model, $entity, $attach_function ) {
-                   
+
                     return collect($effects)->map(function($effect) use($entity, $model, $method, $attach_function) {
-      
+
                         // get slug for effect
-                        $effect = $this->parser->convertNames($effect, StatusEffect::class);                
+                        $effect = $this->parser->convertNames($effect, StatusEffect::class);
                         $related = StatusEffect::firstWhere( 'slug', $effect['slug'] );
 
                         // don't use ALL methods to attach,
@@ -213,24 +216,25 @@ class ModelConverter implements Converter
                     });
                 }
             )->flatten()->unique('id')->first();
-        }
+        } // endif status effects
 
         // recipes should not convert their relation (item), only find existing and attach
         if ( $relation_method === 'creation'/* || isset($relations['piece_slug'])*/ ) {
+
             // find existing item b/c only item_slug/piece_slug exists
             // when trying to find related
-            $related = ( isset( $relations['item_slug'] )
-                    ? $relation_class::where( 'slug', $relations['item_slug'] )->first()
+            $related = ( isset( $relation_data['item_slug'] )
+                    ? $relation_class::where( 'slug', $relation_data['item_slug'] )->withoutGlobalScope('enabled')->first()
                     : null )
-                ?? ( isset( $relations['piece_slug'] )
-                    ? $relation_class::where( 'slug', $relations['piece_slug'] )->first()
+                ?? ( isset( $relation_data['piece_slug'] )
+                    ? ($relation_class::where( 'slug', $relation_data['piece_slug'] )->withoutGlobalScope('enabled')->first())
                     // sometimes recipes don't have item slug that matches 
                     : null )
-                ?? ( isset( $relations['item_slug'] )
+                ?? ( isset( $relation_data['item_slug'] )
                     ? $relation_class::where(
                         'name',
-                        Str::replace( '-', ' ', $relations['item_slug'] )
-                    )->first()
+                        Str::replace( '-', ' ', $relation_data['item_slug'] )
+                    )->withoutGlobalScope('enabled')->first()
                     : null )
                 ?? ( ( null !== $model->name )
                     ? $relation_class::where(
@@ -311,7 +315,7 @@ class ModelConverter implements Converter
         }
 
         $model->$relation_method()->$attach_function( $relation );
-        
+
         // attach saves by default
         if ( $attach_function !== 'attach' ) {
             $model->save();
