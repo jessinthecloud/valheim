@@ -47,7 +47,7 @@ class DataParser
      *
      * @return array [type]       [description]
      */
-    protected function convertNames(array $info, string $class) : array
+    public function convertNames(array $info, string $class) : array
     {
         // some models have longer raw_names (i.e., raw_crafting_station_name)
         $raw_name_index = (array_key_exists('raw_name', $info)) ? 

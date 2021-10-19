@@ -4,6 +4,7 @@ namespace App\Converters;
 
 use App\Models\Items\Craftables\Items\CraftableItem;
 use App\Models\Items\Item;
+use App\Models\Items\StatusEffect;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Arr;
@@ -14,6 +15,8 @@ use App\Models\Tools\RepairStation;
 
 class ModelConverter implements Converter
 {
+    protected DataParser $parser;
+
     /**
      * Parse fields, create model and attach related models
      *
@@ -26,11 +29,13 @@ class ModelConverter implements Converter
      */
     public function convert( array $data, string $class, DataParser $parser )
     {
+        $this->parser = $parser;
+        
         // create/convert names
-        $entity = $parser->parse( $data, $class );
+        $entity = $this->parser->parse( $data, $class );
         // make sure slug is set and unique
         $entity['slug'] = $entity['item_slug'] = $entity['piece_slug'] = isset( $entity['slug'] ) ?
-            $parser->checkAndSetSlug( $entity['slug'], $class ) :
+            $this->parser->checkAndSetSlug( $entity['slug'], $class ) :
             null;
 
         if ( empty( $entity['slug'] ) ) {
@@ -39,7 +44,7 @@ class ModelConverter implements Converter
         }
 
         // only try to insert columns that exist
-        $table = $parser->parseTable( $class );
+        $table = $this->parser->parseTable( $class );
         $db_column_values = Arr::only( $entity, Schema::getColumnListing( $table ) );
         // requirements also need to check amount and per level 
         // because slug is not unique to Requirement
@@ -68,7 +73,7 @@ class ModelConverter implements Converter
 
             // convert relations
             $relations = collect( $relations )->map(
-                function ( $relation, $key ) use ( $relation_indices, $model, $parser, $entity, $class, $relations ) {
+                function ( $relation, $key ) use ( $relation_indices, $model, $entity, $class, $relations ) {
                     // $key is the unique array index / DB column            
                     $relation_class = $relation_indices[ $key ]['class'];
                     $relation_method = $relation_indices[ $key ]['method'];
@@ -84,7 +89,7 @@ class ModelConverter implements Converter
                             $relation_class,
                             $relation_method,
                             $attach_function,
-                            $parser,
+                            $this->parser,
                             $entity
                         );
                     }
@@ -99,24 +104,29 @@ class ModelConverter implements Converter
                     $multi_relation_data = collect( $relation )->diffAssoc( $flat_relation_data );
 
                     $multi_relation_data = $multi_relation_data->map(
-                        function ( $entity ) use (
+                        function ( $data ) use (
                             $relation,
                             $relation_class,
                             $relation_method,
-                            $parser,
                             $model,
-                            $attach_function
-                        ) {
+                            $attach_function,
+                            $entity
+                        ) {                        
                             // convert & attach relation to model
-                            return $this->convertAndAttachRelation(
+                            $related = $this->convertAndAttachRelation(
                                 $model,
-                                $entity,
+                                $data,
                                 $relation_class,
                                 $relation_method,
                                 $attach_function,
-                                $parser,
+                                $this->parser,
                                 $entity
                             );
+
+/*if ( $relation_method === 'statusEffects' && null !== $related ) {
+    ddd($model, $related, $data, $entity);
+}*/ 
+                            return $related;
                         }
                     );
 
@@ -126,7 +136,7 @@ class ModelConverter implements Converter
                         $relation_class,
                         $relation_method,
                         $attach_function,
-                        $parser,
+                        $this->parser,
                         $entity
                     );
 
@@ -168,6 +178,41 @@ class ModelConverter implements Converter
             }
 
             return $related;
+        }
+        
+        // sharedData should not convert their status effects, only find existing and attach
+        // requirements should not convert their relation (item), only find existing and attach
+        if ( $relation_method === 'statusEffects' ) {
+  
+            // remove empty
+            $effects = (isset($entity['status_effects']) ? (isset($entity['status_effects']['slug']) ? collect($entity['status_effects'])->filter()->all() : null) : null);
+
+            if ( empty($effects) ) {
+                // no status effects
+                return null;
+            }
+
+            // make sure there is something to attach
+            return collect( $model->$relation_method() )->map(
+                function ( $method ) use ( $effects, $model, $entity, $attach_function ) {
+                   
+                    return collect($effects)->map(function($effect) use($entity, $model, $method, $attach_function) {
+      
+                        // get slug for effect
+                        $effect = $this->parser->convertNames($effect, StatusEffect::class);                
+                        $related = StatusEffect::firstWhere( 'slug', $effect['slug'] );
+
+                        // don't use ALL methods to attach,
+                        // just the one with matching type (e.g., status effect)
+                        if ( isset( $related ) && isset( $effect['type'] ) && Str::startsWith( $method, $effect['type'] ) ) {
+                            $model->$method()->$attach_function( $related );
+                            $model->save();
+                        }
+
+                        return $related;
+                    });
+                }
+            )->flatten()->unique('id')->first();
         }
 
         // recipes should not convert their relation (item), only find existing and attach
@@ -234,7 +279,7 @@ class ModelConverter implements Converter
         $related = $this->convert(
             $relation_data,
             $relation_class,
-            $parser
+            $this->parser
         );
 
         // if null, quit
@@ -265,28 +310,8 @@ class ModelConverter implements Converter
             return;
         }
 
-        if ( is_array( $model->$relation_method() ) ) {
-            // some models have multiple methods for a related model class (SharedData -> StatusEffect)
-
-            collect( $model->$relation_method() )->each(
-                function ( $method ) use ( $model, $relation, $attach_function ) {
-                    // don't use ALL methods to attach,
-                    // just the one with matching type (e.g., status effect)
-                    if ( isset( $relation['type'] ) && Str::startsWith( $method, $relation['type'] ) ) {
-                        $model->$method()->$attach_function( $relation );
-                    }
-                }
-            );
-
-            // attach saves by default
-            if ( $attach_function !== 'attach' ) {
-                $model->save();
-            }
-
-            return;
-        }
-
         $model->$relation_method()->$attach_function( $relation );
+        
         // attach saves by default
         if ( $attach_function !== 'attach' ) {
             $model->save();
