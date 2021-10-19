@@ -23,9 +23,9 @@ class ItemController extends Controller
 
         $paginator = Item::select('id','name','slug')
             ->unionAll(Piece::select('id','name','slug'))
-            ->orderBy('name', 'asc')->get();
-ddd(Piece::select('id','name','slug')->dd());            
-//            ->paginate($per_page);
+            ->orderBy('name', 'asc')
+            ->paginate($per_page)
+            ;
         
         $items = $paginator->items();
 

@@ -21,19 +21,19 @@ Route::get( '/', [App\Http\Controllers\PageController::class, 'index'] )->name( 
 Route::get( '/home', [App\Http\Controllers\PageController::class, 'index'] )->name( 'index' );
 Route::get( '/about', [App\Http\Controllers\PageController::class, 'about'] )->name( 'about' );
 
+// ITEMS
+Route::get( '/items', [App\Http\Controllers\ItemController::class, 'index'] )
+    ->name( 'items.index' );
+Route::get( '/items/{item:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
+    ->name( 'items.show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
+
 // RECIPES
 Route::get( '/recipes', [App\Http\Controllers\RecipeController::class, 'index'] )
     ->name( 'recipes.index' );
 Route::get( '/recipes/{recipe:slug}', [App\Http\Controllers\RecipeController::class, 'showSlug'] )
     ->where( 'slug', '[a-zA-Z0-9-]+' )
     ->name( 'recipes.show' );
-
-// ITEMS
-Route::get( '/items', [App\Http\Controllers\CraftableController::class, 'index'] )
-    ->name( 'items.index' );
-Route::get( '/items/{item:slug}', [App\Http\Controllers\CraftableController::class, 'show'] )
-    ->name( 'items.show' )
-    ->where( 'slug', '[a-zA-Z0-9-]+' );
 
 // PIECES
 Route::get( '/pieces', [App\Http\Controllers\PieceController::class, 'index'] )
