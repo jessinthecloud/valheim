@@ -14,12 +14,12 @@ trait HasRecipe
      *
      * @return void
      */
-    protected static function booted()
+    /*protected static function booted()
     {
         static::addGlobalScope('enabled', function (Builder $builder) {
             return $builder->whereHas( 'recipes', function($query){
                 $query->where('enabled', 1);
             });
         });
-    }
+    }*/
 }
