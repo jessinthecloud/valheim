@@ -21,8 +21,8 @@ class ItemController extends Controller
         $page = $request->page ?? 1;
         $per_page = 32;
 
-        $paginator = CraftableItem::selectRaw('id,name,slug, "items" as url')
-            ->unionAll(Piece::selectRaw('id, name, slug, "pieces" as url'))
+        $paginator = Item::selectRaw('id,name,slug, "item" as type, "items" as url')
+            ->unionAll(Piece::selectRaw('id, name, slug, "piece" as type, "pieces" as url'))
             ->orderBy('name', 'asc')
             ->paginate($per_page)
             ;
@@ -46,8 +46,8 @@ class ItemController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Items\Item   $item
+     * @param \Illuminate\Http\Request                         $request
+     * @param \App\Models\Items\Craftables\Items\CraftableItem $item
      *
      * @return \Illuminate\Contracts\View\View
      */
@@ -56,6 +56,14 @@ class ItemController extends Controller
         $item->name = ucwords($item->name);
         // lazy eager load recipe
         $item->load('recipes', 'recipes.requirements', 'recipes.requirements.item');
+        
+        /*$item->recipes->transform(function($recipe){
+            $recipe->requirements->transform(function($requirement){
+                dump($requirement, $requirement->item);
+                return $requirement->item->filter();
+            });
+            return $recipe;
+        });*/
 
         return view('items.show', compact('item'));
     }

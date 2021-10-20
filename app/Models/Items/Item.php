@@ -65,4 +65,9 @@ class Item extends Model implements CanBeIngredient
     {
         return $fetcher->fetchImageHtmlString( Str::snake( $this->name ) );
     }
+
+    public function hasRecipes()
+    {
+        return (null !== $this->recipes);
+    }
 }
