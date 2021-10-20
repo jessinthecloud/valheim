@@ -50,6 +50,7 @@ class ModelConverter implements Converter
 
         // requirements are always unique
         if( Str::contains( $class, ["Requirement"] ) ){
+//dump($class, $db_column_values, $entity);
             // create model from values
             $model = new $class(
             // array of values to use
@@ -175,8 +176,9 @@ class ModelConverter implements Converter
     ) {
         // requirements should not convert their relation (item), only find existing and attach
         if ( $relation_method === 'item' ) {
-            $related = Item::firstWhere( 'slug', $entity['slug'] );
-
+//dump($entity);        
+            $related = Item::firstWhere( 'var_name', $entity['var_name'] );
+//dump($related);
             if ( isset( $related ) ) {
                 $this->attachRelated( $model, $related, $relation_method, $attach_function );
             }
