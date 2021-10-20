@@ -101,21 +101,20 @@
     
     @if($item->recipes)
         @foreach($item->recipes as $key => $recipe)
-            <section class="w-full bg-amber-900 mt-6 p-4 md:w-1/3 md:mt-0">
+            <section class="w-full bg-gray-700 mt-6 p-4 md:w-1/3 md:mt-0">
                 <h3 class="w-full text-xl font-semibold mt-0 mb-0">
                     Recipe @if($key > 0) {{ $key+1 }} @endif
                 </h3>
 
                 @include('partials._recipe-details')
 
-                @if($recipe->max_quality > 1)
-                    <x-general.button-link
-                        class="font-semibold mt-4"
-                        href="{{ route('recipes.show', $recipe->slug) }}"
-                    >
-                        View Full Recipe
-                    </x-general.button-link>
-                @endif
+                <x-general.button-link
+                    class="font-semibold mt-4"
+                    href="{{ route('recipes.show', $recipe->slug) }}"
+                >
+                    View Recipe Details
+                </x-general.button-link>
+            
             </section>
         @endforeach
     @endif
