@@ -22,12 +22,42 @@ Route::get( '/home', [App\Http\Controllers\PageController::class, 'index'] )->na
 Route::get( '/about', [App\Http\Controllers\PageController::class, 'about'] )->name( 'about' );
 
 // ITEMS
-Route::get( '/items', [App\Http\Controllers\ItemController::class, 'index'] )
-    ->name( 'items.index' );
-Route::get( '/items/{item:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
-    ->name( 'items.show' )
-    ->where( 'slug', '[a-zA-Z0-9-]+' );
 
+Route::group([
+    'prefix' => 'items',
+    'as' => 'items.'
+], function(){
+// ALL
+    Route::get( '/', [App\Http\Controllers\ItemController::class, 'index'] )
+        ->name( 'index' );
+    
+// ARMOR
+    Route::get( '/armor', [App\Http\Controllers\ArmorController::class, 'index'] )
+        ->name( 'armor.index' );
+    Route::get( '/armor/{armor:slug}', [App\Http\Controllers\ArmorController::class, 'show'] )
+        ->name( 'armor.show' )
+        ->where( 'slug', '[a-zA-Z0-9-]+' );
+
+// WEAPONS
+    Route::get( '/weapons', [App\Http\Controllers\WeaponController::class, 'index'] )
+        ->name( 'weapons.index' );
+    Route::get( '/weapon/{weapon:slug}', [App\Http\Controllers\WeaponController::class, 'show'] )
+        ->name( 'weapons.show' )
+        ->where( 'slug', '[a-zA-Z0-9-]+' );
+
+// CONSUMABLES
+    Route::get( '/consumables', [App\Http\Controllers\ConsumableController::class, 'index'] )
+        ->name( 'consumables.index' );
+    Route::get( '/consumables/{consumable:slug}', [App\Http\Controllers\ConsumableController::class, 'show'] )
+        ->name( 'consumables.show' )
+        ->where( 'slug', '[a-zA-Z0-9-]+' );
+    
+// ALL
+    Route::get( '/{item:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
+        ->name( 'show' )
+        ->where( 'slug', '[a-zA-Z0-9-]+' );
+});
+/*
 // RECIPES
 Route::get( '/recipes', [App\Http\Controllers\RecipeController::class, 'index'] )
     ->name( 'recipes.index' );
@@ -35,16 +65,9 @@ Route::get( '/recipes/{recipe:slug}', [App\Http\Controllers\RecipeController::cl
     ->where( 'slug', '[a-zA-Z0-9-]+' )
     ->name( 'recipes.show' );
 
-// PIECES
-Route::get( '/pieces', [App\Http\Controllers\PieceController::class, 'index'] )
-    ->name( 'pieces.index' );
-Route::get( '/pieces/{piece:slug}', [App\Http\Controllers\PieceController::class, 'show'] )
-    ->where( 'id', '[a-zA-Z0-9-]+' )
-    ->name( 'pieces.show' );
-
 // STATUS EFFECTS
 Route::get( '/status-effects', [App\Http\Controllers\StatusEffectController::class, 'index'] )
-    ->name( 'status-effects.index' );
+    ->name( 'status-effects.index' );*/
 
 /* 
 Route::resources(

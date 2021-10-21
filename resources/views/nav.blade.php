@@ -23,21 +23,21 @@
                     About
                 </a>
             </li>
-            <li>
+            {{--<li>
                 <a href="{{ route('recipes.index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
                     Recipes
                 </a>
-            </li>
+            </li>--}}
             <li>
                 <a href="{{ route('items.index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
                     Items
                 </a>
             </li>
-            <li>
+            {{--<li>
                 <a href="{{ route('pieces.index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
                     Pieces
                 </a>
-            </li>
+            </li>--}}
             <li>
                 <a 
                 class="block p-3 hover:bg-gray-800 transition ease-in-out duration-150" 

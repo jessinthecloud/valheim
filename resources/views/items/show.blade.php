@@ -1,15 +1,8 @@
-@extends('layouts.app')
-
-@section('title')
-    @if(!empty($item)) {{ $item->name }} | @endif
-@endsection
-
-@section('content')
-    @if(!empty($item))
-        @include('partials._item', [
-            'item' => $item
-        ])  
-    @else 
-        No item to display.      
-    @endif
-@endsection
+<x-layouts.app>
+    <x-items.page
+        :title="$item->name"
+        :partial="'partials._item'"
+        :index="'item'"
+        :item_class_type="'item'"
+    ></x-items.page>
+</x-layouts.app>

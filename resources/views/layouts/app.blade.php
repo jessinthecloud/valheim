@@ -7,7 +7,7 @@
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>@yield('title') {{ config('app.name', 'Valheim Recipes') }}</title>
+        <title>{{ $title.' | ' ?? '' }} {{ config('app.name', 'Valheim Recipes') }}</title>
 
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
@@ -24,6 +24,8 @@
 
         <livewire:styles />
         
+        @stack('styles')
+        
     </head>
     <body class="bg-gray-900 text-gray-100 flow-root">
         
@@ -33,10 +35,12 @@
             lg:my-12
             lg:p-0
         ">
-            @yield('content')
+            {{ $slot }}
         </main>
 
+        @stack('scripts')
+        
         <livewire:scripts />
-
+        
     </body>
 </html>

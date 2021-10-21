@@ -1,7 +1,7 @@
-@props(['routeName', 'entity'])
+@props(['routeName', 'entity', 'entityName'])
 
 <a
-    href="{{ $entity->url.'/'.$entity->slug }} {{--{{ route($routeName, $entity->slug) }}--}}"
+    href="{{ route($routeName, [$entityName => $entity->slug]) }} {{--{{ route($routeName, $entity->slug) }}--}}"
     class="relative w-full flex flex-wrap items-center justify-between flex-grow bg-gray-800 mb-4 p-6 transition ease-in-out duration-150 
         hover:bg-amber-200 
         hover:text-black

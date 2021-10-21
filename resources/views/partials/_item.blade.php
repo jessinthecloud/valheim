@@ -110,7 +110,7 @@
 
                 <x-general.button-link
                     class="font-semibold mt-4"
-                    href="{{ route('recipes.show', $recipe->slug) }}"
+                    href="{{--{{ route('recipes.show', $recipe->slug) }}--}}"
                 >
                     View Recipe Details
                 </x-general.button-link>

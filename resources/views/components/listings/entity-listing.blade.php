@@ -10,8 +10,9 @@
 
     @foreach($entities as $entity)
         <x-listings.listing-link
-            {{--:routeName="$routeName"--}}
+            :routeName="$routeName"
             :entity="$entity"
+            :entityName="$entityName"
         ></x-listings.listing-link>
     @endforeach
 
