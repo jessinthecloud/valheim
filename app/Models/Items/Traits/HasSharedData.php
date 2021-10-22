@@ -52,18 +52,6 @@ trait HasSharedData
     
 // -- MISC ---------------------------------------
 
-    /**
-     * @required by Craftable
-     *
-     * shared_data item_type as string
-     *
-     * @return string   item type
-     */
-    public function type() : string
-    {
-        return $this->niceName( ItemType::toString( $this->sharedData->item_type ) );
-    }
-
     public function weight()
     {
         return $this->sharedData->weight;

@@ -28,6 +28,11 @@ class Armor extends CraftableItem
 
 // -- MISC -----------------------------------------------------
 
+    public function block()
+    {
+        return $this->sharedData->block_power;
+    }
+
     public function armor()
     {
         return $this->sharedData->armor;

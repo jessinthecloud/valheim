@@ -89,9 +89,15 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
         return ( (int)$this->sharedData->item_type === ItemType::Consumable );
     }
 
+    /**
+     * @required by IsCategorizable
+     *
+     * shared_data item_type as string
+     *
+     * @return string   item type
+     */
     public function type() : string
     {
-        // TODO: Implement type() method.
-        return '';
+        return $this->niceName( ItemType::toString( $this->sharedData->item_type ) );
     }
 }

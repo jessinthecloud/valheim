@@ -45,6 +45,6 @@ class WeaponController extends Controller
         // lazy eager load recipe
         $weapon->load('recipes', 'recipes.requirements', 'recipes.requirements.item');
 
-        return view('items.weapon.show', compact('weapon'));
+        return view('items.weapons.show', compact('weapon'));
     }
 }
