@@ -5,6 +5,7 @@ namespace App\Models\Items\Traits;
 use App\Enums\ItemType;
 use App\Models\Items\Craftables\Items\CraftableItem;
 use App\Models\Items\SharedData;
+use App\Models\Items\StatusEffect;
 
 trait HasSharedData
 {
@@ -60,5 +61,25 @@ trait HasSharedData
     public function teleportable() : bool
     {
         return ( (int)$this->sharedData->teleportable === 1 );
+    }
+
+    public function attackEffect() : string
+    {
+        return !empty($this->sharedData->attackStatusEffect->name) ? $this->niceName($this->sharedData->attackStatusEffect->name) : '';
+    }
+
+    public function consumeEffect() : string
+    {
+        return !empty($this->sharedData->consumeStatusEffect) ? $this->niceName($this->sharedData->consumeStatusEffect->name) : '';
+    }
+
+    public function equipEffect() : string
+    {
+        return !empty($this->sharedData->equipStatusEffect->name) ? $this->niceName($this->sharedData->equipStatusEffect->name) : '';
+    }
+
+    public function setEffect() : string
+    {
+        return !empty($this->sharedData->setStatusEffect->name) ? $this->niceName($this->sharedData->setStatusEffect->name) : '';
     }
 }

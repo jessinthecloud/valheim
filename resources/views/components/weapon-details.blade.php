@@ -10,10 +10,16 @@
         <td class="font-bold px-2 py-1">Block Power:</td>
         <td class="px-2 py-1">{{ $item->block() }}</td>
     </tr>
-    @if(null !== $item->attackEffect())
+    @if( !empty($item->attackEffect()) )
         <tr>
-            <td class="font-bold px-2 py-1">Effect:</td>
+            <td class="font-bold px-2 py-1">Status Effect:</td>
             <td class="px-2 py-1">{{ $item->attackEffect() }}</td>
+        </tr>
+    @endif
+    @if( !empty($item->equipEffect()) )
+        <tr>
+            <td class="font-bold px-2 py-1">Equip Status Effect:</td>
+            <td class="px-2 py-1">{{ $item->equipEffect() }}</td>
         </tr>
     @endif
     <tr>

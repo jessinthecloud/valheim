@@ -35,5 +35,17 @@
             <td class="px-2 py-1">{{ $item->movementEffect() }}</td>
         </tr>
     @endif
+    @if( !empty($item->setEffect()) )
+        <tr>
+            <td class="font-bold px-2 py-1">Status Effect:</td>
+            <td class="px-2 py-1">{{ $item->setEffect() }}</td>
+        </tr>
+    @endif
+    @if( !empty($item->equipEffect()) )
+        <tr>
+            <td class="font-bold px-2 py-1">Equip Status Effect:</td>
+            <td class="px-2 py-1">{{ $item->equipEffect() }}</td>
+        </tr>
+    @endif
 </table>
 @endif

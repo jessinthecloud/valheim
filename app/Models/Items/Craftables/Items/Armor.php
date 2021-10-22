@@ -64,6 +64,6 @@ class Armor extends CraftableItem
     {
         return abs(
                 $this->sharedData->movement_modifier
-            ) . ' ' . ( $this->sharedData->movement_modifier > 1 ? 'Faster' : 'Slower' );
+            ) . 'x ' . ( $this->sharedData->movement_modifier > 1 ? 'Faster' : 'Slower' );
     }
 }
