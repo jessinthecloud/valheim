@@ -25,7 +25,6 @@ Route::get( '/about', [App\Http\Controllers\PageController::class, 'about'] )->n
 Route::get( '/images', App\Http\Controllers\Conversion\SaveImageController::class )->name( 'images' );
 
 // ITEMS
-
 Route::group([
     'prefix' => 'items',
     'as' => 'items.'

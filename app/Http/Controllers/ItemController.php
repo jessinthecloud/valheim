@@ -28,11 +28,6 @@ class ItemController extends Controller
             ;
         $items = $paginator->items();
         
-        /*foreach($items as $item){
-            dump($item->image, asset('storage/images/'.$item->image));
-        }
-        exit;*/
-        
         /*$all_items = $items->concat($pieces)->sortBy('name');
            
         $items = $all_items->skip((($page-1) * $per_page))->take($per_page);

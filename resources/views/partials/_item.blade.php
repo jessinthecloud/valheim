@@ -13,17 +13,17 @@
             <em class="block mt-2">{{ $item->type() }}</em>
         </p>
         
-        <x-weapon-details
+        <x-items.weapon-details
             :item="$item"
-        ></x-weapon-details>
+        ></x-items.weapon-details>
         
-        <x-armor-details
+        <x-items.armor-details
             :item="$item"
-        ></x-armor-details>
+        ></x-items.armor-details>
         
-        <x-consumable-details
+        <x-items.consumable-details
             :item="$item"
-        ></x-consumable-details>
+        ></x-items.consumable-details>
     </div> {{-- end item-details --}}
     
     {{-- <div class="w-full"> {!! $item->image(new \App\Http\ImageFetcher) !!}</div> --}}
