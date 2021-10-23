@@ -95,6 +95,7 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
      * shared_data item_type as string
      *
      * @return string   item type
+     * @throws \ErrorException
      */
     public function type() : string
     {
