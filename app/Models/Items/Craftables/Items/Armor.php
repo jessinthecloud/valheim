@@ -2,12 +2,13 @@
 
 namespace App\Models\Items\Craftables\Items;
 
+use App\Models\Items\Traits\HasArmor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Armor extends CraftableItem
 {
-    use HasFactory;
+    use HasFactory, HasArmor;
 
     protected $table = 'items';
 
@@ -29,44 +30,7 @@ class Armor extends CraftableItem
         });
     }
 
-// -- MISC -----------------------------------------------------
-
-    public function block()
-    {
-        return $this->sharedData->block_power;
-    }
-
-    public function armor()
-    {
-        return $this->sharedData->armor;
-    }
-
-    public function armorPerLevel()
-    {
-        return $this->sharedData->armor_per_level;
-    }
-
-    public function deflection()
-    {
-        return $this->sharedData->deflection_force;
-    }
-
-    public function deflectionPerLevel()
-    {
-        return $this->sharedData->deflection_force_per_level;
-    }
-
-    public function movementModifier()
-    {
-        return $this->sharedData->movement_modifier;
-    }
+// -- MISC ----------------------------------------------------- 
     
-// -- CALCULATIONS -----------------------------------------------
 
-    public function movementEffect()
-    {
-        return abs(
-                $this->sharedData->movement_modifier
-            ) . 'x ' . ( $this->sharedData->movement_modifier > 1 ? 'Faster' : 'Slower' );
-    }
 }

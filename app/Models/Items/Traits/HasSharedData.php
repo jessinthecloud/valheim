@@ -71,7 +71,9 @@ trait HasSharedData
 
     public function attackEffect() : string
     {
-        return !empty($this->sharedData->attackStatusEffect->name) ? $this->niceName($this->sharedData->attackStatusEffect->name) : '';
+        $effect = $this->sharedData->attackStatusEffect;
+        
+        return $effect->tooltip ?? (!empty($effect->name) ? $this->niceName($effect->name) : '');
     }
 
     public function consumeEffect() : string

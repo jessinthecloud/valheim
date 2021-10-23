@@ -1,6 +1,6 @@
 @props(['item'])
 {{-- if food --}}
-@if($item->hasRecipes() && $item->isFood())
+@if($item->isFood())
 <table>
     <tr>
         <td class="font-bold px-2 py-1">Health:</td>

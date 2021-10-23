@@ -1,7 +1,7 @@
 @props(['item'])
 
 {{-- if armor --}}
-@if($item->hasRecipes() && $item->isArmor())
+@if($item->isArmor())
 <table>
     <tr>
         <td class="font-bold px-2 py-1">Armor:</td>

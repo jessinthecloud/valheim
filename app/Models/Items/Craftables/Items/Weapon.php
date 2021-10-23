@@ -2,12 +2,13 @@
 
 namespace App\Models\Items\Craftables\Items;
 
+use App\Models\Items\Traits\HasAttacks;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Weapon extends CraftableItem
 {
-    use HasFactory;
+    use HasFactory, HasAttacks;
 
     protected $table = 'items';
     
@@ -31,30 +32,4 @@ class Weapon extends CraftableItem
 
 // -- MISC -----------------------------------------------------
 
-    public function attackEffect()
-    {
-        $effect = $this->sharedData->attackStatusEffect;
-
-        return isset( $effect ) ? $effect->tooltip : null;
-    }
-
-    public function attack()
-    {
-        return $this->sharedData->attack_force;
-    }
-
-    public function backstab()
-    {
-        return $this->sharedData->backstab_bonus;
-    }
-
-    public function block()
-    {
-        return $this->sharedData->block_power;
-    }
-
-    public function armor()
-    {
-        return $this->sharedData->armor;
-    }
 }
