@@ -19,9 +19,9 @@ class ImageFetcher
      */
     public function fetch(string $item_name)
     {
-        $image_url = $this->fetchImageHtmlString(Str::snake($item_name));
+        $image_url = $this->fetchImageHtmlString($item_name);
         
-        return $this->saveImage($image_url);
+        return $image_url ? $this->saveImage($image_url) : false;
     }
 
     /**
@@ -54,17 +54,21 @@ class ImageFetcher
             abort($response->status(), 'Request to '.$uri.' failed.');
         }
         
-        if($response->object()->error){
-            abort($response->object()->error->code, $response->object()->error->info);
+        if(property_exists($response->object(), 'error')){
+            dump('======= ERROR ',$response->object(),  '=======');
+            return false;
         }
-dump($response->object());        
-        $response = $response->object()->parse;
+        $obj = $response->object();
+        $response = $obj->parse;
         
         // https://github.com/paquettg/php-html-parser
         $dom = new Dom;
         $dom->loadStr(stripslashes(reset($response->text)));
         $imageNode = $dom->find('.pi-image-thumbnail')[0];
-        
+        if(null === $imageNode){
+            dump('======= ERROR ',$obj, $dom->find('.pi-image-thumbnail'),  '=======');
+            return false;
+        }
         return $imageNode->getTag()->getAttribute('src')->getValue();
         
         /*return '<img
@@ -92,7 +96,7 @@ dump($response->object());
                     fwrite( $newf, fread( $file, 1024 * 8 ), 1024 * 8 );
                 }
 
-                dump($newf);
+//                dump($newf);
                 
                 fclose($file);
                 fclose($newf);

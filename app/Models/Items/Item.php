@@ -61,13 +61,13 @@ class Item extends Model implements CanBeIngredient
         return trim( implode( ' ', preg_split( '/(?=[A-Z])/', $name ) ) ) ?? $name;
     }
 
-    public function image( ImageFetcher $fetcher )
+    public function image() : string
     {
-        return $fetcher->fetchImageHtmlString( Str::snake( $this->name ) );
+        return storage_path('app/public/images/'.$this->image);
     }
 
     public function hasRecipes()
     {
-        return (null !== $this->recipes);
+        return (!empty($this->recipes->filter()->all()));
     }
 }

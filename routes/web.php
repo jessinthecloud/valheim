@@ -21,6 +21,9 @@ Route::get( '/', [App\Http\Controllers\PageController::class, 'index'] )->name( 
 Route::get( '/home', [App\Http\Controllers\PageController::class, 'index'] )->name( 'index' );
 Route::get( '/about', [App\Http\Controllers\PageController::class, 'about'] )->name( 'about' );
 
+// get and save images
+Route::get( '/images', App\Http\Controllers\Conversion\SaveImageController::class )->name( 'images' );
+
 // ITEMS
 
 Route::group([
