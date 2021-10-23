@@ -30,7 +30,7 @@ class Item extends Model implements CanBeIngredient
      * @var array
      */
     protected $with = [];
-
+    
 // -- RELATIONSHIPS -----------------------------------------------
 
     /**

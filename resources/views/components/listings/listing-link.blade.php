@@ -23,10 +23,10 @@
     
     <h2 class="relative w-3/4 flex flex-wrap items-center text-lg pl-4 m-0">
                 
-        {{ $entity->name }} 
+        {{ $entity->name }}
         
-        {{--@if(config('app.env') === 'local')
-            <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $entity->id }}</span>
-        @endif--}}
+        @if(defined($entity.'::ICON'))
+            {!! $entity::ICON !!}
+        @endif
     </h2>
 </a>
