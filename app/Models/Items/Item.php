@@ -4,6 +4,7 @@ namespace App\Models\Items;
 
 use App\Http\ImageFetcher;
 use App\Models\Items\Contracts\CanBeIngredient;
+use App\Models\Items\Contracts\IsItem;
 use App\Models\Recipes\ItemRecipe;
 use App\Models\Recipes\PieceRecipe;
 use App\Models\Recipes\Requirement;
@@ -79,18 +80,33 @@ class Item extends Model implements CanBeIngredient
 // -- MISC -----------------------------------------------
 
     // split string into array on uppercase letter and turn it into string
-    public static function niceName( $name )
+    public static function niceName( $name ) : string
     {
         return trim( implode( ' ', preg_split( '/(?=[A-Z])/', $name ) ) ) ?? $name;
     }
 
     public function image() : string
     {
-        return asset('storage/images/'.$this->image);
+        return !empty($this->getAttribute('image')) ? asset('storage/images/'.$this->image) : '';
     }
 
-    public function hasRecipes()
+    public function hasRecipes() : bool
     {
         return (!empty($this->recipes->filter()->all()));
+    }
+
+    public function hasSharedData() : bool
+    {
+        return (!empty($this->sharedData));
+    }
+
+    /**
+     * uniformity for description field
+     *
+     * @return ?string
+     */
+    public function description() : ?string
+    {
+        return ($this->hasSharedData() ? $this->sharedData->description : (property_exists($this,'description') ? $this->description : ''));
     }
 }

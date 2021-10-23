@@ -8,9 +8,14 @@
         @endif
     </h2>
     <div class="item-details flex-grow md:mr-6">
+        
+        {!! $item->image() !!}
+    
         <p class="block my-4">
-            {!! $item->sharedData->description !!} 
-            <em class="block mt-2">{{ $item->type() }}</em>
+            {!! $item->description() !!}
+            @if($item->hasSharedData()) 
+                <em class="block mt-2">{{ $item->type() }}</em>
+            @endif
         </p>
         
         <x-items.weapon-details
@@ -25,8 +30,6 @@
             :item="$item"
         ></x-items.consumable-details>
     </div> {{-- end item-details --}}
-    
-    {{-- <div class="w-full"> {!! $item->image(new \App\Http\ImageFetcher) !!}</div> --}}
     
     @if($item->recipes)
         @foreach($item->recipes as $key => $recipe)

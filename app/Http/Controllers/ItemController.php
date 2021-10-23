@@ -50,6 +50,7 @@ class ItemController extends Controller
      */
     public function show(Request $request, Item $item)
     {
+//dump($item);    
         $item->name = ucwords($item->name);
         
         // lazy eager load recipe

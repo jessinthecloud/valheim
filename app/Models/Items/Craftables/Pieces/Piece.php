@@ -4,14 +4,16 @@ namespace App\Models\Items\Craftables\Pieces;
 
 use App\Enums\PieceCategory;
 use App\Models\Items\Contracts\IsCategorizable;
-use App\Models\Items\Contracts\IsCraftable; 
+use App\Models\Items\Contracts\IsCraftable;
+use App\Models\Items\Contracts\IsItem;
+use App\Models\Items\Item;
 use App\Models\Items\Traits\HasRecipe;
 use App\Models\Recipes\PieceRecipe;
 use App\Models\Recipes\Requirement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Piece extends Model implements IsCraftable, IsCategorizable
+class Piece extends Item implements IsItem, IsCraftable, IsCategorizable
 {
     use HasFactory, HasRecipe;
 
@@ -76,5 +78,25 @@ class Piece extends Model implements IsCraftable, IsCategorizable
                 } );
             } )
             ->get()->unique( 'item_id' );
+    }
+
+    public function isWeapon() : bool
+    {
+        return false;
+    }
+
+    public function isArmor() : bool
+    {
+        return false;
+    }
+
+    public function isConsumable() : bool
+    {
+        return false;
+    }
+    
+    public function isFood() : bool
+    {
+        return false;
     }
 }

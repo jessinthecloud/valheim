@@ -49,6 +49,16 @@ trait HasSharedData
     
 // -- MISC ---------------------------------------
 
+    /**
+     * uniformity for description field
+     * 
+     * @return string|null
+     */
+    public function description() : ?string
+    {
+        return $this->sharedData->description;
+    }
+
     public function weight()
     {
         return $this->sharedData->weight;

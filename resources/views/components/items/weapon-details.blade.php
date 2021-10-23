@@ -1,6 +1,6 @@
 @props(['item'])
 
-@if($item->isWeapon())
+@if($item->hasRecipes() && $item->isWeapon())
 <table>
     <tr>
         <td class="font-bold px-2 py-1">Attack Force:</td>

@@ -3,6 +3,7 @@
 namespace App\Models\Items\Craftables\Items;
 
 use App\Enums\ItemType;
+use App\Models\Items\Contracts\IsItem;
 use App\Models\Items\Item;
 use App\Models\Items\Contracts\IsCategorizable;
 use App\Models\Items\Contracts\IsCraftable;
@@ -11,7 +12,7 @@ use App\Models\Items\Traits\HasSharedData;
 use App\Models\Recipes\ItemRecipe;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CraftableItem extends Item implements IsCraftable, IsCategorizable
+class CraftableItem extends Item implements IsItem, IsCraftable, IsCategorizable
 {
     use HasFactory, HasSharedData, HasRecipe;
     
@@ -84,9 +85,14 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
     /*************************************
      * FOOD METHODS
      */
-    public function isFood() : bool
+    public function isConsumable() : bool
     {
         return ( (int)$this->sharedData->item_type === ItemType::Consumable );
+    }
+    
+    public function isFood() : bool
+    {
+        return $this->isConsumable();
     }
 
     /**
