@@ -65,17 +65,6 @@ class CraftableItem extends Item implements IsCraftable, IsCategorizable
 
 // -- RELATIONSHIPS -----------------------------------------------------
 
-    /**
-     * items can have multiple recipes for their variants
-     * e.g., Bronze and 5 Bronze bars
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function recipes()
-    {
-        return $this->hasMany( ItemRecipe::class, 'creation_id', 'id' );
-    }
-
     /*************************************
      * WEAPON METHODS
      */

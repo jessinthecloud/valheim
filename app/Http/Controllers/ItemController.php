@@ -29,9 +29,7 @@ class ItemController extends Controller
         $items = $paginator->items();
         
         /*$all_items = $items->concat($pieces)->sortBy('name');
-           
         $items = $all_items->skip((($page-1) * $per_page))->take($per_page);
-
         $paginator = new LengthAwarePaginator($items, $all_items->count(), $per_page, $page, ['path'=>$request->getPathInfo()]);*/
 
         return view('items.index',
@@ -46,13 +44,14 @@ class ItemController extends Controller
      * Display the specified resource.
      *
      * @param \Illuminate\Http\Request                         $request
-     * @param \App\Models\Items\Craftables\Items\CraftableItem $item
+     * @param \App\Models\Items\Craftables\Items\Item $item
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function show(Request $request, CraftableItem $item)
+    public function show(Request $request, Item $item)
     {
         $item->name = ucwords($item->name);
+        
         // lazy eager load recipe
         $item->load('recipes', 'recipes.requirements', 'recipes.requirements.item');
         

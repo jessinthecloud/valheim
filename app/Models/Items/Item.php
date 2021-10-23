@@ -53,6 +53,29 @@ class Item extends Model implements CanBeIngredient
         return $this->hasManyThrough( PieceRecipe::class, Requirement::class, 'item_id',  'creation_id');
     }
 
+    /**
+     * Need this so we can use it to check for recipes
+     * 
+     * items can have multiple recipes for their variants
+     * e.g., Bronze and 5 Bronze bars
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function recipes()
+    {
+        return $this->hasMany( ItemRecipe::class, 'creation_id', 'id' );
+    }
+
+    /**
+     * Need this so we can use it to check for sharedData
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function sharedData()
+    {
+        return $this->belongsTo( SharedData::class );
+    }
+
 // -- MISC -----------------------------------------------
 
     // split string into array on uppercase letter and turn it into string

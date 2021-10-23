@@ -46,10 +46,6 @@ trait HasSharedData
 
 // -- RELATIONSHIPS -----------------------------------------------
 
-    public function sharedData()
-    {
-        return $this->belongsTo( SharedData::class );
-    }
     
 // -- MISC ---------------------------------------
 
