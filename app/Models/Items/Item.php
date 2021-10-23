@@ -63,7 +63,7 @@ class Item extends Model implements CanBeIngredient
 
     public function image() : string
     {
-        return storage_path('app/public/images/'.$this->image);
+        return asset('storage/images/'.$this->image);
     }
 
     public function hasRecipes()

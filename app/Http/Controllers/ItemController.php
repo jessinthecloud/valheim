@@ -21,14 +21,18 @@ class ItemController extends Controller
         $page = $request->page ?? 1;
         $per_page = 32;
 
-        $paginator = Item::selectRaw('id,name,slug, "item" as type, "items" as url')
-            ->unionAll(Piece::selectRaw('id, name, slug, "piece" as type, "pieces" as url'))
+        $paginator = Item::selectRaw('id,name,slug,image, "item" as type, "items" as url')
+            ->unionAll(Piece::selectRaw('id, name, slug,image, "piece" as type, "pieces" as url'))
             ->orderBy('name', 'asc')
             ->paginate($per_page)
             ;
-        
         $items = $paginator->items();
-
+        
+        /*foreach($items as $item){
+            dump($item->image, asset('storage/images/'.$item->image));
+        }
+        exit;*/
+        
         /*$all_items = $items->concat($pieces)->sortBy('name');
            
         $items = $all_items->skip((($page-1) * $per_page))->take($per_page);

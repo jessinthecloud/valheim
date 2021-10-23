@@ -12,8 +12,17 @@
         lg:w-1/5
     "
 >
-    <h2 class="relative w-full text-xl">
+    <h2 class="relative w-full text-xl flex flex-wrap items-center">
+        @if( !empty($entity->image))
+            <img
+                src="{{ $entity->image() }}"
+                alt="{{ $entity->name }} Thumbnail"
+                class="mr-4"
+            />
+        @endif
+        
         {{ $entity->name }} 
+        
         @if(config('app.env') === 'local')
             <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $entity->id }}</span>
         @endif
