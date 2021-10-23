@@ -87,7 +87,9 @@ class Item extends Model implements CanBeIngredient
 
     public function image() : string
     {
-        return !empty($this->getAttribute('image')) ? asset('storage/images/'.$this->image) : '';
+        $image = !empty($this->getAttribute('image')) ? asset('storage/images/'.$this->image) : '';
+
+        return '<img src="'.$image.'" alt="'.self::niceName($this->name).'">';
     }
 
     public function hasRecipes() : bool
@@ -107,6 +109,6 @@ class Item extends Model implements CanBeIngredient
      */
     public function description() : ?string
     {
-        return ($this->hasSharedData() ? $this->sharedData->description : (property_exists($this,'description') ? $this->description : ''));
+        return ($this->hasSharedData() ? $this->sharedData->description : ( $this->description ?? ''));
     }
 }
