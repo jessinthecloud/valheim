@@ -1,4 +1,4 @@
-@if($recipe->item)
+@if($recipe->creation)
     @if($recipe->craftingStation)
         <p class="mt-4">
             <strong>Crafting Station:</strong>
