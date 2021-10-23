@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Craftables\Pieces\Piece;
+use App\Models\Items\NaturalItem;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -46,6 +49,15 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
+        });
+        
+        // Custom bind Item to route
+        // get a specific item type instead of generic Item 
+        Route::bind('item', function ($slug) {
+            return CraftableItem::where('slug', $slug)->first() 
+                ?? NaturalItem::where('slug', $slug)->first() 
+                ?? Piece::where('slug', $slug)->first() 
+                ?? abort('404');
         });
     }
 
