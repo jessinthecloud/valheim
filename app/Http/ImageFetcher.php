@@ -55,7 +55,7 @@ class ImageFetcher
         }
         
         if(property_exists($response->object(), 'error')){
-            dump('======= ERROR ',$response->object(),  '=======');
+//            dump('======= ERROR ',$response->object(),  '=======');
             return false;
         }
         $obj = $response->object();
@@ -66,7 +66,7 @@ class ImageFetcher
         $dom->loadStr(stripslashes(reset($response->text)));
         $imageNode = $dom->find('.pi-image-thumbnail')[0];
         if(null === $imageNode){
-            dump('======= ERROR ',$obj, $dom->find('.pi-image-thumbnail'),  '=======');
+//            dump('======= ERROR ',$obj, $dom->find('.pi-image-thumbnail'),  '=======');
             return false;
         }
         return $imageNode->getTag()->getAttribute('src')->getValue();
