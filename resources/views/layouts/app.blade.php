@@ -27,20 +27,25 @@
         @stack('styles')
         
     </head>
-    <body class="bg-gray-900 text-gray-100 flow-root">
+    <body class="bg-gray-900 min-h-screen flex flex-col text-gray-100">
         
         @include('nav')
 
-        <main class="container max-w-6xl flex flex-wrap justify-between mx-auto my-6 px-4
+        <main class="container max-w-6xl flex-grow mx-auto my-6 px-4
             lg:my-12
             lg:p-0
         ">
             {{ $slot }}
         </main>
-
+        
+        <footer class="w-full bg-gray-800 border-t border-gray-700 py-6">
+            
+            <div class="max-w-6xl mx-auto text-gray-500 text-sm italic text-center">
+                <a class="inline-block underline hover:no-underline" href="https://remixicon.com/" rel="noopener">Remix Icon</a> &middot; <a class="inline-block my-2 underline hover:no-underline" href="https://valheim.fandom.com" rel="noopener">Valheim Wiki Images</a> &middot; <a class="inline-block underline hover:no-underline" rel="noopener nofollow" href="https://github.com/jessinthecloud/valheim">jessinthecloud/valheim</a> &middot; <a class="inline-block underline hover:no-underline" rel="noopener nofollow" href="https://twitter.com/jessinthecloud">@jessinthecloud</a> &middot; <a class="inline-block underline hover:no-underline" rel="noopener nofollow" href="https://jessinthe.cloud">jessinthe.cloud</a>
+            </div>
+            
+        </footer>
         @stack('scripts')
-        
         <livewire:scripts />
-        
     </body>
 </html>
