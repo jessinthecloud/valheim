@@ -7,14 +7,16 @@
     <div class="paging-wrapper w-full mt-4 mb-10 lg:mt-0">
         {{ $paginator->links() }}
     </div>
-
-    @foreach($entities as $entity)
-        <x-listings.listing-link
-            :routeName="$routeName"
-            :entity="$entity"
-            :entityName="$entityName"
-        ></x-listings.listing-link>
-    @endforeach
+    
+    <div class="flex flex-wrap justify-between">
+        @foreach($entities as $entity)
+            <x-listings.listing-link
+                :routeName="$routeName"
+                :entity="$entity"
+                :entityName="$entityName"
+            ></x-listings.listing-link>
+        @endforeach
+    </div>
 
     {{--paging links--}}
     <div class="paging-wrapper w-full mt-8">

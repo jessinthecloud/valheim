@@ -1,6 +1,4 @@
-<div class="max-w-full flex flex-wrap flex-grow justify-between bg-gray-800 mb-4 p-6 
-    md:w-5/12
-">
+<div class="w-full flex flex-wrap flex-grow justify-between bg-gray-800 mb-4 p-6">
     <h2 class="w-full relative text-3xl mb-4">
         {{ $item->name }} 
         @if(config('app.env') === 'local') 
