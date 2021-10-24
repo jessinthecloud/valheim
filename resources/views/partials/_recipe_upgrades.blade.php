@@ -1,19 +1,19 @@
 <section class="upgrades-wrapper w-full">
-    <div class="bg-gray-900 mt-4 p-4">
+    <div class="bg-gray-900 w-full mt-4 p-4">
         <h3 class="w-full text-xl mb-4">Upgrades</h3>
-        <ul class="w-full">
+        <ul class="w-full flex flex-wrap">
             @foreach($recipe->upgrades() as $level => $upgrade)
-                <li class="bg-gray-800 mb-4 p-4">
+                <li class="bg-gray-800 mb-4 mr-2 p-4 flex-grow">
                     <h4 class="text-lg font-bold mb-2">
                         Level {{ $level }}
                         @if($level === $recipe->max_quality())
                             (MAX)
                         @endif
                     </h4>
-                    <ul class="pl-4">
+                    <ul class="">
                         <li>
                             @if(isset($upgrade['station']) && $upgrade['station_level'] > 1) 
-                                <em class="block mb-2">Level {{ $upgrade['station_level'] }} {{ $upgrade['station'] }} </em>  
+                                <em class="block mb-2">{{ $upgrade['station'] }} Level {{ $upgrade['station_level'] }}</em>  
                             @endif
                         </li>
                         @isset($upgrade['resources'])

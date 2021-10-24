@@ -29,6 +29,17 @@
         <x-items.consumable-details
             :item="$item"
         ></x-items.consumable-details>
+
+        @if($item->recipes)
+            @foreach($item->recipes as $key => $recipe)
+                @if($recipe->max_quality() > 1 && !empty($recipe->upgrades()))
+                    @include('partials._recipe_upgrades', [
+                        'recipe'    => $recipe
+                    ])
+                @endif
+            @endforeach
+        @endif
+        
     </div> {{-- end item-details --}}
     
     @if($item->recipes)
@@ -39,12 +50,6 @@
                 </h3>
 
                 @include('partials._recipe-details')
-                
-                @if($recipe->max_quality() > 1 && !empty($recipe->upgrades()))
-                    @include('partials._recipe_upgrades', [
-                        'recipe'    => $recipe
-                    ])
-                @endif
 
                 {{--<x-general.button-link
                     class="font-semibold mt-4"
