@@ -99,7 +99,7 @@ class Item extends Model implements CanBeIngredient
      */
     public function recipes()
     {
-        return $this->hasMany( ItemRecipe::class, 'creation_id', 'id' );
+        return $this->hasMany( ItemRecipe::class, 'creation_id', 'id' ) ?? $this->hasMany( PieceRecipe::class, 'creation_id' ) ?? null;
     }
 
     /**
@@ -145,6 +145,8 @@ class Item extends Model implements CanBeIngredient
         if($this->isConsumable()){
             return Consumable::ICON;
         }
+        
+        return null;
     }
 
     /**

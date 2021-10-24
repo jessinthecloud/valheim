@@ -4,7 +4,6 @@ namespace App\Models\Items\Contracts;
 
 interface IsItem
 {
-    public function recipes();
     public function sharedData();
     public function hasRecipes() : bool;
     public function hasSharedData() : bool;

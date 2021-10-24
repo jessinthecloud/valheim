@@ -59,17 +59,19 @@ Route::group([
         ->name( 'show' )
         ->where( 'slug', '[a-zA-Z0-9-]+' );
 });
-/*
+
 // RECIPES
 Route::get( '/recipes', [App\Http\Controllers\RecipeController::class, 'index'] )
     ->name( 'recipes.index' );
-Route::get( '/recipes/{recipe:slug}', [App\Http\Controllers\RecipeController::class, 'showSlug'] )
+Route::get( '/recipes/{recipe:slug}', [App\Http\Controllers\RecipeController::class, 'show'] )
     ->where( 'slug', '[a-zA-Z0-9-]+' )
     ->name( 'recipes.show' );
 
+/*
 // STATUS EFFECTS
 Route::get( '/status-effects', [App\Http\Controllers\StatusEffectController::class, 'index'] )
-    ->name( 'status-effects.index' );*/
+    ->name( 'status-effects.index' );
+//*/
 
 /* 
 Route::resources(

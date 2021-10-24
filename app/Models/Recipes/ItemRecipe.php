@@ -39,6 +39,8 @@ class ItemRecipe extends Recipe
         ],
     ];
 
+// -- RELATIONSHIPS -----------------------------------------------
+
     // item this recipe creates
     public function creation()
     {
@@ -51,7 +53,7 @@ class ItemRecipe extends Recipe
     }
 
     /**
-     * tool that makes the piece
+     * tool that makes the item
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      * Relationship or Collection of PieceTable
@@ -59,5 +61,12 @@ class ItemRecipe extends Recipe
     public function craftingDevice()
     {
         return $this->craftingStation();
+    }
+
+// -- MISC -----------------------------------------------
+
+    public function icon() : string
+    {
+        return null !== $this->creation ? $this->creation->icon() : '';
     }
 }

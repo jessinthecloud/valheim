@@ -3,10 +3,10 @@
     {{ $title }}
 </x-slot>
 
-@if(!empty($item))
+@if(!empty($entity))
     @include($partial, [
-        $index => $item
+        $index => $entity
     ])
 @else
-    No {{ $itemClassType }} to display.
+    No {{ $entityClassType }} to display.
 @endif
