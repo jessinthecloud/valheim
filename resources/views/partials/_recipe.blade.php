@@ -12,7 +12,7 @@
         @include('partials._recipe-details')
     </div>
 
-    @if($recipe->maxQuality() > 1 && !empty($recipe->upgrades))
+    @if($recipe->maxQuality() > 1 && !empty($recipe->upgrades()))
         @include('partials._recipe_upgrades', [
             'recipe'    => $recipe
         ])

@@ -72,7 +72,7 @@ class ItemRecipe extends Recipe
 
     public function maxQuality() : int
     {
-        return (!empty($this->creation) && !empty($this->creation->sharedData)) ? ($this->creation->sharedData->maxQuality ?? 1) : 1;
+        return (!empty($this->creation) && !empty($this->creation->sharedData)) ? ($this->creation->sharedData->max_quality ?? 1) : 1;
     }
 
     public function upgrades()
