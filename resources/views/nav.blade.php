@@ -33,6 +33,21 @@
                     Items
                 </a>
             </li>
+            <li>
+                <a href="{{ route('items.armor.index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
+                    Armor
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('items.weapons.index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
+                    Weapons
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('items.consumables.index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
+                    Food
+                </a>
+            </li>
             {{--<li>
                 <a href="{{ route('pieces.index') }}" class="block hover:bg-gray-800 hover:text-gray-100 px-3 py-3 flex items-center transition ease-in-out duration-150">
                     Pieces
