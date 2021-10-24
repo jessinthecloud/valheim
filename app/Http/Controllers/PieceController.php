@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Piece;
+use App\Models\Items\Craftables\Pieces\Piece;
 use Illuminate\Http\Request;
 
 class PieceController extends Controller
@@ -10,101 +10,50 @@ class PieceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @param \Illuminate\Http\Request $request
+     *
+     * @return \Illuminate\Contracts\View\View
      */
-    public function index()
+    public function index( Request $request )
     {
-        $paginator = Piece::orderBy('name', 'asc')->paginate(32);
-        $pieces = collect($paginator->items());
+        $page = $request->page ?? 1;
+        $per_page = 32;
 
-        return view('pieces.index',
+        $paginator = Piece::selectRaw( 'id, name, slug, "piece" as type, "pieces" as url' )
+            ->orderBy( 'name', 'asc' )
+            ->paginate( $per_page );
+
+        $items = $paginator->items();
+
+        /*$all_items = $items->concat($pieces)->sortBy('name');
+           
+        $items = $all_items->skip((($page-1) * $per_page))->take($per_page);
+
+        $paginator = new LengthAwarePaginator($items, $all_items->count(), $per_page, $page, ['path'=>$request->getPathInfo()]);*/
+
+        return view(
+            'pieces.index',
             compact(
-                'pieces',
+                'items',
                 'paginator'
             )
         );
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Piece $piece
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $piece = Piece::with('pieceTable')->with('requirements')->findOrFail($id);
-        $piece->name = ucwords($piece->name);
-
-        return view('pieces.show', compact('piece'));
-    }
-
-    /**
-     * Display the specified resource.
+     * @param \Illuminate\Http\Request                  $request
+     * @param \App\Models\Items\Craftables\Pieces\Piece $piece
      *
-     * @param  \App\Models\Piece $piece
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View
      */
-    public function showSlug($slug)
+    public function show( Request $request, Piece $piece )
     {
-        $piece = Piece::with('pieceTable')->with('requirements')->where('slug', $slug)->firstOrFail();
-        $piece->name = ucwords($piece->name);
+        $piece->name = ucwords( $piece->name );
+        // lazy eager load recipe
+        $piece->load( 'recipes', 'recipes.requirements', 'recipes.requirements.item' );
 
-        return view('pieces.show', compact('piece'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Piece  $piece
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Piece $piece)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Piece  $piece
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Piece $piece)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Piece  $piece
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Piece $piece)
-    {
-        //
+        return view( 'items.show', compact( 'piece' ) );
     }
 }

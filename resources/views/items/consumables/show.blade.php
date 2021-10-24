@@ -1,0 +1,9 @@
+<x-layouts.app>
+    <x-show
+        :title="$consumable->name"
+        :entity="$consumable"
+        :partial="'partials._item'"
+        :index="'item'"
+        :entityClassType="'consumable'"
+    ></x-show>
+</x-layouts.app>

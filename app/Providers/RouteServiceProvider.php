@@ -2,6 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Items\Craftables\Items\Armor;
+use App\Models\Items\Craftables\Items\Consumable;
+use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Craftables\Items\Weapon;
+use App\Models\Items\Craftables\Pieces\Piece;
+use App\Models\Items\NaturalItem;
+use App\Models\Recipes\ItemRecipe;
+use App\Models\Recipes\PieceRecipe;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -46,6 +54,35 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
+        });
+        
+        // Custom bind Item to route
+        // get a specific item type instead of generic Item 
+        Route::bind('item', function ($slug) {
+            $item = Armor::where('slug', $slug)->first()
+                ?? Weapon::where('slug', $slug)->first()
+                ?? Consumable::where('slug', $slug)->first()
+                ?? CraftableItem::where('slug', $slug)->first() 
+                ?? NaturalItem::where('slug', $slug)->first() 
+                /* 
+                ?? Furniture::where('slug', $slug)->first()
+                ?? BuildingPiece::where('slug', $slug)->first()
+                ?? CraftingPiece::where('slug', $slug)->first() 
+                */
+                ?? Piece::where('slug', $slug)->first() 
+                ?? abort('404');
+//ddd($item);
+            return $item;
+        });
+
+        // Custom bind Recipe to route
+        // get a specific recipe type instead of generic Recipe 
+        Route::bind('recipe', function ($slug) {
+            $recipe = ItemRecipe::where('slug', $slug)->first()
+            ?? PieceRecipe::where('slug', $slug)->first()
+            ?? abort('404');
+//ddd($recipe);
+            return $recipe;
         });
     }
 

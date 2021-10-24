@@ -1,13 +1,11 @@
 <?php
 
+use App\Models\Craftables\Item;
+use App\Models\Recipes\Recipe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\RecipeController;
-use App\Http\Controllers\ItemController;
 use App\Http\Resources\ItemResource;
 use App\Http\Resources\RecipeResource;
-use App\Models\Item;
-use App\Models\Recipe;
 
 /*
 |--------------------------------------------------------------------------

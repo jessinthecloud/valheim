@@ -1,0 +1,476 @@
+[
+    {
+        "raw_name": null,
+        "var_name": null,
+        "true_name": "Recipe_Adze",
+        "enabled": false,
+        "min_station_level": 1,
+        "amount": 1,
+        "raw_crafting_station_name": null,
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 3,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Wood",
+                "var_name": "$item_wood"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Stone",
+                "var_name": "$item_stone"
+            }
+        ]
+    },
+    {
+        "raw_name": "Bronze plate cuirass",
+        "var_name": "$item_chest_bronze",
+        "true_name": "Recipe_ArmorBronzeChest",
+        "enabled": true,
+        "min_station_level": 1,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 3,
+                "recover": true,
+                "raw_name": "Bronze",
+                "var_name": "$item_bronze"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 0,
+                "recover": true,
+                "raw_name": "Deer hide",
+                "var_name": "$item_deerhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Bronze plate leggings",
+        "var_name": "$item_legs_bronze",
+        "true_name": "Recipe_ArmorBronzeLegs",
+        "enabled": true,
+        "min_station_level": 1,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 3,
+                "recover": true,
+                "raw_name": "Bronze",
+                "var_name": "$item_bronze"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 0,
+                "recover": true,
+                "raw_name": "Deer hide",
+                "var_name": "$item_deerhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Iron scale mail",
+        "var_name": "$item_chest_iron",
+        "true_name": "Recipe_ArmorIronChest",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 20,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Iron",
+                "var_name": "$item_iron"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 0,
+                "recover": true,
+                "raw_name": "Deer hide",
+                "var_name": "$item_deerhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Iron greaves",
+        "var_name": "$item_legs_iron",
+        "true_name": "Recipe_ArmorIronLegs",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 20,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Iron",
+                "var_name": "$item_iron"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 0,
+                "recover": true,
+                "raw_name": "Deer hide",
+                "var_name": "$item_deerhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Leather tunic",
+        "var_name": "$item_chest_leather",
+        "true_name": "Recipe_ArmorLeatherChest",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 6,
+                "amount_per_level": 6,
+                "recover": true,
+                "raw_name": "Deer hide",
+                "var_name": "$item_deerhide"
+            },
+            {
+                "amount": 0,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Bone fragments",
+                "var_name": "$item_bonefragments"
+            }
+        ]
+    },
+    {
+        "raw_name": "Leather pants",
+        "var_name": "$item_legs_leather",
+        "true_name": "Recipe_ArmorLeatherLegs",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 6,
+                "amount_per_level": 6,
+                "recover": true,
+                "raw_name": "Deer hide",
+                "var_name": "$item_deerhide"
+            },
+            {
+                "amount": 0,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Bone fragments",
+                "var_name": "$item_bonefragments"
+            }
+        ]
+    },
+    {
+        "raw_name": "Padded cuirass",
+        "var_name": "$item_chest_pcuirass",
+        "true_name": "Recipe_ArmorPaddedCuirass",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 10,
+                "amount_per_level": 3,
+                "recover": true,
+                "raw_name": "Iron",
+                "var_name": "$item_iron"
+            },
+            {
+                "amount": 20,
+                "amount_per_level": 10,
+                "recover": true,
+                "raw_name": "Linen thread",
+                "var_name": "$item_linenthread"
+            }
+        ]
+    },
+    {
+        "raw_name": "Padded greaves",
+        "var_name": "$item_legs_pgreaves",
+        "true_name": "Recipe_ArmorPaddedGreaves",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 10,
+                "amount_per_level": 3,
+                "recover": true,
+                "raw_name": "Iron",
+                "var_name": "$item_iron"
+            },
+            {
+                "amount": 20,
+                "amount_per_level": 10,
+                "recover": true,
+                "raw_name": "Linen thread",
+                "var_name": "$item_linenthread"
+            }
+        ]
+    },
+    {
+        "raw_name": "Rag tunic",
+        "var_name": "$item_chest_rags",
+        "true_name": "Recipe_ArmorRagsChest",
+        "enabled": true,
+        "min_station_level": 1,
+        "amount": 1,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Leather scraps",
+                "var_name": "$item_leatherscraps"
+            }
+        ]
+    },
+    {
+        "raw_name": "Rag pants",
+        "var_name": "$item_legs_rags",
+        "true_name": "Recipe_ArmorRagsLegs",
+        "enabled": true,
+        "min_station_level": 1,
+        "amount": 1,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Leather scraps",
+                "var_name": "$item_leatherscraps"
+            }
+        ]
+    },
+    {
+        "raw_name": "Troll leather tunic",
+        "var_name": "$item_chest_trollleather",
+        "true_name": "Recipe_ArmorTrollLeatherChest",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 2,
+                "recover": true,
+                "raw_name": "Troll hide",
+                "var_name": "$item_trollhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Troll leather pants",
+        "var_name": "$item_legs_trollleather",
+        "true_name": "Recipe_ArmorTrollLeatherLegs",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 2,
+                "recover": true,
+                "raw_name": "Troll hide",
+                "var_name": "$item_trollhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Wolf armor chest",
+        "var_name": "$item_chest_wolf",
+        "true_name": "Recipe_ArmorWolfChest",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 20,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Silver",
+                "var_name": "$item_silver"
+            },
+            {
+                "amount": 5,
+                "amount_per_level": 2,
+                "recover": true,
+                "raw_name": "Wolf pelt",
+                "var_name": "$item_wolfpelt"
+            },
+            {
+                "amount": 1,
+                "amount_per_level": 0,
+                "recover": true,
+                "raw_name": "Chain",
+                "var_name": "$item_chain"
+            }
+        ]
+    },
+    {
+        "raw_name": "Wolf armor legs",
+        "var_name": "$item_legs_wolf",
+        "true_name": "Recipe_ArmorWolfLegs",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 20,
+                "amount_per_level": 5,
+                "recover": true,
+                "raw_name": "Silver",
+                "var_name": "$item_silver"
+            },
+            {
+                "amount": 5,
+                "amount_per_level": 2,
+                "recover": true,
+                "raw_name": "Wolf pelt",
+                "var_name": "$item_wolfpelt"
+            },
+            {
+                "amount": 4,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Wolf fang",
+                "var_name": "$item_wolffang"
+            }
+        ]
+    },
+    {
+        "raw_name": "Bronzehead arrow",
+        "var_name": "$item_arrow_bronze",
+        "true_name": "Recipe_ArrowBronze",
+        "enabled": true,
+        "min_station_level": 1,
+        "amount": 20,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 8,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Wood",
+                "var_name": "$item_wood"
+            },
+            {
+                "amount": 1,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Bronze",
+                "var_name": "$item_bronze"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Feathers",
+                "var_name": "$item_feathers"
+            }
+        ]
+    },
+    {
+        "raw_name": "Fire arrow",
+        "var_name": "$item_arrow_fire",
+        "true_name": "Recipe_ArrowFire",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 20,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 8,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Wood",
+                "var_name": "$item_wood"
+            },
+            {
+                "amount": 8,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Resin",
+                "var_name": "$item_resin"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Feathers",
+                "var_name": "$item_feathers"
+            }
+        ]
+    }
+]

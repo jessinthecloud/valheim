@@ -1,6 +1,6 @@
-@props(['entities', 'entityName', 'paginator', 'routeName'])
+@props(['title', 'entities', 'entityName', 'paginator', 'routeName'])
 
-<h1 class="w-full text-4xl mb-4">{{ ucwords(Str::plural($entityName)) }}</h1>
+<h1 class="w-full text-4xl mb-4">{{ $title }}</h1>
 
 @if(!empty($entities))
     {{--paging links--}}
@@ -12,6 +12,7 @@
         <x-listings.listing-link
             :routeName="$routeName"
             :entity="$entity"
+            :entityName="$entityName"
         ></x-listings.listing-link>
     @endforeach
 

@@ -1,4 +1,4 @@
-@if($recipe->item)
+@if($recipe->creation)
     @if($recipe->craftingStation)
         <p class="mt-4">
             <strong>Crafting Station:</strong>
@@ -25,12 +25,16 @@
             @if($requirement->amount > 0)
                 <li>
                     <strong>{{ $requirement->amount }}</strong>
-                    <a
-                        class="underline hover:text-amber hover:no-underline transition ease-in-out duration-150"
-                        href="{{ route('items.show', $requirement->item->slug) }}"
-                    >
-                        {{ $requirement->name }}
-                    </a>
+                    @if( !empty($requirement->item))
+                        <a
+                            class="underline hover:text-amber hover:no-underline transition ease-in-out duration-150"
+                            href="{{ route('items.show', $requirement->item->slug) }}"
+                        >
+                            {{ $requirement->item->name }}
+                        </a>
+                    @else
+                        [item missing]
+                    @endif
                 </li>
             @endif
         @endforeach

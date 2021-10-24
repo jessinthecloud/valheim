@@ -1,15 +1,9 @@
-@extends('layouts.app')
-
-@section('title')
-    @if(!empty($recipe)) {{ $recipe->name }} Recipe | @endif
-@endsection
-
-@section('content')
-    @if(!empty($recipe))
-        @include('partials._recipe', [
-            'recipe'    => $recipe
-        ])
-    @else 
-        No recipe to display.
-    @endif
-@endsection
+<x-layouts.app>
+    <x-show
+        :title="$recipe->name"
+        :entity="$recipe"
+        :partial="'partials._recipe'"
+        :index="'recipe'"
+        :entity_class_type="'recipe'"
+    ></x-show>
+</x-layouts.app>
