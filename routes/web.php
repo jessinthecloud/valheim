@@ -2,10 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\RecipeController;
-use App\Http\Controllers\ItemController;
-use App\Models\Item;
-use App\Models\Recipe;
+// include convert routes
+include_once( base_path('routes/convert.php') );
 
 /*
 |--------------------------------------------------------------------------
@@ -18,104 +16,80 @@ use App\Models\Recipe;
 |
 */
 
-// Convert ------------------------------------------------------------------
-if (env('APP_ENV') === 'local') {
-    Route::prefix('convert')->name('convert.')->group(function () {
-        Route::get(
-            '/',
-            [App\Http\Controllers\ConvertController::class, 'index']
-        )->name('index');
+// PAGES
+Route::get( '/', [App\Http\Controllers\PageController::class, 'index'] )->name( 'index' );
+Route::get( '/home', [App\Http\Controllers\PageController::class, 'index'] )->name( 'index' );
+Route::get( '/about', [App\Http\Controllers\PageController::class, 'about'] )->name( 'about' );
 
-        Route::get(
-            '/piece-tables/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'pieceTable']
-        )->name('piece-tables');
+// get and save images
+Route::get( '/images', App\Http\Controllers\Conversion\SaveImageController::class )->name( 'images' );
 
-        Route::get(
-            '/pieces/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'piece']
-        )->name('pieces');
+// ITEMS
+Route::group([
+    'as' => 'items.'
+], function() {
 
-        Route::get(
-            '/pieces/chunk/{offset}',
-            [App\Http\Controllers\ConvertController::class, 'pieces']
-        )
-        ->where('offset', '[0-9]+')
-        ->name('pieces.chunk');
+// ARMOR
+    Route::get( '/armor', [App\Http\Controllers\ArmorController::class, 'index'] )
+    ->name( 'armor.index' );
+    Route::get( '/armor/{armor:slug}', [App\Http\Controllers\ArmorController::class, 'show'] )
+    ->name( 'armor.show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
 
-        Route::get(
-            '/crafting-station/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'craftingStation']
-        )->name('crafting-station');
+// WEAPONS
+    Route::get( '/weapons', [App\Http\Controllers\WeaponController::class, 'index'] )
+    ->name( 'weapons.index' );
+    Route::get( '/weapon/{weapon:slug}', [App\Http\Controllers\WeaponController::class, 'show'] )
+    ->name( 'weapons.show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
 
-        Route::get(
-            '/status-effects/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'statusEffect']
-        )->name('status-effects');
+// CONSUMABLES
+    Route::get( '/consumables', [App\Http\Controllers\ConsumableController::class, 'index'] )
+    ->name( 'consumables.index' );
+    Route::get( '/consumables/{consumable:slug}', [App\Http\Controllers\ConsumableController::class, 'show'] )
+    ->name( 'consumables.show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
+// ALT ROUTE -- FOOD
+    Route::get( '/food', [App\Http\Controllers\ConsumableController::class, 'index'] )
+    ->name( 'food.index' );
+    Route::get( '/food/{consumable:slug}', [App\Http\Controllers\ConsumableController::class, 'show'] )
+    ->name( 'food.show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
 
-        Route::get(
-            '/recipes/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'recipe']
-        )->name('recipes');
+// ALL
+    Route::get( '/items', [App\Http\Controllers\ItemController::class, 'index'] )
+    ->name( 'index' );
 
-        Route::get(
-            '/items/{name?}',
-            [App\Http\Controllers\ConvertController::class, 'item']
-        )->name('items');
+// ALL
+    Route::get( '/items/{item:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
+    ->name( 'show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
+});
 
-        Route::get(
-            '/{name}',
-            [App\Http\Controllers\ConvertController::class, 'convert']
-        )->name('names');
-    });
-}
+// RECIPES
+/*Route::get( '/recipes', [App\Http\Controllers\RecipeController::class, 'index'] )
+    ->name( 'recipes.index' );
+Route::get( '/recipes/{recipe:slug}', [App\Http\Controllers\RecipeController::class, 'show'] )
+    ->where( 'slug', '[a-zA-Z0-9-]+' )
+    ->name( 'recipes.show' );*/
 
-// END Convert ------------------------------------------------------------------
+/*
+// STATUS EFFECTS
+Route::get( '/status-effects', [App\Http\Controllers\StatusEffectController::class, 'index'] )
+    ->name( 'status-effects.index' );
+//*/
 
-Route::get('/', [App\Http\Controllers\PageController::class, 'index'])->name('index');
-Route::get('/home', [App\Http\Controllers\PageController::class, 'index'])->name('index');
-Route::get('/about', [App\Http\Controllers\PageController::class, 'about'])->name('about');
-
-/*Route::resources(
+/* 
+Route::resources(
     [
         'status-effects' => StatusEffectController::class,
-        'recipes' => RecipeController::class,
+        'recipes' => ItemRecipeController::class,
         'items' => ItemController::class,
     ],
-    // options -- ['index', 'show', 'store', 'update', 'destroy'];
+    // options -- ['index', 'show', 'store', 'edit', 'update', 'destroy'];
     [
         // don't create routes for modifying the resources
         'only' => ['index', 'show']
     ]
-);*/
-
-// RECIPES
-Route::get('/recipes', [App\Http\Controllers\RecipeController::class, 'index'])
-    ->name('recipes.index');
-Route::get('/recipes/{id}', [App\Http\Controllers\RecipeController::class, 'show'])
-    ->name('recipes.show')
-    ->where('id', '[0-9]+');
-Route::get('/recipes/{slug}', [App\Http\Controllers\RecipeController::class, 'showSlug'])
-    ->name('recipes.showSlug');
-
-// ITEMS
-Route::get('/items', [App\Http\Controllers\ItemController::class, 'index'])
-    ->name('items.index');
-Route::get('/items/{id}', [App\Http\Controllers\ItemController::class, 'show'])
-    ->name('items.show')
-    ->where('id', '[0-9]+');
-Route::get('/items/{slug}', [App\Http\Controllers\ItemController::class, 'showSlug'])
-    ->name('items.showSlug');
-
-// PIECES
-Route::get('/pieces', [App\Http\Controllers\PieceController::class, 'index'])
-    ->name('pieces.index');
-Route::get('/pieces/{id}', [App\Http\Controllers\PieceController::class, 'show'])
-    ->name('pieces.show')
-    ->where('id', '[0-9]+');
-Route::get('/pieces/{slug}', [App\Http\Controllers\PieceController::class, 'showSlug'])
-    ->name('pieces.showSlug');
-
-// STATUS EFFECTS
-Route::get('/status-effects', [App\Http\Controllers\StatusEffectController::class, 'index'])
-    ->name('status-effects.index');
+); 
+*/

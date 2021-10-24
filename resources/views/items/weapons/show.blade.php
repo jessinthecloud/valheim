@@ -1,0 +1,9 @@
+<x-layouts.app>
+    <x-show
+        :title="$weapon->name"
+        :entity="$weapon"
+        :partial="'partials._item'"
+        :index="'item'"
+        :entityClassType="'weapon'"
+    ></x-show>
+</x-layouts.app>

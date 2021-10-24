@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Piece;
-use App\Models\Recipe;
-use App\Models\Item;
+use App\Models\Items\Craftables\Pieces\Piece;
+use App\Models\Items\Item;
+use App\Models\Recipes\Recipe;
 use Livewire\Component;
 use Illuminate\Support\Str;
 
@@ -36,24 +36,24 @@ class SearchDropdown extends Component
             $term = str_replace(' ', '%', $this->search);
 
             // do search request with livewire data from view
-            $recipe_results = Recipe::where('name', 'like', '%'.$term.'%')
+            /*$recipe_results = Recipe::where('name', 'like', '%'.$term.'%')
                 ->orWhere('true_name', 'like', '%'.$term.'%')
-                ->get();
+                ->get();*/
             $item_results = Item::where('name', 'like', '%'.$term.'%')
                 ->orWhere('true_name', 'like', '%'.$term.'%')
                 ->get();
-            $item_results = Piece::where('name', 'like', '%'.$term.'%')
+            $piece_results = Piece::where('name', 'like', '%'.$term.'%')
                 ->orWhere('true_name', 'like', '%'.$term.'%')
                 ->get();
 
-            $raw_search_results = $recipe_results->merge($item_results)->sortBy('name');
+            $raw_search_results = $item_results->merge($piece_results)->sortBy('name');
 
             if (!empty($raw_search_results)) {
                 // add table info so we know how to label and what routes to link
                 $raw_search_results = $raw_search_results->map(function ($result) {
                     return collect($result)->merge([
-                        'result_type' => $result->getTable(),
-                        'type_name' => ucwords(Str::singular($result->getTable()))
+                        'type' => $result->type(),
+                        'image_url' => $result->imageUrl(),
                     ]);
                 });
                 if ($raw_search_results->count() > 8) {

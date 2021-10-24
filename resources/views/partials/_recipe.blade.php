@@ -3,25 +3,26 @@
         {{ $recipe->name }} <span class="absolute top-0 right-0 text-gray-500 text-xs">{{ $recipe->id }}</span>
     </h2>
     <div class="recipe-details w-full md:mr-6 md:w-1/2">
-        @if($recipe->item)
+        @if($recipe->creation)
             <p class="my-4">
-                {!! $recipe->item->sharedData->description !!}
+                {!! $recipe->creation->sharedData->description !!}
             </p>
         @endif
         
         @include('partials._recipe-details')
     </div>
 
-    @if($recipe->max_quality > 1 && !empty($recipe->upgrades))
+    @if($recipe->maxQuality() > 1 && !empty($recipe->upgrades()))
         @include('partials._recipe_upgrades', [
             'recipe'    => $recipe
         ])
     @endif
     
     @if($recipe->relatedItems()->count() > 0)
+        <?php //dump($recipe->relatedItems()) ?>
         <div class="w-full bg-gray-900 mt-4 p-4">
             <h3 class="w-full text-xl font-semibold">Related Items</h3>
-            <?php //if(null !== $recipe->item) { dump($recipe->item->id, $recipe->relatedItems()); } ?>
+            <?php //if(null !== $recipe->creation) { dump($recipe->creation->id, $recipe->relatedItems()); } ?>
             <div class="flex flex-wrap flex-col h-40">
                 @foreach($recipe->relatedItems() as $item)
                     <span class="pt-4 pr-4">

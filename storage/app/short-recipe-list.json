@@ -1,0 +1,112 @@
+[
+    {
+        "raw_name": null,
+        "var_name": null,
+        "true_name": "Recipe_Adze",
+        "enabled": false,
+        "min_station_level": 1,
+        "amount": 1,
+        "raw_crafting_station_name": null,
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 3,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Wood",
+                "var_name": "$item_wood"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Stone",
+                "var_name": "$item_stone"
+            }
+        ]
+    },
+    {
+        "raw_name": "Bronze plate cuirass",
+        "var_name": "$item_chest_bronze",
+        "true_name": "Recipe_ArmorBronzeChest",
+        "enabled": true,
+        "min_station_level": 1,
+        "amount": 1,
+        "raw_crafting_station_name": "Forge",
+        "var_crafting_station_name": "$piece_forge",
+        "true_crafting_station_name": "forge",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 3,
+                "recover": true,
+                "raw_name": "Bronze",
+                "var_name": "$item_bronze"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 0,
+                "recover": true,
+                "raw_name": "Deer hide",
+                "var_name": "$item_deerhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Troll leather tunic",
+        "var_name": "$item_chest_trollleather",
+        "true_name": "Recipe_ArmorTrollLeatherChest",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 1,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 5,
+                "amount_per_level": 2,
+                "recover": true,
+                "raw_name": "Troll hide",
+                "var_name": "$item_trollhide"
+            }
+        ]
+    },
+    {
+        "raw_name": "Fire arrow",
+        "var_name": "$item_arrow_fire",
+        "true_name": "Recipe_ArrowFire",
+        "enabled": true,
+        "min_station_level": 2,
+        "amount": 20,
+        "raw_crafting_station_name": "Workbench",
+        "var_crafting_station_name": "$piece_workbench",
+        "true_crafting_station_name": "piece_workbench",
+        "raw_repair_station_name": null,
+        "requirements": [
+            {
+                "amount": 8,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Wood",
+                "var_name": "$item_wood"
+            },
+            {
+                "amount": 8,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Resin",
+                "var_name": "$item_resin"
+            },
+            {
+                "amount": 2,
+                "amount_per_level": 1,
+                "recover": true,
+                "raw_name": "Feathers",
+                "var_name": "$item_feathers"
+            }
+        ]
+    }
+]

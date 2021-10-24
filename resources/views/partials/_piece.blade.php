@@ -79,7 +79,7 @@
                         </li>
                     @endif
     
-                    {{--@if($requirement->max_quality > 1)
+                    {{--@if($requirement->maxQuality() > 1)
                         <x-general.button-link
                             class="font-semibold mt-4"
                             href="{{ route('requirements.show', $requirement->slug) }}"

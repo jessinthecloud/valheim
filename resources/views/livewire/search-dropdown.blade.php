@@ -46,7 +46,7 @@
                     @foreach($search_results as $result)
                         <li wire:key="{{ $loop->index }}" class="border-b border-gray-700">
                             <a 
-                            href="{{ route($result['result_type'].'.show', $result['slug']) }}" 
+                            href="{{ route('items.show', $result['slug']) }}" 
                             class="block hover:bg-gray-700 px-3 py-3 flex items-center transition ease-in-out duartion-150"
                             {{-- if we are on last item,
                             if press tab (focus off), hide dropdown --}}
@@ -54,10 +54,10 @@
                                 @keydown.tab="isVisible=false"
                             @endif
                             >
-                                {{-- @if(!empty($result['cover_url']))
-                                    <img src="{{ $result['cover_url'] }}" alt="Cover Art" class="w-10">
-                                @endif --}}
-                                <span class="ml-4">{{ $result['name'] }} - <strong>{{ $result['type_name'] }}</strong></span>
+                                 @if(!empty($result['image_url']))
+                                    <img src="{{ $result['image_url'] }}" alt="{{ $result['name'] }}" class="w-10">
+                                @endif 
+                                <span class="ml-4">{{ $result['name'] }} - <strong>{{ $result['type'] }}</strong></span>
                             </a>
                         </li>
                     @endforeach
