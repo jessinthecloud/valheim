@@ -32,7 +32,7 @@
 
         @if($item->recipes)
             @foreach($item->recipes as $key => $recipe)
-                @if($recipe->max_quality() > 1 && !empty($recipe->upgrades()))
+                @if($recipe->maxQuality() > 1 && !empty($recipe->upgrades()))
                     @include('partials._recipe_upgrades', [
                         'recipe'    => $recipe
                     ])
@@ -44,7 +44,7 @@
     
     @if($item->recipes)
         @foreach($item->recipes as $key => $recipe)
-            <section class="w-full bg-gray-700 mt-6 p-4 md:w-1/3 md:mt-0">
+            <section class="w-full bg-gray-700 mt-6 ml-4 p-4 md:w-1/3 md:mt-0">
                 <h3 class="w-full text-xl font-semibold mt-0 mb-0">
                     Recipe @if($key > 0) {{ $key+1 }} @endif
                 </h3>

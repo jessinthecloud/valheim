@@ -99,4 +99,7 @@ class Piece extends Item implements IsItem, IsCraftable, IsCategorizable
     {
         return false;
     }
+    
+    // TODO: calculate quality / levels of pieces ? based on $this->is_upgrade
+    
 }

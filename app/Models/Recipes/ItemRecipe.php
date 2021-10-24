@@ -70,9 +70,9 @@ class ItemRecipe extends Recipe
         return null !== $this->creation ? $this->creation->icon() : '';
     }
 
-    public function max_quality() : int
+    public function maxQuality() : int
     {
-        return (!empty($this->creation) && !empty($this->creation->sharedData)) ? ($this->creation->sharedData->max_quality ?? 1) : 1;
+        return (!empty($this->creation) && !empty($this->creation->sharedData)) ? ($this->creation->sharedData->maxQuality ?? 1) : 1;
     }
 
     public function upgrades()
@@ -80,7 +80,7 @@ class ItemRecipe extends Recipe
         $upgrades = [];
 
         // start at the first upgrade level and determine the required item amounts
-        for ($i=2; $i<=$this->max_quality(); $i++) {
+        for ($i=2; $i<=$this->maxQuality(); $i++) {
         
             $upgrades[$i]= [
                 'station' => $this->requiredStation($i)->name,
@@ -120,8 +120,8 @@ class ItemRecipe extends Recipe
         $html = rtrim($html, ', ');
 
         // include max station level in totals
-        if (isset($upgrades[$this->max_quality()]) && $upgrades[$this->max_quality()]['station_level'] > 1) {
-            $html .= ' (<strong>Level ' . $upgrades[$this->max_quality()]['station_level'].' '.$upgrades[$this->max_quality()]['station'] . '</strong>)';
+        if (isset($upgrades[$this->maxQuality()]) && $upgrades[$this->maxQuality()]['station_level'] > 1) {
+            $html .= ' (<strong>Level ' . $upgrades[$this->maxQuality()]['station_level'].' '.$upgrades[$this->maxQuality()]['station'] . '</strong>)';
         }
         
         return $html;

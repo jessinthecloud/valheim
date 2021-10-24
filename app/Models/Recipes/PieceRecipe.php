@@ -72,4 +72,8 @@ class PieceRecipe extends Recipe
 
 // -- MISC -----------------------------------------------
 
+    public function maxQuality() : int
+    {
+        return 1;
+    }
 }

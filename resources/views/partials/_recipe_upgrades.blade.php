@@ -6,7 +6,7 @@
                 <li class="bg-gray-800 mb-4 mr-2 p-4 flex-grow">
                     <h4 class="text-lg font-bold mb-2">
                         Level {{ $level }}
-                        @if($level === $recipe->max_quality())
+                        @if($level === $recipe->maxQuality())
                             (MAX)
                         @endif
                     </h4>

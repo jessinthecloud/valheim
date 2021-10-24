@@ -58,7 +58,7 @@ class PieceRecipeController extends Controller
     protected function formatForView($recipe)
     {
         $recipe->name = ucwords($recipe->name);
-        $recipe->max_quality = $recipe->item->sharedData->max_quality ?? 1;
+        $recipe->max_quality = $recipe->creation->sharedData->maxQuality() ?? 1;
 
         return $recipe;
     }
@@ -66,11 +66,11 @@ class PieceRecipeController extends Controller
     protected function formatUpgradesForView($recipe)
     {
         $recipe->name = ucwords($recipe->name);
-        $recipe->max_quality = $recipe->item->sharedData->max_quality ?? 1;
+        $recipe->max_quality = $recipe->creation->sharedData->maxQuality() ?? 1;
         $upgrades = [];
         $sum = [];
         // start at the first upgrade level and determine the required item amounts
-        for ($i=2; $i<=$recipe->max_quality; $i++) {
+        for ($i=2; $i<=$recipe->maxQuality(); $i++) {
             $upgrades[$i]= [
                 'station' => $recipe->getRequiredStation($i)->name,
                 'station_level' => $recipe->getRequiredStationLevel($i),
@@ -86,7 +86,7 @@ class PieceRecipeController extends Controller
         } // end for
 
         // dump($recipe);
-        // dump("max level: ".$recipe->item->sharedData->max_quality);
+        // dump("max level: ".$recipe->creation->sharedData->maxQuality());
         // dump($upgrades);
         // dump($sum);
 
@@ -98,8 +98,8 @@ class PieceRecipeController extends Controller
         endforeach;
         $totals = rtrim($totals, ', ');
         // include max station level in totals
-        if (isset($upgrades[$recipe->max_quality]) && $upgrades[$recipe->max_quality]['station_level'] > 1) {
-            $totals .= ' (<strong>Level ' . $upgrades[$recipe->max_quality]['station_level'].' '.$upgrades[$recipe->max_quality]['station'] . '</strong>)';
+        if (isset($upgrades[$recipe->maxQuality()]) && $upgrades[$recipe->maxQuality()]['station_level'] > 1) {
+            $totals .= ' (<strong>Level ' . $upgrades[$recipe->maxQuality()]['station_level'].' '.$upgrades[$recipe->maxQuality()]['station'] . '</strong>)';
         }
 
         $recipe->upgrades = $upgrades;
