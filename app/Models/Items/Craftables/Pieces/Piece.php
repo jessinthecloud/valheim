@@ -49,7 +49,7 @@ class Piece extends Item implements IsItem, IsCraftable, IsCategorizable
      */
     public function type() : string
     {
-        return $this->niceName( PieceCategory::toString( $this->category ) );
+        return $this->niceName( PieceCategory::toString( $this->category ?? 0 ) );
     }
 
     public function isFurniture() : bool

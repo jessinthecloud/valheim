@@ -13,9 +13,9 @@
         
         <p class="block my-4">
             {!! $item->description() !!}
-            @if($item->hasSharedData()) 
-                <em class="block mt-2">{{ $item->type() }}</em>
-            @endif
+            
+            <em class="block mt-2">{{ $item->type() }}</em>
+            
         </p>
         
         <x-items.weapon-details
