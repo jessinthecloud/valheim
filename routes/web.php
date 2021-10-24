@@ -26,45 +26,45 @@ Route::get( '/images', App\Http\Controllers\Conversion\SaveImageController::clas
 
 // ITEMS
 Route::group([
-    'prefix' => 'items',
     'as' => 'items.'
-], function(){
-// ALL
-    Route::get( '/', [App\Http\Controllers\ItemController::class, 'index'] )
-        ->name( 'index' );
-    
-// ALL
-    Route::get( '/{item:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
-        ->name( 'show' )
-        ->where( 'slug', '[a-zA-Z0-9-]+' );
-});
+], function() {
 
 // ARMOR
-Route::get( '/armor', [App\Http\Controllers\ArmorController::class, 'index'] )
+    Route::get( '/armor', [App\Http\Controllers\ArmorController::class, 'index'] )
     ->name( 'armor.index' );
-Route::get( '/armor/{armor:slug}', [App\Http\Controllers\ArmorController::class, 'show'] )
+    Route::get( '/armor/{armor:slug}', [App\Http\Controllers\ArmorController::class, 'show'] )
     ->name( 'armor.show' )
     ->where( 'slug', '[a-zA-Z0-9-]+' );
 
 // WEAPONS
-Route::get( '/weapons', [App\Http\Controllers\WeaponController::class, 'index'] )
+    Route::get( '/weapons', [App\Http\Controllers\WeaponController::class, 'index'] )
     ->name( 'weapons.index' );
-Route::get( '/weapon/{weapon:slug}', [App\Http\Controllers\WeaponController::class, 'show'] )
+    Route::get( '/weapon/{weapon:slug}', [App\Http\Controllers\WeaponController::class, 'show'] )
     ->name( 'weapons.show' )
     ->where( 'slug', '[a-zA-Z0-9-]+' );
 
 // CONSUMABLES
-Route::get( '/consumables', [App\Http\Controllers\ConsumableController::class, 'index'] )
+    Route::get( '/consumables', [App\Http\Controllers\ConsumableController::class, 'index'] )
     ->name( 'consumables.index' );
-Route::get( '/consumables/{consumable:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
+    Route::get( '/consumables/{consumable:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
     ->name( 'consumables.show' )
     ->where( 'slug', '[a-zA-Z0-9-]+' );
 // ALT ROUTE -- FOOD
-Route::get( '/food', [App\Http\Controllers\ConsumableController::class, 'index'] )
-->name( 'food.index' );
-Route::get( '/food/{consumable:slug}', [App\Http\Controllers\ConsumableController::class, 'show'] )
-->name( 'food.show' )
-->where( 'slug', '[a-zA-Z0-9-]+' );
+    Route::get( '/food', [App\Http\Controllers\ConsumableController::class, 'index'] )
+    ->name( 'food.index' );
+    Route::get( '/food/{consumable:slug}', [App\Http\Controllers\ConsumableController::class, 'show'] )
+    ->name( 'food.show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
+
+// ALL
+    Route::get( '/items', [App\Http\Controllers\ItemController::class, 'index'] )
+    ->name( 'index' );
+
+// ALL
+    Route::get( '/items/{item:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
+    ->name( 'show' )
+    ->where( 'slug', '[a-zA-Z0-9-]+' );
+});
 
 // RECIPES
 /*Route::get( '/recipes', [App\Http\Controllers\RecipeController::class, 'index'] )
