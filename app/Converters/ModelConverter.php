@@ -39,18 +39,15 @@ class ModelConverter implements Converter
             $this->parser->checkAndSetSlug( $entity['slug'], $class ) :
             null;
 
-        if ( empty( $entity['slug'] ) ) {
-            // if no slug, don't bother
-            return null;
-        }
-
         // only try to insert columns that exist
         $table = $this->parser->parseTable( $class );
+        $entity = collect($entity)->filter()->all();
         $db_column_values = Arr::only( $entity, Schema::getColumnListing( $table ) );
+        // 
 
+//dump('class: '.$class, 'DB values: ',$db_column_values, 'ENTITY',$entity);
         // requirements are always unique
         if( Str::contains( $class, ["Requirement"] ) ){
-//dump($class, $db_column_values, $entity);
             // create model from values
             $model = new $class(
             // array of values to use
@@ -58,7 +55,24 @@ class ModelConverter implements Converter
             );
             $model->save();
         }
+        // sharedData always unique
+        elseif( Str::contains( $class, ["Shared"] ) ){
+//dump($class, $db_column_values, $entity);
+            // create model from values
+            $model = new $class(
+                // array of values to use
+                $db_column_values
+            );
+            $model->save();
+        }
         else{
+
+            if ( empty( $entity['slug'] ) ) {
+ddd('---- NO SLUG ---',$class, $entity, $data, '--- END NO SLUG ---');
+                // if no slug, don't bother
+                return null;
+            }
+        
             // create model
             // check if already exists
             // find existing or create model from values
@@ -107,10 +121,10 @@ class ModelConverter implements Converter
                     // check all, not just first
                     $flat_relation_data = collect( $relation )->filter( function ( $entity ) {
                         return !is_array( $entity );
-                    } );
-
-                    $multi_relation_data = collect( $relation )->diffAssoc( $flat_relation_data );
-
+                    } )->filter();
+//dump('flat', $flat_relation_data);
+                    $multi_relation_data = collect( $relation )->diffAssoc( $flat_relation_data )->filter();
+//dump('multi ', $multi_relation_data);
                     $multi_relation_data = $multi_relation_data->map(
                         function ( $data ) use (
                             $relation,
@@ -134,16 +148,20 @@ class ModelConverter implements Converter
                             return $related;
                         }
                     );
-
-                    $flat_relation_data = $this->convertAndAttachRelation(
-                        $model,
-                        $relation,
-                        $relation_class,
-                        $relation_method,
-                        $attach_function,
-                        $this->parser,
-                        $entity
-                    );
+                    
+                    if(!empty($flat_relation_data->all())){
+                        $flat_relation_data = $this->convertAndAttachRelation(
+                            $model,
+                            $relation,
+                            $relation_class,
+                            $relation_method,
+                            $attach_function,
+                            $this->parser,
+                            $entity
+                        );
+                    }
+                    
+/*dump('flat AFTER', $flat_relation_data, 'multi AFTER', $multi_relation_data, 'merged', $multi_relation_data->merge( $flat_relation_data )->all());*/
 
                     return $multi_relation_data->merge( $flat_relation_data )->all();
                 }
@@ -176,17 +194,19 @@ class ModelConverter implements Converter
     ) {
         // requirements should not convert their relation (item), only find existing and attach
         if ( $relation_method === 'item' ) {
-//dump($entity);        
-            $related = Item::firstWhere( 'var_name', $entity['var_name'] );
-//dump($related);
-            if ( isset( $related ) ) {
-                $this->attachRelated( $model, $related, $relation_method, $attach_function );
+//dump('entity', $entity);
+            $related = Item::where( 'var_name', $entity['var_name'] )->first();
+//dump('related: ',$related);
+            if ( !isset( $related ) ) {
+                ddd('NOT FOUND');
             }
+            
+            $this->attachRelated( $model, $related, $relation_method, $attach_function );
+            
             return $related;
         }
 
         // sharedData should not convert their status effects, only find existing and attach
-        // requirements should not convert their relation (item), only find existing and attach
         if ( $relation_method === 'statusEffects' ) {
 
             // remove empty
@@ -311,7 +331,7 @@ class ModelConverter implements Converter
      */
     protected function attachRelated( Model $model, Model $relation, string $relation_method, string $attach_function )
     {
-        if ( null === $model->$relation_method() ) {
+        if ( null === $model->$relation_method()) {
             // no relation methods
             return;
         }

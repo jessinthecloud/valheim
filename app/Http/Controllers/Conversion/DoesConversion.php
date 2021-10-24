@@ -52,7 +52,7 @@ trait DoesConversion
         $data = collect($data)->map(function($entity){
             //ddd($entity);
             $converted = $this->converter->convert( $entity, $this->class, $this->parser);
-//            dump('CONVERTED: ',$converted, '+++++================================+++++');
+//            ddd('CONVERTED: ',$converted, '+++++================================+++++');
             return $converted;
         })->filter();
         

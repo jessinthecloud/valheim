@@ -12,17 +12,17 @@ if ( config( 'app.env' ) === 'local' ) {
             )->name('index');*/
 
             Route::get(
-                '/crafting-station',
+                '/crafting-stations',
                 [App\Http\Controllers\Conversion\CraftingStationController::class, 'convert']
             )->name( 'crafting-station' );
 
             Route::get(
-                '/status-effect',
+                '/status-effects',
                 [App\Http\Controllers\Conversion\StatusEffectController::class, 'convert']
             )->name( 'status-effects' );
 
             Route::get(
-                '/piece-table',
+                '/piece-tables',
                 [App\Http\Controllers\Conversion\PieceTableController::class, 'convert']
             )->name( 'piece-tables' );
 
@@ -32,7 +32,7 @@ if ( config( 'app.env' ) === 'local' ) {
             )->name( 'items' );
 // TODO:
             Route::get(
-                '/piece',
+                '/pieces',
                 [App\Http\Controllers\Conversion\PieceController::class, 'convert']
             )->name( 'pieces' );
 
@@ -51,7 +51,7 @@ if ( config( 'app.env' ) === 'local' ) {
 
 // TODO: piece-recipes, or combine with Pieces convert. OR combine with ItemRecipes and use a RecipesController?
             Route::get(
-                '/piece-recipe',
+                '/piece-recipes',
                 [App\Http\Controllers\Conversion\PieceRecipeController::class, 'convert']
             )->name( 'piece-recipes' );
             /*Route::get(
