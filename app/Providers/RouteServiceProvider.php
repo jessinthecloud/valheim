@@ -8,6 +8,8 @@ use App\Models\Items\Craftables\Items\CraftableItem;
 use App\Models\Items\Craftables\Items\Weapon;
 use App\Models\Items\Craftables\Pieces\Piece;
 use App\Models\Items\NaturalItem;
+use App\Models\Recipes\ItemRecipe;
+use App\Models\Recipes\PieceRecipe;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -71,6 +73,16 @@ class RouteServiceProvider extends ServiceProvider
                 ?? abort('404');
 //ddd($item);
             return $item;
+        });
+
+        // Custom bind Recipe to route
+        // get a specific recipe type instead of generic Recipe 
+        Route::bind('recipe', function ($slug) {
+            $recipe = ItemRecipe::where('slug', $slug)->first()
+            ?? PieceRecipe::where('slug', $slug)->first()
+            ?? abort('404');
+//ddd($recipe);
+            return $recipe;
         });
     }
 
