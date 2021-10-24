@@ -69,4 +69,7 @@ class PieceRecipe extends Recipe
     {
         return $this->belongsToMany(Requirement::class);
     }
+
+// -- MISC -----------------------------------------------
+
 }

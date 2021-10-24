@@ -19,11 +19,13 @@
     @endif
     
     @if($recipe->relatedItems()->count() > 0)
+        <?php //dump($recipe->relatedItems()) ?>
         <div class="w-full bg-gray-900 mt-4 p-4">
             <h3 class="w-full text-xl font-semibold">Related Items</h3>
             <?php //if(null !== $recipe->item) { dump($recipe->item->id, $recipe->relatedItems()); } ?>
             <div class="flex flex-wrap flex-col h-40">
                 @foreach($recipe->relatedItems() as $item)
+                    <?php dump($item) ?>
                     <span class="pt-4 pr-4">
                         <x-general.link
                             class=""

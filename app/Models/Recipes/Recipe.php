@@ -2,6 +2,7 @@
 
 namespace App\Models\Recipes;
 
+use App\Models\Items\Item;
 use App\Models\Tools\CraftingStation;
 use App\Models\Tools\RepairStation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,8 +53,26 @@ abstract class Recipe extends Model
                 $query->where('item_id', $this->item->id);
             });
         })
-        ->get()->unique('item_id');
+        ->groupBy('item_id')
+        ->get();
+        //->unique('item_id');
     }
+    
+    // TODO: implement
+    public function relatedItems()
+    {
+//        return Item::whereIn('id', $this->requirements->pluck('item_id'))
+        
+       /* Requirement::whereHas( 'item', function ( $query ) {
+            $query->where( 'item_id', $this->creation->id )
+            ->orWhereIn('id', $this->requirements->pluck('item_id'))
+            ;
+        } )
+        ->groupBy('item_id')*/
+//        ->get();
+        return collect();
+    }
+    
 
     /**
      * calculate the required station level for this item based on its quality
