@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Items\Craftables\Items\Armor;
+use App\Models\Items\Craftables\Items\Consumable;
 use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Craftables\Items\Weapon;
 use App\Models\Items\Craftables\Pieces\Piece;
 use App\Models\Items\NaturalItem;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -54,10 +57,20 @@ class RouteServiceProvider extends ServiceProvider
         // Custom bind Item to route
         // get a specific item type instead of generic Item 
         Route::bind('item', function ($slug) {
-            return CraftableItem::where('slug', $slug)->first() 
+            $item = Armor::where('slug', $slug)
+                    ->unionAll(Weapon::where('slug', $slug))
+                    ->unionAll(Consumable::where('slug', $slug))->first()
+                ?? CraftableItem::where('slug', $slug)->first() 
                 ?? NaturalItem::where('slug', $slug)->first() 
+                /* 
+                ?? Furniture::where('slug', $slug)
+                    ->unionAll(BuildingPiece::where('slug', $slug))
+                    ->unionAll(CraftingPiece::where('slug', $slug))->first() 
+                */
                 ?? Piece::where('slug', $slug)->first() 
                 ?? abort('404');
+//ddd($item);
+            return $item;
         });
     }
 
