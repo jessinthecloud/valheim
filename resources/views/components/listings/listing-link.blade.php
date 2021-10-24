@@ -22,10 +22,9 @@
     @endif
     
     <h2 class="relative w-3/4 flex flex-wrap items-center text-lg pl-4 m-0">
-        
         {{ $entity->name }}
- 
-        {!! $entity->icon() !!}
-        
     </h2>
+
+    <span class="w-full flex justify-end">{!! $entity->icon() !!}</span>
+
 </a>
