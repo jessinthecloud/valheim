@@ -15,9 +15,9 @@
 >
     @if( !empty($entity->image))
         <img
-                src="{{ $entity->image() }}"
-                alt="{{ $entity->name }} Thumbnail"
-                class="w-1/4"
+            src="{{ $entity->imageUrl() }}"
+            alt="{{ $entity->name }} Thumbnail"
+            class="w-1/4"
         />
     @endif
     

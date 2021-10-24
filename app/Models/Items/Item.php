@@ -85,6 +85,11 @@ class Item extends Model implements CanBeIngredient
         return trim( implode( ' ', preg_split( '/(?=[A-Z])/', $name ) ) ) ?? $name;
     }
 
+    public function imageUrl() : string
+    {
+        return !empty($this->getAttribute('image')) ? asset('storage/images/'.$this->image) : '';
+    }
+
     public function image() : string
     {
         $image = !empty($this->getAttribute('image')) ? asset('storage/images/'.$this->image) : '';
