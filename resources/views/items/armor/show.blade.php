@@ -1,9 +1,9 @@
 <x-layouts.app>
     <x-show
         :title="$armor->name"
-        :item="$armor"
+        :entity="$armor"
         :partial="'partials._item'"
         :index="'item'"
-        :itemClassType="'armor'"
+        :entityClassType="'armor'"
     ></x-show>
 </x-layouts.app>

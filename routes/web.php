@@ -46,7 +46,7 @@ Route::group([
 // CONSUMABLES
     Route::get( '/consumables', [App\Http\Controllers\ConsumableController::class, 'index'] )
     ->name( 'consumables.index' );
-    Route::get( '/consumables/{consumable:slug}', [App\Http\Controllers\ItemController::class, 'show'] )
+    Route::get( '/consumables/{consumable:slug}', [App\Http\Controllers\ConsumableController::class, 'show'] )
     ->name( 'consumables.show' )
     ->where( 'slug', '[a-zA-Z0-9-]+' );
 // ALT ROUTE -- FOOD

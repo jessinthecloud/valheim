@@ -4,6 +4,6 @@
         :entity="$item"
         :partial="'partials._item'"
         :index="'item'"
-        :entity_class_type="'item'"
+        :entityClassType="'item'"
     ></x-show>
 </x-layouts.app>
