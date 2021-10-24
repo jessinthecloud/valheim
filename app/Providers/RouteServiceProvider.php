@@ -57,15 +57,15 @@ class RouteServiceProvider extends ServiceProvider
         // Custom bind Item to route
         // get a specific item type instead of generic Item 
         Route::bind('item', function ($slug) {
-            $item = Armor::where('slug', $slug)
-                    ->unionAll(Weapon::where('slug', $slug))
-                    ->unionAll(Consumable::where('slug', $slug))->first()
+            $item = Armor::where('slug', $slug)->first()
+                ?? Weapon::where('slug', $slug)->first()
+                ?? Consumable::where('slug', $slug)->first()
                 ?? CraftableItem::where('slug', $slug)->first() 
                 ?? NaturalItem::where('slug', $slug)->first() 
                 /* 
                 ?? Furniture::where('slug', $slug)
-                    ->unionAll(BuildingPiece::where('slug', $slug))
-                    ->unionAll(CraftingPiece::where('slug', $slug))->first() 
+                ?? BuildingPiece::where('slug', $slug)->first()
+                ?? CraftingPiece::where('slug', $slug)->first() 
                 */
                 ?? Piece::where('slug', $slug)->first() 
                 ?? abort('404');
