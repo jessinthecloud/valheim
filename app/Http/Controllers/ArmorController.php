@@ -16,7 +16,6 @@ class ArmorController extends Controller
      */
     public function index(Request $request)
     {
-        $page = $request->page ?? 1;
         $per_page = 32;
 
         $paginator = Armor::orderBy('name', 'asc')->paginate($per_page);
@@ -24,10 +23,10 @@ class ArmorController extends Controller
         $armor = $paginator->items();
 
         return view('items.armor.index',
-                    compact(
-                        'armor',
-                        'paginator'
-                    )
+            compact(
+                'armor',
+                'paginator'
+            )
         );
     }
 

@@ -2,6 +2,6 @@
     :title="'Armor'"
     :entities="$armor"
     :entityName="'armor'"
-    :routeName="'items.armor.show'"
+    :routeName="'armor.show'"
     :paginator="$paginator"
 ></x-listings.page>

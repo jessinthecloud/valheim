@@ -6,6 +6,7 @@
     </x-slot>
 
     <x-listings.entity-listing
+            :title="$title"
             :entities="$entities"
             :entityName="$entityName"
             :routeName="$routeName"

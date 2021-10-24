@@ -2,6 +2,6 @@
         :title="'Consumables'"
         :entities="$consumables"
         :entityName="'consumable'"
-        :routeName="'items.consumables.show'"
+        :routeName="'consumables.show'"
         :paginator="$paginator"
 ></x-listings.page>
