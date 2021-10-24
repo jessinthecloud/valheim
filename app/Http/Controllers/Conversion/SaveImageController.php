@@ -49,7 +49,12 @@ class SaveImageController extends Controller
             'slug' => ['goblin-torch']
         ];
         
-        $plural_criteria = ['seed', 'berry', 'fragment', 'nail', 'coin', 'entrail', 'feather', 'wrap', 'sausages', 'scrap'];
+        $plural_criteria = [
+            'plural' => ['seed', 'berry', 'fragment', 'nail', 'coin', 'entrail', 'feather', 'wrap', 'sausages', 'scrap'],
+            'override' => [
+                'ancient seed', 'black metal scrap'
+            ],
+        ];
 
         // images, pieces, piece table, crafting station
         $this->getMissingImages(Item::class, $skippers, $plural_criteria);        
@@ -72,7 +77,10 @@ class SaveImageController extends Controller
             'slug' => []
         ];
 
-        $plural_criteria = [];
+        $plural_criteria = [
+            'plural' => [],
+            'override' => [],
+        ];
 
         // images, pieces, piece table, crafting station
         $this->getMissingImages(Piece::class, $skippers, $plural_criteria);
@@ -95,7 +103,10 @@ class SaveImageController extends Controller
             'slug' => []
         ];
 
-        $plural_criteria = [];
+        $plural_criteria = [
+            'plural' => [],
+            'override' => [],
+        ];
 
         // images, pieces, piece table, crafting station
         $this->getMissingImages(PieceTable::class, $skippers, $plural_criteria);
@@ -118,7 +129,10 @@ class SaveImageController extends Controller
             'slug' => []
         ];
 
-        $plural_criteria = [];
+        $plural_criteria = [
+            'plural' => [],
+            'override' => [],
+        ];
 
         // images, pieces, piece table, crafting station
         $this->getMissingImages(CraftingStation::class, $skippers, $plural_criteria);
@@ -168,8 +182,8 @@ class SaveImageController extends Controller
     {
         // items like "Bronze Plate Leggings" should be plural 
         $name = Str::snake((Str::startsWith($item->slug, 'armor-')) ? $item->name : Str::singular($item->name));
-
-        $name = Str::contains($name, $plural_criteria) ? Str::plural($name) : $name;
+//dump('-- name: '.$name.' item name: '.$item->name.' - plural? '.Str::contains($item->name, $plural_criteria['plural']).' exclude? ' .(!Str::contains($item->name, $plural_criteria['override'])), $plural_criteria['plural'], $plural_criteria['override']);
+        $name = (Str::contains(Str::lower($item->name), $plural_criteria['plural']) && !Str::contains(Str::lower($item->name), $plural_criteria['override'])) ? Str::plural($name) : $name;
 
         // handle names with ":" in them
         if(Str::contains($name, ':')){
