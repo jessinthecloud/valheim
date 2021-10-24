@@ -20,14 +20,14 @@ class SaveImageController extends Controller
     {
         $this->fetcher = $fetcher;
 
+        $this->getCraftingStationImages();
+
+        $this->getPieceTableImages();
+
         $this->getItemImages();
 
         $this->getPieceImages();
-        
-//        $this->getPieceTableImages();
-        
-//        $this->getCraftingStationImages();
-        
+
     }
 
     /**

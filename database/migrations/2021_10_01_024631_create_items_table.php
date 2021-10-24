@@ -17,6 +17,7 @@ class CreateItemsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug')->unique();
+            $table->string('image')->nullable();
 //            $table->string('url_path')->nullable();
             $table->string('raw_name'); 
             $table->string('true_name')->nullable(); // kind of secret name
