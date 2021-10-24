@@ -63,7 +63,7 @@ class RouteServiceProvider extends ServiceProvider
                 ?? CraftableItem::where('slug', $slug)->first() 
                 ?? NaturalItem::where('slug', $slug)->first() 
                 /* 
-                ?? Furniture::where('slug', $slug)
+                ?? Furniture::where('slug', $slug)->first()
                 ?? BuildingPiece::where('slug', $slug)->first()
                 ?? CraftingPiece::where('slug', $slug)->first() 
                 */
