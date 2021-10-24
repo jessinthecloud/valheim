@@ -69,4 +69,61 @@ class ItemRecipe extends Recipe
     {
         return null !== $this->creation ? $this->creation->icon() : '';
     }
+
+    public function max_quality() : int
+    {
+        return (!empty($this->creation) && !empty($this->creation->sharedData)) ? ($this->creation->sharedData->max_quality ?? 1) : 1;
+    }
+
+    public function upgrades()
+    {
+        $upgrades = [];
+
+        // start at the first upgrade level and determine the required item amounts
+        for ($i=2; $i<=$this->max_quality(); $i++) {
+        
+            $upgrades[$i]= [
+                'station' => $this->requiredStation($i)->name,
+                'station_level' => $this->requiredStationLevel($i),
+            ];
+        
+            foreach ($this->requirements as $req) {
+                if(null === $req->item){
+//                    dump('[missing req item]');
+                    continue;
+                }
+                
+                $upgrades[$i]['resources'][$req->item->name]= $req->getAmount($i);
+            
+            } // end foreach
+        } // end for
+
+        return $upgrades;
+    }
+
+    public function upgradeTotals( $upgrades )
+    {
+        $resources = collect($upgrades)->pluck('resources')->filter();
+        $html = '';
+        $totals = $resources->flatMap(function($resource, $key) use ($resources) {
+            return collect($resource)->map(function($amount, $item) use ($resources) {
+//                dump($amount.' '.$item);
+                return $resources->sum($item);
+            });
+        });
+      
+        foreach ( $totals as $item => $amount ) {
+            if ( $amount > 0 ) {
+                $html .= '<strong>' . $amount . '</strong> ' . $item . ', ';
+            }
+        } // sums
+        $html = rtrim($html, ', ');
+
+        // include max station level in totals
+        if (isset($upgrades[$this->max_quality()]) && $upgrades[$this->max_quality()]['station_level'] > 1) {
+            $html .= ' (<strong>Level ' . $upgrades[$this->max_quality()]['station_level'].' '.$upgrades[$this->max_quality()]['station'] . '</strong>)';
+        }
+        
+        return $html;
+    }
 }

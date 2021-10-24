@@ -39,13 +39,19 @@
                 </h3>
 
                 @include('partials._recipe-details')
+                
+                @if($recipe->max_quality() > 1 && !empty($recipe->upgrades()))
+                    @include('partials._recipe_upgrades', [
+                        'recipe'    => $recipe
+                    ])
+                @endif
 
-                <x-general.button-link
+                {{--<x-general.button-link
                     class="font-semibold mt-4"
-                    href="{{--{{ route('recipes.show', $recipe->slug) }}--}}"
+                    href="--}}{{--{{ route('recipes.show', $recipe->slug) }}--}}{{--"
                 >
                     View Recipe Details
-                </x-general.button-link>
+                </x-general.button-link>--}}
             
             </section>
         @endforeach
