@@ -4,6 +4,7 @@ namespace App\Models\Items\Traits;
 
 use App\Enums\ItemType;
 use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Item;
 use App\Models\Items\SharedData;
 use App\Models\Items\StatusEffect;
 
@@ -21,19 +22,19 @@ trait HasSharedData
         ],
     ];
 
-    // -- SCOPES -----------------------------------------------------
+// -- SCOPES -----------------------------------------------------
 
     public function scopeWeapon($query)
     {
         return $query->whereHas( 'sharedData', function($query){
-            $query->whereIn('item_type', CraftableItem::WEAPON_TYPES);
+            $query->whereIn('item_type', Item::WEAPON_TYPES);
         } );
     }
 
     public function scopeArmor($query)
     {
         return $query->whereHas( 'sharedData', function($query){
-            $query->whereIn('item_type', CraftableItem::ARMOR_TYPES);
+            $query->whereIn('item_type', Item::ARMOR_TYPES);
         } );
     }
 
@@ -68,7 +69,10 @@ trait HasSharedData
     {
         return ( (int)$this->sharedData->teleportable === 1 );
     }
-
+    
+/*************************************
+ * STATUS EFFECTS
+ */
     public function attackEffect() : string
     {
         $effect = $this->sharedData->attackStatusEffect;

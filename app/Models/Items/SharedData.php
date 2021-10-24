@@ -2,7 +2,10 @@
 
 namespace App\Models\Items;
 
+use App\Models\Items\Craftables\Items\Armor;
+use App\Models\Items\Craftables\Items\Consumable;
 use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Craftables\Items\Weapon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,14 +27,29 @@ class SharedData extends Model
         ],
     ];
     
-    public function items()
+    public function item()
     {
-        return $this->hasMany(Item::class);
+        return $this->hasOne(Item::class);
     }
 
-    public function craftableItems()
+    public function craftableItem()
     {
-        return $this->hasMany(CraftableItem::class);
+        return $this->hasOne(CraftableItem::class);
+    }
+
+    public function armor()
+    {
+        return $this->hasOne(Armor::class);
+    }
+
+    public function weapon()
+    {
+        return $this->hasOne(Weapon::class);
+    }
+
+    public function consumable()
+    {
+        return $this->hasOne(Consumable::class);
     }
     
     // return all relations

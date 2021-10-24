@@ -10,7 +10,7 @@
     <div class="item-details flex-grow md:mr-6">
         
         {!! $item->image() !!}
-    
+        <?php dd(Str::afterLast(get_class($item), '\\'), $item->sharedData); ?>
         <p class="block my-4">
             {!! $item->description() !!}
             @if($item->hasSharedData()) 

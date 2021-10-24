@@ -22,11 +22,10 @@
     @endif
     
     <h2 class="relative w-3/4 flex flex-wrap items-center text-lg pl-4 m-0">
-                
-        {{ $entity->name }}
         
-        @if(defined($entity.'::ICON'))
-            {!! $entity::ICON !!}
-        @endif
+        {{ $entity->name }}
+ 
+        {!! $entity->icon() !!}
+        
     </h2>
 </a>
