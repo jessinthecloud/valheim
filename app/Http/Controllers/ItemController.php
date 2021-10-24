@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Items\Craftables\Items\Armor;
+use App\Models\Items\Craftables\Items\Consumable;
 use App\Models\Items\Craftables\Items\CraftableItem;
+use App\Models\Items\Craftables\Items\Weapon;
 use App\Models\Items\Craftables\Pieces\Piece;
 use App\Models\Items\Item;
+use App\Models\Items\NaturalItem;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
@@ -20,9 +24,13 @@ class ItemController extends Controller
     {
         $page = $request->page ?? 1;
         $per_page = 32;
-
-        $paginator = Item::selectRaw('id,name,slug,image, "item" as type, "items" as url')
-            ->unionAll(Piece::selectRaw('id, name, slug,image, "piece" as type, "pieces" as url'))
+        // get items as their specific subtypes
+        $paginator = Armor::selectRaw('id,name,slug,image, "items" as url')
+            ->union(Weapon::selectRaw('id,name,slug,image, "items" as url'))
+            ->union(Consumable::selectRaw('id,name,slug,image, "items" as url'))
+            ->union(CraftableItem::selectRaw('id,name,slug,image, "items" as url'))
+            ->union(NaturalItem::selectRaw('id,name,slug,image, "items" as url'))
+            ->union(Piece::selectRaw('id, name, slug,image, "pieces" as url'))
             ->orderBy('name', 'asc')
             ->paginate($per_page)
             ;
